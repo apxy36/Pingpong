@@ -11,7 +11,7 @@ const io = new Server(8001, {
 const clients = new Set();
 const rooms = [];
 const TICK_DELAY = 1000 / 60;
-const MAPS_DATA = JSON.parse(readFileSync("./maps.json"));
+// const MAPS_DATA = JSON.parse(readFileSync("./maps.json"));
 
 function Client(socket) {
     this.socket = socket;
@@ -25,6 +25,8 @@ class Room {
     constructor(id) {
         this.clients = [];
         this.id = id;
+        this.mapManager = new MapManager(id);
+
     }
 
     addClient(c) {
@@ -57,7 +59,7 @@ io.on("connection", (socket) => {
         client.position = { x, y, z };
     });
 
-    socket.on("registerClient", (ign, team, roomCode), () => {
+    socket.on("registerClient", (ign, team, roomCode) => {
         client.ign = ign;
         client.team = team;
 
@@ -79,11 +81,13 @@ io.on("connection", (socket) => {
         // Client wants to join a room that does not exist, create a new room
         if (roomExists == false) {
             let room = new Room(roomCode);
+            // console.log(room.mapManager.grid)
             room.addClient(client)
             rooms.push(room);
         }
 
         socket.emit("buildMap", client.room.mapManager);
+        socket.emit("setRoomCode", roomCode);
     })
 
     // socket.on("requestCreateRoom", () => {

@@ -21,25 +21,34 @@ let cam;
 let displayPlayer;
 let localIGN = '';
 let setupComplete = false;
-let team;
+let team = 0;
 let statusconditions = [];
 
 const socket = io.connect("ws://localhost:8001");
 
 window.onload = () => { // temporary
-    const join_option_input = prompt('Select: "CREATE" or "JOIN"', "CREATE");
-    if (join_option_input === "CREATE") {
-        // socket.emit("requestCreateRoom");
+    const room_code_input = prompt("Enter Room Code", "12345");
+    // validate room code
+    if (room_code_input.length !== 5) {
+        window.onload();
+    } else {
         let localIGN = prompt('Enter IGN');
         socket.emit("registerClient", localIGN, team, room_code_input);
-    } else if (join_option_input === "JOIN") {
-        const room_code_input = prompt("Enter Room Code");
-        let localIGN = prompt('Enter IGN')
-        socket.emit("registerClient", localIGN, team, room_code_input);
-        // socket.emit("requestJoinRoom", room_code_input);
-    } else {
-        window.onload();
     }
+    // const join_option_input = prompt('Select: "CREATE" or "JOIN"', "CREATE");
+    // if (join_option_input === "CREATE") {
+    //     // socket.emit("requestCreateRoom");
+    //     let localIGN = prompt('Enter IGN');
+    //     let room
+    //     socket.emit("registerClient", localIGN, team, room_code_input);
+    // } else if (join_option_input === "JOIN") {
+    //     const room_code_input = prompt("Enter Room Code");
+    //     let localIGN = prompt('Enter IGN')
+    //     socket.emit("registerClient", localIGN, team, room_code_input);
+    //     // socket.emit("requestJoinRoom", room_code_input);
+    // } else {
+    //     window.onload();
+    // }
 };
 
 socket.on("setRoomCode", (code) => {
@@ -47,10 +56,11 @@ socket.on("setRoomCode", (code) => {
 });
 
 socket.on("buildMap", (mapManager) => {
+    // console.log(mapManager)
     mechplayer = createPlayerSprite(localIGN) // creates mechanics for player
     map.buildBaseMap(mapManager);
     map.buildVisualMap();
-    displayPlayer = createVisiblePlayerSprite(mechplayer, 'test', map);
+    displayPlayer = createVisiblePlayerSprite(mechplayer, localIGN, map);
     playerZ = map.setPlayerPosition(1, mechplayer);//map.getTile(round(map.)).z;
     cam.setTarget(displayPlayer);
     setupComplete = true;
@@ -58,7 +68,12 @@ socket.on("buildMap", (mapManager) => {
 
 socket.on("playerDataUpdate", (id, playerData) => {
     for (let data of playerData) {
-        if (data.id === id) continue;
+        if (data.id === id) {
+            // coins = data.coins;
+            statusconditions = data.statusconditions;
+            // timeRemaining = data.timer;
+            continue;
+        };
         if (!em.exists(data.id)) {
             em.registerNewPlayer(data);
         } else {
@@ -103,15 +118,15 @@ function manageVisiblePlayer(mechanicSprite, playerSprite, map){
 
 function setup() {
     new Canvas("fullscreen");
-    map =  new mapBuilder();
+    map =  new mapBuilder(70, 70, 32);
     em = new EntityManager();
     cam = new CameraManager(windowWidth / 2, windowHeight / 2, camera);
-    mechplayer = createPlayerSprite('test') // creates mechanics for player
+    // mechplayer = createPlayerSprite('test') // creates mechanics for player
 //   map.buildVisualMap();
-    displayPlayer = createVisiblePlayerSprite(mechplayer, 'test', map);
+    // displayPlayer = createVisiblePlayerSprite(mechplayer, 'test', map);
     
-    cam.setTarget(displayPlayer);
-    playerZ = map.setPlayerPosition(1, mechplayer);//map.getTile(round(map.)).z;
+    // cam.setTarget(displayPlayer);
+    // playerZ = map.setPlayerPosition(1, mechplayer);//map.getTile(round(map.)).z;
 //   cam.setTarget(displayPlayer);
     // p5play draws over our draw() loop, so we
     // have to jump thru hoops to draw our text

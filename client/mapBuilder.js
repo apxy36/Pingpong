@@ -125,12 +125,26 @@ class mapBuilder{
   }
 
   buildBaseMap(mapManager){
-    this.gridarray = this.convertMapToGridArray(mapManager.grid);
-    this.grid = mapManager.grid;
-    console.log(this.gridarray)
+    this.grid = this.convertTileArrayToMap(mapManager.gridarr);
+    console.log(this.grid)
+    this.gridarray = this.convertMapToGridArray(this.grid);
+    // this.grid = mapManager.grid;
+    // console.log(this.gridarray)
     // this.generateMap();
     this.isoarray = this.generateIsometricTileArray();
 
+  }
+
+  convertTileArrayToMap(gridarray){
+    let grid = new Map();
+    let numCols = gridarray.length;
+    let numRows = gridarray[0].length;
+    for (let i = 0; i < numCols; i++) {
+      for (let j = 0; j < numRows; j++) {
+        grid.set(i + "_" + j, gridarray[i][j]);
+      }
+    }
+    return grid;
   }
 
   getTile(x, y){ // from the map
@@ -360,6 +374,7 @@ class mapBuilder{
   }
 
   convertMapToGridArray(map){
+    // console.log(map.get("0_1"))
     let gridarray = [];
     for (let i = 0; i < this.numCols; i++) {
       // join the array to make it a string
@@ -368,6 +383,7 @@ class mapBuilder{
         row.push(map.get(i + "_" + j).z);
       }
       row = row.join('');
+      // console.log(row)
       gridarray.push(row);
     }
     // console.log(gridarray)

@@ -1,7 +1,11 @@
 export default class MapManager{
-    constructor(){
-        w = 60;
-        h = 60;
+    constructor(roomcode){
+        this.grid = [];
+
+        this.roomCode = roomcode;
+        let w = 70;
+        let h = 70;
+        let cellSize = 32;
         this.width = w;
         this.GRID_SIZE = w;
         this.height = h;
@@ -23,6 +27,8 @@ export default class MapManager{
         this.xstart = this.truewidth / 2 - this.TILE_WIDTH / 2;
         this.ystart = this.trueheight / 2 - this.GRID_SIZE * this.TILE_HEIGHT / 2;
         this.grid = this.generateRandomMap()
+        this.gridarr = this.convertMapToArray(this.grid)
+        // console.log(this.gridarr)
     }
 
 
@@ -213,6 +219,19 @@ export default class MapManager{
 
   }
 
+  convertMapToArray(map){
+    let arr = []
+    for (let x = 0; x < this.GRID_SIZE; x++) {
+      let arr1 = []
+      for (let y = 0; y < this.GRID_SIZE; y++) {
+        let tile = map.get(`${x}_${y}`);
+        arr1.push(tile);
+      }
+      arr.push(arr1);
+    }
+    return arr;
+  }
+
   updateMap(tileIndex, tileChar) {
     // Find which char in this.mapTiles to update
     // double check this works
@@ -232,5 +251,15 @@ export default class MapManager{
     this.mapTiles[rowNum] = newRow;
 }
 
+
+}
+
+class Tile{
+  constructor(x, y, z, type){
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.type = type;
+  }
 
 }
