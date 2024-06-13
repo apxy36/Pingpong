@@ -692,7 +692,7 @@ class mapBuilder{
     this.displayLayer0.h = this.TILE_HEIGHT; // Height of each brick
     this.displayLayer0.tile = "0";
     this.displayLayer0.collider = 'static';
-    this.displayLayer0.overlaps(allSprites);
+    // this.displayLayer0.overlaps(allSprites);
     this.displayLayer0.layer = -990;
     this.displayLayer0.visible = false;
     // this.displayLayer0.img = './new_tileset/tile_066.png';
@@ -701,7 +701,7 @@ class mapBuilder{
     this.displayLayer1.h = this.TILE_HEIGHT
     this.displayLayer1.tile = "1";
     this.displayLayer1.collider = 'static';
-    this.displayLayer1.overlaps(allSprites);
+    // this.displayLayer1.overlaps(allSprites);
     this.displayLayer1.layer = 0;
     // this.displayLayer1.img = './new_tileset/tile_067.png';
     this.displayLayer1.visible = false;
@@ -835,8 +835,7 @@ class mapBuilder{
       if (z != 'B'){
         // tile.pos.y -= z * this.TILE_HEIGHT / 2;
         // console.log(z, vect.x, vect.y)
-        // let newtile = new this.displayLayer0.Sprite();
-        // newtile.pos = createVector(tile.pos.x, tile.pos.y);
+        
         // + z * this.TILE_HEIGHT / 2; //make an entirely new tile that displays another image but has no collision, at the elevated pos. the original tile is at the original pos
         let type = this.getTile(vect.x, vect.y).type;
         let displayTile;
@@ -881,6 +880,12 @@ class mapBuilder{
           } else if (type == "forest"){
             displayTile.img = './new_tileset/tile_036.png';
           }
+
+
+          let newtile = new this.displayElevatedTileLayer0.Sprite();
+          newtile.pos = createVector(tile.pos.x, tile.pos.y);
+          newtile.img = displayTile.img;
+
           displayTile.pos.x = tile.pos.x;
           if (z != 'B'){
           displayTile.pos.y = tile.pos.y - z * this.TILE_HEIGHT / 2;
@@ -937,29 +942,41 @@ class mapBuilder{
     }
   }
 
-  updateCollisionLayers(playerZ){ // reconfig to make it player based? ie playersprite.overlaps(displayLayer0)
+  updateCollisionLayers(playerZ, playerSprite){ // reconfig to make it player based? ie playersprite.overlaps(displayLayer0)
     // for (let i = -1; i < 1; i++){
     //   let index = min(max(playerZ + i, 0), this.numLayers - 2);
     //   this.displayLayers[index].overlaps(allSprites);
     // }
-
+    playerSprite.collides(this.displayBoundaryLayer)
     if (playerZ == 0){
-
-      this.displayLayer0.overlaps(allSprites);
-      this.displayLayer1.overlaps(allSprites);
+      // playerSprite.overlaps(this.displayLayer0);
+      // playerSprite.overlaps(this.displayLayer1);
+      playerSprite.collides(this.displayLayer2);
+      // playerSprite.collides(this.displayLayer3);
+      // playerSprite.collides(this.displayLayer4);
+      // playerSprite.collides(this.displayLayer5);
+      // this.displayLayer0.overlaps(allSprites);
+      // this.displayLayer1.overlaps(allSprites);
       // this.displayLayer2.overlaps(null)
       // this.displayLayer3.overlaps(null)
       // this.displayLayer4.overlaps(null)
       // this.displayLayer5.overlaps(null)
 
-      this.displayLayer2.overlaps(allSprites, null);
+      // this.displayLayer2.overlaps(allSprites, null);
       // this.displayLayer3.overlaps(allSprites);
       // this.displayLayer4.overlaps(allSprites);
       // this.displayLayer5.overlaps(allSprites);
     } else if (playerZ == 1){
-      this.displayLayer0.overlaps(allSprites);
-      this.displayLayer1.overlaps(allSprites);
-      this.displayLayer2.overlaps(allSprites);
+      playerSprite.overlaps(this.displayLayer0);
+      // playerSprite.overlaps(this.displayLayer1);
+      playerSprite.overlaps(this.displayLayer2);
+      playerSprite.collides(this.displayLayer3);
+      // playerSprite.collides(this.displayLayer4);
+      // playerSprite.collides(this.displayLayer5);
+
+      // this.displayLayer0.overlaps(allSprites);
+      // this.displayLayer1.overlaps(allSprites);
+      // this.displayLayer2.overlaps(allSprites);
       // this.displayLayer3.overlaps(null)
       // this.displayLayer4.overlaps(null)
       // this.displayLayer5.overlaps(null)
@@ -968,34 +985,59 @@ class mapBuilder{
       // this.displayLayer4.overlaps(allSprites);
       // this.displayLayer5.overlaps(allSprites);
     } else if (playerZ == 2){
+      playerSprite.collides(this.displayLayer0);
+      playerSprite.overlaps(this.displayLayer1);
+      // playerSprite.overlaps(this.displayLayer2);
+      playerSprite.overlaps(this.displayLayer3);
+      playerSprite.collides(this.displayLayer4);
+      // playerSprite.collides(this.displayLayer5);
       // this.displayLayer0.overlaps(allSprites);
       // this.displayLayer0.overlaps(null)
-      this.displayLayer1.overlaps(allSprites);
-      this.displayLayer2.overlaps(allSprites);
-      this.displayLayer3.overlaps(allSprites);
+      // this.displayLayer1.overlaps(allSprites);
+      // this.displayLayer2.overlaps(allSprites);
+      // this.displayLayer3.overlaps(allSprites);
       // this.displayLayer4.overlaps(null);
       // this.displayLayer5.overlaps(null);
     } else if (playerZ == 3){
+      // playerSprite.collides(this.displayLayer0);
+      playerSprite.collides(this.displayLayer1);
+      playerSprite.overlaps(this.displayLayer2);
+      // playerSprite.overlaps(this.displayLayer3);
+      playerSprite.overlaps(this.displayLayer4);
+      playerSprite.collides(this.displayLayer5);
+
       // this.displayLayer0.overlaps(null);
       // this.displayLayer1.overlaps(null);
-      this.displayLayer2.overlaps(allSprites);
-      this.displayLayer3.overlaps(allSprites);
-      this.displayLayer4.overlaps(allSprites);
+      // this.displayLayer2.overlaps(allSprites);
+      // this.displayLayer3.overlaps(allSprites);
+      // this.displayLayer4.overlaps(allSprites);
       // this.displayLayer5.overlaps(null);
     } else if (playerZ == 4){
+      // playerSprite.collides(this.displayLayer0);
+      // playerSprite.collides(this.displayLayer1);
+      playerSprite.collides(this.displayLayer2);
+      playerSprite.overlaps(this.displayLayer3);
+      // playerSprite.overlaps(this.displayLayer4);
+      playerSprite.overlaps(this.displayLayer5);
       // this.displayLayer0.overlaps(null);
       // this.displayLayer1.overlaps(null);
       // this.displayLayer2.overlaps(null);
-      this.displayLayer3.overlaps(allSprites);
-      this.displayLayer4.overlaps(allSprites);
-      this.displayLayer5.overlaps(allSprites);
+      // this.displayLayer3.overlaps(allSprites);
+      // this.displayLayer4.overlaps(allSprites);
+      // this.displayLayer5.overlaps(allSprites);
     } else if (playerZ == 5){
+      // playerSprite.collides(this.displayLayer0);
+      // playerSprite.collides(this.displayLayer1);
+      // playerSprite.collides(this.displayLayer2);
+      playerSprite.collides(this.displayLayer3);
+      // playerSprite.overlaps(this.displayLayer4);
+      // playerSprite.overlaps(this.displayLayer5);
       // this.displayLayer0.overlaps(null);
       // this.displayLayer1.overlaps(null);
       // this.displayLayer2.overlaps(null);
       // this.displayLayer3.overlaps(null);
-      this.displayLayer4.overlaps(allSprites);
-      this.displayLayer5.overlaps(allSprites);
+      // this.displayLayer4.overlaps(allSprites);
+      // this.displayLayer5.overlaps(allSprites);
     
     }
 
@@ -1110,6 +1152,101 @@ class mapBuilder{
   buildIso(camx, camy){ // out of use
     this.graphics = this.draw_grid(camx, camy);
     // console.log(this.graphics)
+  }
+
+  initializeCollisions(playerZ, playerSprite){
+    if (playerZ == 0){
+      playerSprite.overlaps(this.displayLayer0);
+      playerSprite.overlaps(this.displayLayer1);
+      playerSprite.collides(this.displayLayer2);
+      playerSprite.collides(this.displayLayer3);
+      playerSprite.collides(this.displayLayer4);
+      playerSprite.collides(this.displayLayer5);
+      // this.displayLayer0.overlaps(allSprites);
+      // this.displayLayer1.overlaps(allSprites);
+      // this.displayLayer2.overlaps(null)
+      // this.displayLayer3.overlaps(null)
+      // this.displayLayer4.overlaps(null)
+      // this.displayLayer5.overlaps(null)
+
+      // this.displayLayer2.overlaps(allSprites, null);
+      // this.displayLayer3.overlaps(allSprites);
+      // this.displayLayer4.overlaps(allSprites);
+      // this.displayLayer5.overlaps(allSprites);
+    } else if (playerZ == 1){
+      playerSprite.overlaps(this.displayLayer0);
+      playerSprite.overlaps(this.displayLayer1);
+      playerSprite.overlaps(this.displayLayer2);
+      playerSprite.collides(this.displayLayer3);
+      playerSprite.collides(this.displayLayer4);
+      playerSprite.collides(this.displayLayer5);
+
+      // this.displayLayer0.overlaps(allSprites);
+      // this.displayLayer1.overlaps(allSprites);
+      // this.displayLayer2.overlaps(allSprites);
+      // this.displayLayer3.overlaps(null)
+      // this.displayLayer4.overlaps(null)
+      // this.displayLayer5.overlaps(null)
+      // console.log(this.displayLayer2)
+      // this.displayLayer3.overlaps(allSprites);
+      // this.displayLayer4.overlaps(allSprites);
+      // this.displayLayer5.overlaps(allSprites);
+    } else if (playerZ == 2){
+      playerSprite.collides(this.displayLayer0);
+      playerSprite.overlaps(this.displayLayer1);
+      playerSprite.overlaps(this.displayLayer2);
+      playerSprite.overlaps(this.displayLayer3);
+      playerSprite.collides(this.displayLayer4);
+      playerSprite.collides(this.displayLayer5);
+      // this.displayLayer0.overlaps(allSprites);
+      // this.displayLayer0.overlaps(null)
+      // this.displayLayer1.overlaps(allSprites);
+      // this.displayLayer2.overlaps(allSprites);
+      // this.displayLayer3.overlaps(allSprites);
+      // this.displayLayer4.overlaps(null);
+      // this.displayLayer5.overlaps(null);
+    } else if (playerZ == 3){
+      playerSprite.collides(this.displayLayer0);
+      playerSprite.collides(this.displayLayer1);
+      playerSprite.overlaps(this.displayLayer2);
+      playerSprite.overlaps(this.displayLayer3);
+      playerSprite.overlaps(this.displayLayer4);
+      playerSprite.collides(this.displayLayer5);
+
+      // this.displayLayer0.overlaps(null);
+      // this.displayLayer1.overlaps(null);
+      // this.displayLayer2.overlaps(allSprites);
+      // this.displayLayer3.overlaps(allSprites);
+      // this.displayLayer4.overlaps(allSprites);
+      // this.displayLayer5.overlaps(null);
+    } else if (playerZ == 4){
+      playerSprite.collides(this.displayLayer0);
+      playerSprite.collides(this.displayLayer1);
+      playerSprite.collides(this.displayLayer2);
+      playerSprite.overlaps(this.displayLayer3);
+      playerSprite.overlaps(this.displayLayer4);
+      playerSprite.overlaps(this.displayLayer5);
+      // this.displayLayer0.overlaps(null);
+      // this.displayLayer1.overlaps(null);
+      // this.displayLayer2.overlaps(null);
+      // this.displayLayer3.overlaps(allSprites);
+      // this.displayLayer4.overlaps(allSprites);
+      // this.displayLayer5.overlaps(allSprites);
+    } else if (playerZ == 5){
+      playerSprite.collides(this.displayLayer0);
+      playerSprite.collides(this.displayLayer1);
+      playerSprite.collides(this.displayLayer2);
+      playerSprite.collides(this.displayLayer3);
+      playerSprite.overlaps(this.displayLayer4);
+      playerSprite.overlaps(this.displayLayer5);
+      // this.displayLayer0.overlaps(null);
+      // this.displayLayer1.overlaps(null);
+      // this.displayLayer2.overlaps(null);
+      // this.displayLayer3.overlaps(null);
+      // this.displayLayer4.overlaps(allSprites);
+      // this.displayLayer5.overlaps(allSprites);
+    
+    }
   }
 
 

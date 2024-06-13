@@ -12,7 +12,7 @@ let GRID_SCALE = 1.0;
 
 let mechplayer;
 let playerZ = 0;
-let prevPlayerZ = 0; 
+let prevPlayerZ = -1; 
 // let em;
 
 
@@ -66,6 +66,7 @@ socket.on("buildMap", (mapManager) => {
     displayPlayer = createVisiblePlayerSprite(localIGN, playerZ);
     playerZ = map.setPlayerPosition(1, mechplayer);//map.getTile(round(map.)).z;
     cam.setTarget(displayPlayer);
+    map.initializeCollisions(playerZ, mechplayer);
     setupComplete = true;
 });
 
@@ -118,7 +119,7 @@ function manageVisiblePlayer(mechanicSprite, playerSprite, map){
 
     // playerSprite.scale.x = 1 + 0.55 * playerZ;
     // playerSprite.scale.y = 1 + 0.55 * playerZ;
-    console.log(playerSprite.scale)
+    // console.log(playerSprite.scale)
     playerSprite.pos = createVector(mechanicSprite.pos.x, mechanicSprite.pos.y - playerZ * map.TILE_HEIGHT/2);
     // playerSprite.pos.x = mechanicSprite.pos.x;
     // playerSprite.pos.y = mechanicSprite.pos.y - playerZ * map.TILE_HEIGHT/2;
@@ -159,7 +160,7 @@ function draw() {
         cam.update()
         manageVisiblePlayer(mechplayer, displayPlayer, map)
         if (playerZ != prevPlayerZ){
-            map.updateCollisionLayers(playerZ);
+            map.updateCollisionLayers(playerZ, mechplayer);
             prevPlayerZ = playerZ;
         }
 
