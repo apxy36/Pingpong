@@ -106,7 +106,7 @@ class mapBuilder{
     // for (let i = 0; i < this.numLayers - 1; i++){
     //   this.displayElevatedTileLayers.push(new Group());
     // }
-
+    this.displayElevatedTileLayer0 = new Group();
     this.displayElevatedTileLayer1 = new Group();
     this.displayElevatedTileLayer2 = new Group();
     this.displayElevatedTileLayer3 = new Group();
@@ -694,7 +694,8 @@ class mapBuilder{
     this.displayLayer0.collider = 'static';
     this.displayLayer0.overlaps(allSprites);
     this.displayLayer0.layer = -990;
-    this.displayLayer0.img = './new_tileset/tile_066.png';
+    this.displayLayer0.visible = false;
+    // this.displayLayer0.img = './new_tileset/tile_066.png';
 
     this.displayLayer1.w = this.TILE_WIDTH;
     this.displayLayer1.h = this.TILE_HEIGHT
@@ -758,47 +759,54 @@ class mapBuilder{
     //   this.displayElevatedTileLayers[i].img = './new_tileset/tile_027.png';
     // }
 
+    this.displayElevatedTileLayer0.w = this.TILE_WIDTH;
+    this.displayElevatedTileLayer0.h = this.TILE_HEIGHT;
+    this.displayElevatedTileLayer0.collider = 'static';
+    this.displayElevatedTileLayer0.overlaps(allSprites);
+    this.displayElevatedTileLayer0.layer = -1*999;
+
+
     this.displayElevatedTileLayer1.w = this.TILE_WIDTH;
     this.displayElevatedTileLayer1.h = this.TILE_HEIGHT;
     this.displayElevatedTileLayer1.collider = 'static';
     this.displayElevatedTileLayer1.overlaps(allSprites);
     this.displayElevatedTileLayer1.layer = 0*999;
-    this.displayElevatedTileLayer1.img = './new_tileset/tile_027.png';
+    // this.displayElevatedTileLayer1.img = './new_tileset/tile_027.png';
 
     this.displayElevatedTileLayer2.w = this.TILE_WIDTH;
     this.displayElevatedTileLayer2.h = this.TILE_HEIGHT;
     this.displayElevatedTileLayer2.collider = 'static';
     this.displayElevatedTileLayer2.overlaps(allSprites);
     this.displayElevatedTileLayer2.layer = 1*999;
-    this.displayElevatedTileLayer2.img = './new_tileset/tile_027.png';
+    // this.displayElevatedTileLayer2.img = './new_tileset/tile_027.png';
 
     this.displayElevatedTileLayer3.w = this.TILE_WIDTH;
     this.displayElevatedTileLayer3.h = this.TILE_HEIGHT;
     this.displayElevatedTileLayer3.collider = 'static';
     this.displayElevatedTileLayer3.overlaps(allSprites);
     this.displayElevatedTileLayer3.layer = 2*999;
-    this.displayElevatedTileLayer3.img = './new_tileset/tile_027.png';
+    // this.displayElevatedTileLayer3.img = './new_tileset/tile_027.png';
 
     this.displayElevatedTileLayer4.w = this.TILE_WIDTH;
     this.displayElevatedTileLayer4.h = this.TILE_HEIGHT;
     this.displayElevatedTileLayer4.collider = 'static';
     this.displayElevatedTileLayer4.overlaps(allSprites);
     this.displayElevatedTileLayer4.layer = 3*999;
-    this.displayElevatedTileLayer4.img = './new_tileset/tile_027.png';
+    // this.displayElevatedTileLayer4.img = './new_tileset/tile_027.png';
 
     this.displayElevatedTileLayer5.w = this.TILE_WIDTH;
     this.displayElevatedTileLayer5.h = this.TILE_HEIGHT;
     this.displayElevatedTileLayer5.collider = 'static';
     this.displayElevatedTileLayer5.overlaps(allSprites);
     this.displayElevatedTileLayer5.layer = 4*999;
-    this.displayElevatedTileLayer5.img = './new_tileset/tile_027.png';
+    // this.displayElevatedTileLayer5.img = './new_tileset/tile_027.png';
 
     this.displayElevatedBoundaryLayer.w = this.TILE_WIDTH;
     this.displayElevatedBoundaryLayer.h = this.TILE_HEIGHT;
     this.displayElevatedBoundaryLayer.collider = 'static';
     this.displayElevatedBoundaryLayer.overlaps(allSprites);
     this.displayElevatedBoundaryLayer.layer = 5*999;
-    this.displayElevatedBoundaryLayer.img = './new_tileset/tile_027.png';
+    // this.displayElevatedBoundaryLayer.img = './new_tileset/tile_027.png';
 
 
 
@@ -824,13 +832,13 @@ class mapBuilder{
       let tile = this.displayMapTiles[i]; //sprite object
       let vect = this.findFromCoords(tile.pos.x, tile.pos.y);
       let z = this.getTile(vect.x, vect.y).z;
-      if (z != 0){
+      if (z != 'B'){
         // tile.pos.y -= z * this.TILE_HEIGHT / 2;
         // console.log(z, vect.x, vect.y)
         // let newtile = new this.displayLayer0.Sprite();
         // newtile.pos = createVector(tile.pos.x, tile.pos.y);
         // + z * this.TILE_HEIGHT / 2; //make an entirely new tile that displays another image but has no collision, at the elevated pos. the original tile is at the original pos
-        
+        let type = this.getTile(vect.x, vect.y).type;
         let displayTile;
         // if (z != 'B'){
         //   displayTile = new this.displayElevatedTileLayers[z - 1].Sprite();
@@ -839,7 +847,9 @@ class mapBuilder{
         // } else {
         //   displayTile = new this.displayElevatedTileLayer1.Sprite();
         // }
-        if (z == 1){
+        if (z == 0){
+          displayTile = new this.displayElevatedTileLayer0.Sprite();
+        } else if (z == 1){
           displayTile = new this.displayElevatedTileLayer1.Sprite();
         } else if (z == 2){
           displayTile = new this.displayElevatedTileLayer2.Sprite();
@@ -850,15 +860,33 @@ class mapBuilder{
         } else if (z == 5){
           displayTile = new this.displayElevatedTileLayer5.Sprite();
         } else if (z == 'B'){
+          continue;
           displayTile = new this.displayElevatedBoundaryLayer.Sprite();
         } else {
           displayTile = new this.displayElevatedTileLayer1.Sprite();
         }
-        displayTile.pos.x = tile.pos.x;
         if (z != 'B'){
-        displayTile.pos.y = tile.pos.y - z * this.TILE_HEIGHT / 2;
-        } else {
-          displayTile.pos.y = tile.pos.y - 10 * this.TILE_HEIGHT / 2;
+          if (type == "grass"){
+            displayTile.img = './new_tileset/tile_027.png';
+          } else if (type == "stone"){
+            displayTile.img = './new_tileset/tile_063.png';
+          } else if (type == "wood"){
+            displayTile.img = './new_tileset/tile_014.png';
+          } else if (type == "brick"){
+            displayTile.img = './new_tileset/tile_066.png';
+          } else if (type == "wall"){
+            displayTile.img = './new_tileset/tile_031.png';
+          } else if (type == "water"){
+            displayTile.img = './new_tileset/tile_104.png';
+          } else if (type == "forest"){
+            displayTile.img = './new_tileset/tile_036.png';
+          }
+          displayTile.pos.x = tile.pos.x;
+          if (z != 'B'){
+          displayTile.pos.y = tile.pos.y - z * this.TILE_HEIGHT / 2;
+          } else {
+            displayTile.pos.y = tile.pos.y - 10 * this.TILE_HEIGHT / 2;
+          }
         }
 
       }
@@ -1135,10 +1163,11 @@ function createPlayerSprite(name) {
     
 }
 
-function createVisiblePlayerSprite(mechanicSprite, name, map) {
+function createVisiblePlayerSprite(name, playerZ) { //scaling added after animation
     let playerSprite = new Sprite(0, 0, 32, 32);
     playerSprite.visible = true;
     playerSprite.collider = 'none';
+    playerSprite.img = "./new_tileset/tile_001.png";
     // Load sprite sheet
     // playerSprite.spriteSheet = mechanicSprite;
     // playerSprite.anis.offset.y = -4;
@@ -1157,9 +1186,15 @@ function createVisiblePlayerSprite(mechanicSprite, name, map) {
         textAlign(CENTER, CENTER);
         textSize(16);
         text(name, 0, -35);
+        // console.log(name)
 
         circle(0, 0, 32);
         rect(10, 0, 32, 50);
+        // scaling = 1 + playerZ * 0.1;
+        // console.log(playerZ, scaling)
+        image(playerSprite.img, 0, 0, 32, 16);
+        // img = loadImage('./new_tileset/tile_001.png');
+        // image(img, 0, 0, 32, 16);
 
         // playerSprite.ani.draw(playerSprite.offset.x, playerSprite.offset.y, 0, playerSprite.scale.x, playerSprite.scale.y);
     }

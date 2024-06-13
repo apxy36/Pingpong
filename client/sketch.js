@@ -32,7 +32,10 @@ window.onload = () => { // temporary
     if (room_code_input.length !== 5) {
         window.onload();
     } else {
-        let localIGN = prompt('Enter IGN');
+        localIGN = prompt('Enter IGN');
+        if (localIGN.length === 0) {
+            window.onload();
+        }
         socket.emit("registerClient", localIGN, team, room_code_input);
     }
     // const join_option_input = prompt('Select: "CREATE" or "JOIN"', "CREATE");
@@ -60,7 +63,7 @@ socket.on("buildMap", (mapManager) => {
     mechplayer = createPlayerSprite(localIGN) // creates mechanics for player
     map.buildBaseMap(mapManager);
     map.buildVisualMap();
-    displayPlayer = createVisiblePlayerSprite(mechplayer, localIGN, map);
+    displayPlayer = createVisiblePlayerSprite(localIGN, playerZ);
     playerZ = map.setPlayerPosition(1, mechplayer);//map.getTile(round(map.)).z;
     cam.setTarget(displayPlayer);
     setupComplete = true;
@@ -110,6 +113,12 @@ function manageVisiblePlayer(mechanicSprite, playerSprite, map){
     // console.log(tile.z, playerZ, map.getAdjacentTiles(tilecoords.x, tilecoords.y));
     // console.log(tilecoords, tile.z, playerZ)
     // console.log(mechanicSprite)
+    // playerSprite.img.scale.x = 1 + 0.25 * playerZ;
+    // playerSprite.img.scale.y = 1 + 0.25 * playerZ;
+
+    // playerSprite.scale.x = 1 + 0.55 * playerZ;
+    // playerSprite.scale.y = 1 + 0.55 * playerZ;
+    console.log(playerSprite.scale)
     playerSprite.pos = createVector(mechanicSprite.pos.x, mechanicSprite.pos.y - playerZ * map.TILE_HEIGHT/2);
     // playerSprite.pos.x = mechanicSprite.pos.x;
     // playerSprite.pos.y = mechanicSprite.pos.y - playerZ * map.TILE_HEIGHT/2;
@@ -154,7 +163,7 @@ function draw() {
             prevPlayerZ = playerZ;
         }
 
-        socket.emit("position", displayPlayer.pos.x, displayPlayer.pos.y, playerZ);
+        socket.emit("position", mechplayer.pos.x, mechplayer.pos.y, playerZ);
     }
     // if (!currentRoomCode) {
     //     allSprites.visible = false;
@@ -221,7 +230,7 @@ function move() {
     }
     if (kb.pressing("a")) {
         // playerSprite.changeAni('run');
-        displayPlayer.scale.x = -1;
+        displayPlayer.scale.x =  - abs(displayPlayer.scale.x);
         mechplayer.pos.x -= SPEED * adjacentSPEED / SPEED;
         mechplayer.pos.y -= SPEED * oppSPEED / SPEED;
         // breakDir = 1;
@@ -247,7 +256,7 @@ function move() {
         // playerSprite.changeAni('idle');
     }
     else if (kb.released("a")) {
-        displayPlayer.scale.x = -1;
+        displayPlayer.scale.x = -abs(displayPlayer.scale.x);
         // playerSprite.changeAni('idle');
     }
 

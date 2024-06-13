@@ -16,7 +16,7 @@ class EntityManager {
     }
 
     registerNewPlayer(data) {
-        let playerSprite = createVisiblePlayerSprite(data.ign);
+        let playerSprite = createVisiblePlayerSprite(data.ign, data.position.z);
         playerSprite.x = data.position.x;
         playerSprite.y = data.position.y;
         this.entities.set(data.id, {
@@ -31,6 +31,8 @@ class EntityManager {
         let currData = this.entities.get(newData.id);
         currData.sprite.visible = true;
         currData.z = newData.position.z;
+        // currData.sprite.scale.x = 1 + 0.05 * newData.position.z;
+        // currData.sprite.scale.y = 1 + 0.05 * newData.position.z;
         // currData.coins = newData.coins;
         if (!currData) return;
         currData.positionBuffer.push({
