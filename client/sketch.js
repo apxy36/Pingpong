@@ -137,8 +137,10 @@ function setup() {
 
     room_code_input = urlParams.get('roomCode');
     Object.freeze(room_code_input);
+
+    // console.log(localIGN, room_code_input);
     socket.emit("registerClient", localIGN, team, room_code_input);
-    
+
     map =  new mapBuilder(70, 70, 32);
     em = new EntityManager();
     cam = new CameraManager(windowWidth / 2, windowHeight / 2, camera);
