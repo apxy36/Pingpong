@@ -26,33 +26,33 @@ let statusconditions = [];
 
 const socket = io.connect("ws://localhost:8001");
 
-window.onload = () => { // temporary
-    const room_code_input = prompt("Enter Room Code", "12345");
-    // validate room code
-    if (room_code_input.length !== 5) {
-        window.onload();
-    } else {
-        localIGN = prompt('Enter IGN');
-        if (localIGN.length === 0) {
-            window.onload();
-        }
-        socket.emit("registerClient", localIGN, team, room_code_input);
-    }
-    // const join_option_input = prompt('Select: "CREATE" or "JOIN"', "CREATE");
-    // if (join_option_input === "CREATE") {
-    //     // socket.emit("requestCreateRoom");
-    //     let localIGN = prompt('Enter IGN');
-    //     let room
-    //     socket.emit("registerClient", localIGN, team, room_code_input);
-    // } else if (join_option_input === "JOIN") {
-    //     const room_code_input = prompt("Enter Room Code");
-    //     let localIGN = prompt('Enter IGN')
-    //     socket.emit("registerClient", localIGN, team, room_code_input);
-    //     // socket.emit("requestJoinRoom", room_code_input);
-    // } else {
-    //     window.onload();
-    // }
-};
+// window.onload = () => { // temporary
+//     const room_code_input = prompt("Enter Room Code", "12345");
+//     // validate room code
+//     if (room_code_input.length !== 5) {
+//         window.onload();
+//     } else {
+//         localIGN = prompt('Enter IGN');
+//         if (localIGN.length === 0) {
+//             window.onload();
+//         }
+//         socket.emit("registerClient", localIGN, team, room_code_input);
+//     }
+//     // const join_option_input = prompt('Select: "CREATE" or "JOIN"', "CREATE");
+//     // if (join_option_input === "CREATE") {
+//     //     // socket.emit("requestCreateRoom");
+//     //     let localIGN = prompt('Enter IGN');
+//     //     let room
+//     //     socket.emit("registerClient", localIGN, team, room_code_input);
+//     // } else if (join_option_input === "JOIN") {
+//     //     const room_code_input = prompt("Enter Room Code");
+//     //     let localIGN = prompt('Enter IGN')
+//     //     socket.emit("registerClient", localIGN, team, room_code_input);
+//     //     // socket.emit("requestJoinRoom", room_code_input);
+//     // } else {
+//     //     window.onload();
+//     // }
+// };
 
 socket.on("setRoomCode", (code) => {
     currentRoomCode = code;
@@ -128,12 +128,24 @@ function manageVisiblePlayer(mechanicSprite, playerSprite, map){
 
 function setup() {
     new Canvas("fullscreen");
+    const urlParams = new URLSearchParams(
+        window.location.search,
+    );
+
+    localIGN = urlParams.get('ign');
+    Object.freeze(localIGN);
+
+    room_code_input = urlParams.get('roomCode');
+    Object.freeze(room_code_input);
+    socket.emit("registerClient", localIGN, team, room_code_input);
+    
     map =  new mapBuilder(70, 70, 32);
     em = new EntityManager();
     cam = new CameraManager(windowWidth / 2, windowHeight / 2, camera);
     // mechplayer = createPlayerSprite('test') // creates mechanics for player
 //   map.buildVisualMap();
     // displayPlayer = createVisiblePlayerSprite(mechplayer, 'test', map);
+     // Retrieve IGN and room code from url query
     
     // cam.setTarget(displayPlayer);
     // playerZ = map.setPlayerPosition(1, mechplayer);//map.getTile(round(map.)).z;
