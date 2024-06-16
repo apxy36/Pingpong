@@ -815,6 +815,7 @@ class mapBuilder{
         0, // y to position at top
         this.TILE_WIDTH / 2,
         this.TILE_HEIGHT / 2);
+    // console.log(this.displayMapTiles)
     // this.mapTiles.collider = 'none';
 
     // console.log(this.displayMapTiles)

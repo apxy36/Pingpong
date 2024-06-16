@@ -128,6 +128,9 @@ function manageVisiblePlayer(mechanicSprite, playerSprite, map){
 
 function setup() {
     new Canvas("fullscreen");
+    loadingBall = new LoadingBall();
+    // loadingBall.setCollider("circle", 0, 0, 20);
+
     const urlParams = new URLSearchParams(
         window.location.search,
     );
@@ -167,8 +170,11 @@ function setup() {
 }
 
 function draw() {
+    background("grey");
+    
     if (setupComplete){
-        background("grey");
+        
+        
         move();
         interpolateOtherPlayers();
         cam.update()
