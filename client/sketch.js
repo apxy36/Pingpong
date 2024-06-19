@@ -90,6 +90,23 @@ socket.on("removeClient", (id) => {
     }
 });
 
+socket.on("addTower", (tower) => {
+    console.log(tower)
+    mapBuilder.addTower(tower);
+}
+);
+socket.on("removeTower", (index) => {
+    mapBuilder.removeTower(index);
+    console.log(index, 'removed')
+}
+);
+
+socket.on("updateTower", (index, tower) => {
+    mapBuilder.updateTower(index, tower);
+    console.log(index, 'updated')
+}
+);
+
 function manageVisiblePlayer(mechanicSprite, playerSprite, map){
     // console.log(mechanicSprite.pos.x, mechanicSprite.pos.y, playerSprite.pos.x, playerSprite.pos.y, map)
     // project the sprite onto isometric grid from x and y
@@ -200,6 +217,32 @@ function interpolateOtherPlayers() {
                 y0 + ((y1 - y0) * (est_render_timestamp - t0)) / (t1 - t0) - playerData.z * map.TILE_HEIGHT/2;
         }
     }
+}
+
+function mousePressed() {
+    if (keyIsPressed && keyCode === SHIFT) {
+        console.log(mapBuilder.towers)
+    } else if (keyIsPressed && keyCode === CONTROL) {
+        if (mapBuilder.towerarr.length > 0){
+            socket.emit("activateTower", 0);
+        }
+    }
+    // if (allowMapModification) {
+    //     let tile = map.getTile(mouseX, mouseY);
+    //     if (tile) {
+    //         if (wallEditorMode === "*") {
+    //             map.setTile(tile.x, tile.y, tile.z + 1, "wall");
+    //         } else if (wallEditorMode === "=") {
+    //             map.setTile(tile.x, tile.y, tile.z - 1, "wall");
+
+    //         } else if (wallEditorMode === "x") {
+    //             map.setTile(tile.x, tile.y, tile.z, "barrier");
+    //         } else if (wallEditorMode === "4") {
+    //             map.setTile(tile.x, tile.y, tile.z, "4");
+    //         }
+    //     }
+
+    // }
 }
 
 function move() {

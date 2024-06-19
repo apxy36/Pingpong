@@ -122,6 +122,16 @@ class mapBuilder{
     // this.convertMapToGridArray(this.grid);
     
     // three storages for tiles: the map, the mechanics, and the display
+    this.towers = new Group();
+    this.towers.overlaps(allSprites);
+    this.towers.collider = 'static';
+    this.towers.layer = 9999;
+    this.towers.w = this.TILE_SIDE_LENGTH;
+    this.towers.h = this.TILE_SIDE_LENGTH * 2;
+    this.towerarr = [];
+
+    // this.acti
+
   }
 
   buildBaseMap(mapManager){
@@ -898,17 +908,6 @@ class mapBuilder{
     // console.log(" displayer",this.displayMapTiles)
   }
 
-  toggleOverlappingLayers(layernum){
-    if (layernum == 0){
-      this.displayLayer0.overlaps(allSprites);
-      this.displayLayer1.overlaps(null);
-      this.displayLayer2.overlaps(null);
-      this.displayLayer3.overlaps(null);
-      this.displayLayer4.overlaps(null);
-      this.displayLayer5.overlaps(null);
-    }
-  }
-
   updateCollisionLayers(playerZ){ // reconfig to make it player based? ie playersprite.overlaps(displayLayer0)
     // for (let i = -1; i < 1; i++){
     //   let index = min(max(playerZ + i, 0), this.numLayers - 2);
@@ -973,11 +972,56 @@ class mapBuilder{
 
 
   }
+  
+
+  addTower(tower){
+    let towersprite = new this.towers.Sprite();
+    // this.towers.push(tower);
+    towersprite.pos = createVector(tower.x, tower.y + tower.z - this.TILE_HEIGHT / 2);
+    towersprite.rotation = 0;
+    towersprite.width = this.TILE_WIDTH;
+    towersprite.height = this.TILE_HEIGHT * 3;
+    //scale? 
+    towersprite.draw = () => {
+      fill(255, 0, 0);
+      rect(0, 0, this.TILE_WIDTH, this.TILE_HEIGHT * 3);
+      text(tower.type, 0, 0);
+    }
+    this.towerarr.push(towersprite);
+
+  }
+
+  removeTower (index){
+    this.towerarr[index].remove();
+    this.towerarr.splice(index, 1);
+  }
+
+  updateTower(index, tower){
+    // let tower = this.towers[index];
+    let towersprite = this.towerarr[index];
+    //change draw function
+    if (tower.active){
+        towersprite.draw = () => {
+        fill(255, 0, 0);
+        rect(0, 0, this.TILE_WIDTH, this.TILE_HEIGHT * 3);
+        text("new", 0, 0);
+      }
+    } else {
+      towersprite.draw = () => {
+        fill(255, 0, 0);
+        rect(0, 0, this.TILE_WIDTH, this.TILE_HEIGHT * 3);
+        text("old", 0, 0);
+      }
+    }
+    
+
+  }
 
 
   getDisplayTile(x, y){
     return this.displayMapTiles[x * this.numCols + y];
   }
+
 
   random(min, max) {
         let rand;

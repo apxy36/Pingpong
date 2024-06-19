@@ -26,6 +26,7 @@ class Room {
         this.clients = [];
         this.id = id;
         this.mapManager = new MapManager(id);
+        this.gameStarted = true; // set to false ltr
 
     }
 
@@ -90,6 +91,16 @@ io.on("connection", (socket) => {
         socket.emit("setRoomCode", roomCode);
     })
 
+    socket.on("activateTower", (index) => {
+        client.room.mapManager.activateTower(index);
+        for (let c of client.room.clients) {
+            c.socket.emit("updateTower", index, client.room.mapManager.towers[index]);
+        }
+    }
+    );
+
+
+
     // socket.on("requestCreateRoom", () => {
     //     const roomCode = generateRandomRoomCode();
     //     let room = new Room(roomCode);
@@ -137,6 +148,12 @@ function tick() {
         });
         for (let c of room.clients) {
             c.socket.emit("playerDataUpdate", c.socket.id, allData);
+        }
+        if (frameCount % Math.round(60) == 0 && room.gameStarted) {
+            // room.mapManager.generateCoins();
+            room.mapManager.updateTowers(room.clients);
+            // console.log("generating", frameCount, date.getTime() - lastTime, room.mapManager.coinrate, 60 / room.mapManager.coinrate);
+            
         }
     }
 }
