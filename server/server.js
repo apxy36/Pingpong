@@ -11,6 +11,7 @@ const io = new Server(8001, {
 const clients = new Set();
 const rooms = [];
 const TICK_DELAY = 1000 / 60;
+let frameCount = 0;
 // const MAPS_DATA = JSON.parse(readFileSync("./maps.json"));
 
 function Client(socket) {
@@ -137,6 +138,7 @@ function generateRandomRoomCode() {
 }
 
 function tick() {
+    frameCount++;
     for (let room of rooms) {
         let allData = [...room.clients].map((c) => {
             return {

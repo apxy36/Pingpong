@@ -771,51 +771,51 @@ class mapBuilder{
 
     this.displayElevatedTileLayer0.w = this.TILE_WIDTH;
     this.displayElevatedTileLayer0.h = this.TILE_HEIGHT;
-    this.displayElevatedTileLayer0.collider = 'static';
-    this.displayElevatedTileLayer0.overlaps(allSprites);
+    this.displayElevatedTileLayer0.collider = 'none';
+    // this.displayElevatedTileLayer0.overlaps(allSprites);
     this.displayElevatedTileLayer0.layer = -1*999;
 
 
     this.displayElevatedTileLayer1.w = this.TILE_WIDTH;
     this.displayElevatedTileLayer1.h = this.TILE_HEIGHT;
-    this.displayElevatedTileLayer1.collider = 'static';
-    this.displayElevatedTileLayer1.overlaps(allSprites);
+    this.displayElevatedTileLayer1.collider = 'none';
+    // this.displayElevatedTileLayer1.overlaps(allSprites);
     this.displayElevatedTileLayer1.layer = 0*999;
     // this.displayElevatedTileLayer1.img = './new_tileset/tile_027.png';
 
     this.displayElevatedTileLayer2.w = this.TILE_WIDTH;
     this.displayElevatedTileLayer2.h = this.TILE_HEIGHT;
-    this.displayElevatedTileLayer2.collider = 'static';
-    this.displayElevatedTileLayer2.overlaps(allSprites);
+    this.displayElevatedTileLayer2.collider = 'none';
+    // this.displayElevatedTileLayer2.overlaps(allSprites);
     this.displayElevatedTileLayer2.layer = 1*999;
     // this.displayElevatedTileLayer2.img = './new_tileset/tile_027.png';
 
     this.displayElevatedTileLayer3.w = this.TILE_WIDTH;
     this.displayElevatedTileLayer3.h = this.TILE_HEIGHT;
-    this.displayElevatedTileLayer3.collider = 'static';
-    this.displayElevatedTileLayer3.overlaps(allSprites);
+    this.displayElevatedTileLayer3.collider = 'none';
+    // this.displayElevatedTileLayer3.overlaps(allSprites);
     this.displayElevatedTileLayer3.layer = 2*999;
     // this.displayElevatedTileLayer3.img = './new_tileset/tile_027.png';
 
     this.displayElevatedTileLayer4.w = this.TILE_WIDTH;
     this.displayElevatedTileLayer4.h = this.TILE_HEIGHT;
-    this.displayElevatedTileLayer4.collider = 'static';
-    this.displayElevatedTileLayer4.overlaps(allSprites);
+    this.displayElevatedTileLayer4.collider = 'none';
+    // this.displayElevatedTileLayer4.overlaps(allSprites);
     this.displayElevatedTileLayer4.layer = 3*999;
     // this.displayElevatedTileLayer4.img = './new_tileset/tile_027.png';
 
     this.displayElevatedTileLayer5.w = this.TILE_WIDTH;
     this.displayElevatedTileLayer5.h = this.TILE_HEIGHT;
-    this.displayElevatedTileLayer5.collider = 'static';
-    this.displayElevatedTileLayer5.overlaps(allSprites);
+    this.displayElevatedTileLayer5.collider = 'none';
+    // this.displayElevatedTileLayer5.overlaps(allSprites);
     this.displayElevatedTileLayer5.layer = 4*999;
     // this.displayElevatedTileLayer5.img = './new_tileset/tile_027.png';
 
-    this.displayElevatedBoundaryLayer.w = this.TILE_WIDTH;
-    this.displayElevatedBoundaryLayer.h = this.TILE_HEIGHT;
-    this.displayElevatedBoundaryLayer.collider = 'static';
-    this.displayElevatedBoundaryLayer.overlaps(allSprites);
-    this.displayElevatedBoundaryLayer.layer = 5*999;
+    // this.displayElevatedBoundaryLayer.w = this.TILE_WIDTH;
+    // this.displayElevatedBoundaryLayer.h = this.TILE_HEIGHT;
+    // this.displayElevatedBoundaryLayer.collider = 'static';
+    // this.displayElevatedBoundaryLayer.overlaps(allSprites);
+    // this.displayElevatedBoundaryLayer.layer = 5*999;
     // this.displayElevatedBoundaryLayer.img = './new_tileset/tile_027.png';
 
 
@@ -893,9 +893,9 @@ class mapBuilder{
           }
 
 
-          let newtile = new this.displayElevatedTileLayer0.Sprite();
-          newtile.pos = createVector(tile.pos.x, tile.pos.y);
-          newtile.img = displayTile.img;
+          // let newtile = new this.displayElevatedTileLayer0.Sprite();
+          // newtile.pos = createVector(tile.pos.x, tile.pos.y);
+          // newtile.img = displayTile.img;
 
           displayTile.pos.x = tile.pos.x;
           if (z != 'B'){
@@ -1048,7 +1048,10 @@ class mapBuilder{
   addTower(tower){
     let towersprite = new this.towers.Sprite();
     // this.towers.push(tower);
-    towersprite.pos = createVector(tower.x, tower.y + tower.z - this.TILE_HEIGHT / 2);
+    // translate into isometric
+    let towerx = (tower.x - tower.y) * this.TILE_WIDTH / 2;
+    let towery = (tower.x + tower.y) * this.TILE_HEIGHT / 2 - tower.z * this.TILE_HEIGHT / 2;
+    towersprite.pos = createVector(towerx, towery);
     towersprite.rotation = 0;
     towersprite.width = this.TILE_WIDTH;
     towersprite.height = this.TILE_HEIGHT * 3;
@@ -1058,11 +1061,27 @@ class mapBuilder{
       rect(0, 0, this.TILE_WIDTH, this.TILE_HEIGHT * 3);
       text(tower.type, 0, 0);
     }
+    console.log(towersprite.pos.x, towersprite.pos.y)
     this.towerarr.push(towersprite);
-
   }
 
-  removeTower (index){
+  updateTowers(mapManager){ //use?
+    for (let i = 0; i < this.towerarr.length; i++) {
+      if (this.towerarr[i] != null) {
+          this.towerarr[i].remove();
+      }
+  }
+    this.towerarr = [];
+
+    // Spawn coins on the map
+    for (let i = 0; i < mapManager.towers.length; i++) {
+        // We know which tile the coin is on
+        let tower = mapManager.towers[i];
+        this.addTower(tower)
+    }
+  }
+
+  removeTower(index){
     this.towerarr[index].remove();
     this.towerarr.splice(index, 1);
   }

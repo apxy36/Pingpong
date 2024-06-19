@@ -63,11 +63,14 @@ socket.on("buildMap", (mapManager) => {
     mechplayer = createPlayerSprite(localIGN) // creates mechanics for player
     map.buildBaseMap(mapManager);
     map.buildVisualMap();
+    map.updateTowers(mapManager);
+    console.log(mapManager.towers, map.towerarr)
     displayPlayer = createVisiblePlayerSprite(localIGN, playerZ);
     playerZ = map.setPlayerPosition(1, mechplayer);//map.getTile(round(map.)).z;
     cam.setTarget(displayPlayer);
     map.initializeCollisions(playerZ, mechplayer);
     setupComplete = true;
+    
 });
 
 socket.on("playerDataUpdate", (id, playerData) => {
@@ -94,19 +97,19 @@ socket.on("removeClient", (id) => {
     }
 });
 
-socket.on("addTower", (tower) => {
+socket.on("generateTower", (tower) => {
     console.log(tower)
-    mapBuilder.addTower(tower);
+    map.addTower(tower);
 }
 );
 socket.on("removeTower", (index) => {
-    mapBuilder.removeTower(index);
+    map.removeTower(index);
     console.log(index, 'removed')
 }
 );
 
 socket.on("updateTower", (index, tower) => {
-    mapBuilder.updateTower(index, tower);
+    map.updateTower(index, tower);
     console.log(index, 'updated')
 }
 );
@@ -161,7 +164,7 @@ function setup() {
     // console.log(localIGN, room_code_input);
     socket.emit("registerClient", localIGN, team, room_code_input);
 
-    map =  new mapBuilder(70, 70, 32);
+    map =  new mapBuilder(60, 60, 32);
     em = new EntityManager();
     cam = new CameraManager(windowWidth / 2, windowHeight / 2, camera);
     // mechplayer = createPlayerSprite('test') // creates mechanics for player
@@ -200,6 +203,7 @@ function draw() {
             map.updateCollisionLayers(playerZ, mechplayer);
             prevPlayerZ = playerZ;
         }
+        // console.log(map.towerarr)
 
         socket.emit("position", mechplayer.pos.x, mechplayer.pos.y, playerZ);
     }
@@ -249,31 +253,31 @@ function interpolateOtherPlayers() {
     }
 }
 
-function mousePressed() {
-    if (keyIsPressed && keyCode === SHIFT) {
-        console.log(mapBuilder.towers)
-    } else if (keyIsPressed && keyCode === CONTROL) {
-        if (mapBuilder.towerarr.length > 0){
-            socket.emit("activateTower", 0);
-        }
-    }
-    // if (allowMapModification) {
-    //     let tile = map.getTile(mouseX, mouseY);
-    //     if (tile) {
-    //         if (wallEditorMode === "*") {
-    //             map.setTile(tile.x, tile.y, tile.z + 1, "wall");
-    //         } else if (wallEditorMode === "=") {
-    //             map.setTile(tile.x, tile.y, tile.z - 1, "wall");
+// function mousePressed() {
+//     if (keyIsPressed && keyCode === SHIFT) {
+//         console.log(map.towers)
+//     } else if (keyIsPressed && keyCode === CONTROL) {
+//         if (map.towerarr.length > 0){
+//             socket.emit("activateTower", 0);
+//         }
+//     }
+//     // if (allowMapModification) {
+//     //     let tile = map.getTile(mouseX, mouseY);
+//     //     if (tile) {
+//     //         if (wallEditorMode === "*") {
+//     //             map.setTile(tile.x, tile.y, tile.z + 1, "wall");
+//     //         } else if (wallEditorMode === "=") {
+//     //             map.setTile(tile.x, tile.y, tile.z - 1, "wall");
 
-    //         } else if (wallEditorMode === "x") {
-    //             map.setTile(tile.x, tile.y, tile.z, "barrier");
-    //         } else if (wallEditorMode === "4") {
-    //             map.setTile(tile.x, tile.y, tile.z, "4");
-    //         }
-    //     }
+//     //         } else if (wallEditorMode === "x") {
+//     //             map.setTile(tile.x, tile.y, tile.z, "barrier");
+//     //         } else if (wallEditorMode === "4") {
+//     //             map.setTile(tile.x, tile.y, tile.z, "4");
+//     //         }
+//     //     }
 
-    // }
-}
+//     // }
+// }
 
 function move() {
     const SPEED = 5;

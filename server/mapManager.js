@@ -3,8 +3,8 @@ export default class MapManager{
         this.grid = [];
 
         this.roomCode = roomcode;
-        let w = 70;
-        let h = 70;
+        let w = 60;
+        let h = 60;
         let cellSize = 32;
         this.width = w;
         this.GRID_SIZE = w;
@@ -257,6 +257,7 @@ export default class MapManager{
     let id = this.towers.length;
     let tower = new Tower(x, y, z, type, id);
     this.towers.push(tower);
+    return tower;
   }
   activateTower(index){
     this.towers[index].active = true;
@@ -301,12 +302,13 @@ export default class MapManager{
     this.towers.splice(index, 1);
   }
 
-  updateTowers(clients){
+  updateTowers(clients){ // the emit must be in server.js
     for (let i = 0; i < this.towers.length; i++){
       if (this.towers[i].active){
         this.towers[i].duration += 1;
         if (this.towers[i].duration > 100 && this.towers[i].linkedtower != null && this.towers[i].linkedtower.active){ 
           this.removeTower(i);
+
           for (let c of clients){
             c.socket.emit('removeTower', i);
           }
@@ -316,12 +318,13 @@ export default class MapManager{
     //handle spawning of new towers
     //random chance of spawning a new tower
     let rand = Math.random();
-    if (rand < 0.02){
+    if (rand < 0.2){
       if (this.towers.length < 5){
         let randx = Math.floor(Math.random() * this.GRID_SIZE);
         let randy = Math.floor(Math.random() * this.GRID_SIZE);
         let randtype = Math.floor(Math.random() * 5);
         let tower = this.generateTower(randx, randy, randtype);
+        console.log(tower)
         for (let c of clients){
           c.socket.emit('generateTower', tower);
         }
