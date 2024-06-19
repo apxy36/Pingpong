@@ -106,7 +106,7 @@ class mapBuilder{
     // for (let i = 0; i < this.numLayers - 1; i++){
     //   this.displayElevatedTileLayers.push(new Group());
     // }
-
+    this.displayElevatedTileLayer0 = new Group();
     this.displayElevatedTileLayer1 = new Group();
     this.displayElevatedTileLayer2 = new Group();
     this.displayElevatedTileLayer3 = new Group();
@@ -702,15 +702,16 @@ class mapBuilder{
     this.displayLayer0.h = this.TILE_HEIGHT; // Height of each brick
     this.displayLayer0.tile = "0";
     this.displayLayer0.collider = 'static';
-    this.displayLayer0.overlaps(allSprites);
+    // this.displayLayer0.overlaps(allSprites);
     this.displayLayer0.layer = -990;
-    this.displayLayer0.img = './new_tileset/tile_066.png';
+    this.displayLayer0.visible = false;
+    // this.displayLayer0.img = './new_tileset/tile_066.png';
 
     this.displayLayer1.w = this.TILE_WIDTH;
     this.displayLayer1.h = this.TILE_HEIGHT
     this.displayLayer1.tile = "1";
     this.displayLayer1.collider = 'static';
-    this.displayLayer1.overlaps(allSprites);
+    // this.displayLayer1.overlaps(allSprites);
     this.displayLayer1.layer = 0;
     // this.displayLayer1.img = './new_tileset/tile_067.png';
     this.displayLayer1.visible = false;
@@ -768,47 +769,54 @@ class mapBuilder{
     //   this.displayElevatedTileLayers[i].img = './new_tileset/tile_027.png';
     // }
 
+    this.displayElevatedTileLayer0.w = this.TILE_WIDTH;
+    this.displayElevatedTileLayer0.h = this.TILE_HEIGHT;
+    this.displayElevatedTileLayer0.collider = 'static';
+    this.displayElevatedTileLayer0.overlaps(allSprites);
+    this.displayElevatedTileLayer0.layer = -1*999;
+
+
     this.displayElevatedTileLayer1.w = this.TILE_WIDTH;
     this.displayElevatedTileLayer1.h = this.TILE_HEIGHT;
     this.displayElevatedTileLayer1.collider = 'static';
     this.displayElevatedTileLayer1.overlaps(allSprites);
     this.displayElevatedTileLayer1.layer = 0*999;
-    this.displayElevatedTileLayer1.img = './new_tileset/tile_027.png';
+    // this.displayElevatedTileLayer1.img = './new_tileset/tile_027.png';
 
     this.displayElevatedTileLayer2.w = this.TILE_WIDTH;
     this.displayElevatedTileLayer2.h = this.TILE_HEIGHT;
     this.displayElevatedTileLayer2.collider = 'static';
     this.displayElevatedTileLayer2.overlaps(allSprites);
     this.displayElevatedTileLayer2.layer = 1*999;
-    this.displayElevatedTileLayer2.img = './new_tileset/tile_027.png';
+    // this.displayElevatedTileLayer2.img = './new_tileset/tile_027.png';
 
     this.displayElevatedTileLayer3.w = this.TILE_WIDTH;
     this.displayElevatedTileLayer3.h = this.TILE_HEIGHT;
     this.displayElevatedTileLayer3.collider = 'static';
     this.displayElevatedTileLayer3.overlaps(allSprites);
     this.displayElevatedTileLayer3.layer = 2*999;
-    this.displayElevatedTileLayer3.img = './new_tileset/tile_027.png';
+    // this.displayElevatedTileLayer3.img = './new_tileset/tile_027.png';
 
     this.displayElevatedTileLayer4.w = this.TILE_WIDTH;
     this.displayElevatedTileLayer4.h = this.TILE_HEIGHT;
     this.displayElevatedTileLayer4.collider = 'static';
     this.displayElevatedTileLayer4.overlaps(allSprites);
     this.displayElevatedTileLayer4.layer = 3*999;
-    this.displayElevatedTileLayer4.img = './new_tileset/tile_027.png';
+    // this.displayElevatedTileLayer4.img = './new_tileset/tile_027.png';
 
     this.displayElevatedTileLayer5.w = this.TILE_WIDTH;
     this.displayElevatedTileLayer5.h = this.TILE_HEIGHT;
     this.displayElevatedTileLayer5.collider = 'static';
     this.displayElevatedTileLayer5.overlaps(allSprites);
     this.displayElevatedTileLayer5.layer = 4*999;
-    this.displayElevatedTileLayer5.img = './new_tileset/tile_027.png';
+    // this.displayElevatedTileLayer5.img = './new_tileset/tile_027.png';
 
     this.displayElevatedBoundaryLayer.w = this.TILE_WIDTH;
     this.displayElevatedBoundaryLayer.h = this.TILE_HEIGHT;
     this.displayElevatedBoundaryLayer.collider = 'static';
     this.displayElevatedBoundaryLayer.overlaps(allSprites);
     this.displayElevatedBoundaryLayer.layer = 5*999;
-    this.displayElevatedBoundaryLayer.img = './new_tileset/tile_027.png';
+    // this.displayElevatedBoundaryLayer.img = './new_tileset/tile_027.png';
 
 
 
@@ -817,6 +825,7 @@ class mapBuilder{
         0, // y to position at top
         this.TILE_WIDTH / 2,
         this.TILE_HEIGHT / 2);
+    // console.log(this.displayMapTiles)
     // this.mapTiles.collider = 'none';
 
     // console.log(this.displayMapTiles)
@@ -834,13 +843,12 @@ class mapBuilder{
       let tile = this.displayMapTiles[i]; //sprite object
       let vect = this.findFromCoords(tile.pos.x, tile.pos.y);
       let z = this.getTile(vect.x, vect.y).z;
-      if (z != 0){
+      if (z != 'B'){
         // tile.pos.y -= z * this.TILE_HEIGHT / 2;
         // console.log(z, vect.x, vect.y)
-        // let newtile = new this.displayLayer0.Sprite();
-        // newtile.pos = createVector(tile.pos.x, tile.pos.y);
-        // + z * this.TILE_HEIGHT / 2; //make an entirely new tile that displays another image but has no collision, at the elevated pos. the original tile is at the original pos
         
+        // + z * this.TILE_HEIGHT / 2; //make an entirely new tile that displays another image but has no collision, at the elevated pos. the original tile is at the original pos
+        let type = this.getTile(vect.x, vect.y).type;
         let displayTile;
         // if (z != 'B'){
         //   displayTile = new this.displayElevatedTileLayers[z - 1].Sprite();
@@ -849,7 +857,9 @@ class mapBuilder{
         // } else {
         //   displayTile = new this.displayElevatedTileLayer1.Sprite();
         // }
-        if (z == 1){
+        if (z == 0){
+          displayTile = new this.displayElevatedTileLayer0.Sprite();
+        } else if (z == 1){
           displayTile = new this.displayElevatedTileLayer1.Sprite();
         } else if (z == 2){
           displayTile = new this.displayElevatedTileLayer2.Sprite();
@@ -860,15 +870,39 @@ class mapBuilder{
         } else if (z == 5){
           displayTile = new this.displayElevatedTileLayer5.Sprite();
         } else if (z == 'B'){
+          continue;
           displayTile = new this.displayElevatedBoundaryLayer.Sprite();
         } else {
           displayTile = new this.displayElevatedTileLayer1.Sprite();
         }
-        displayTile.pos.x = tile.pos.x;
         if (z != 'B'){
-        displayTile.pos.y = tile.pos.y - z * this.TILE_HEIGHT / 2;
-        } else {
-          displayTile.pos.y = tile.pos.y - 10 * this.TILE_HEIGHT / 2;
+          if (type == "grass"){
+            displayTile.img = './new_tileset/tile_027.png';
+          } else if (type == "stone"){
+            displayTile.img = './new_tileset/tile_063.png';
+          } else if (type == "wood"){
+            displayTile.img = './new_tileset/tile_014.png';
+          } else if (type == "brick"){
+            displayTile.img = './new_tileset/tile_066.png';
+          } else if (type == "wall"){
+            displayTile.img = './new_tileset/tile_031.png';
+          } else if (type == "water"){
+            displayTile.img = './new_tileset/tile_104.png';
+          } else if (type == "forest"){
+            displayTile.img = './new_tileset/tile_036.png';
+          }
+
+
+          let newtile = new this.displayElevatedTileLayer0.Sprite();
+          newtile.pos = createVector(tile.pos.x, tile.pos.y);
+          newtile.img = displayTile.img;
+
+          displayTile.pos.x = tile.pos.x;
+          if (z != 'B'){
+          displayTile.pos.y = tile.pos.y - z * this.TILE_HEIGHT / 2;
+          } else {
+            displayTile.pos.y = tile.pos.y - 10 * this.TILE_HEIGHT / 2;
+          }
         }
 
       }
@@ -908,29 +942,41 @@ class mapBuilder{
     // console.log(" displayer",this.displayMapTiles)
   }
 
-  updateCollisionLayers(playerZ){ // reconfig to make it player based? ie playersprite.overlaps(displayLayer0)
+  updateCollisionLayers(playerZ, playerSprite){ // reconfig to make it player based? ie playersprite.overlaps(displayLayer0)
     // for (let i = -1; i < 1; i++){
     //   let index = min(max(playerZ + i, 0), this.numLayers - 2);
     //   this.displayLayers[index].overlaps(allSprites);
     // }
-
+    playerSprite.collides(this.displayBoundaryLayer)
     if (playerZ == 0){
-
-      this.displayLayer0.overlaps(allSprites);
-      this.displayLayer1.overlaps(allSprites);
+      // playerSprite.overlaps(this.displayLayer0);
+      // playerSprite.overlaps(this.displayLayer1);
+      playerSprite.collides(this.displayLayer2);
+      // playerSprite.collides(this.displayLayer3);
+      // playerSprite.collides(this.displayLayer4);
+      // playerSprite.collides(this.displayLayer5);
+      // this.displayLayer0.overlaps(allSprites);
+      // this.displayLayer1.overlaps(allSprites);
       // this.displayLayer2.overlaps(null)
       // this.displayLayer3.overlaps(null)
       // this.displayLayer4.overlaps(null)
       // this.displayLayer5.overlaps(null)
 
-      this.displayLayer2.overlaps(allSprites, null);
+      // this.displayLayer2.overlaps(allSprites, null);
       // this.displayLayer3.overlaps(allSprites);
       // this.displayLayer4.overlaps(allSprites);
       // this.displayLayer5.overlaps(allSprites);
     } else if (playerZ == 1){
-      this.displayLayer0.overlaps(allSprites);
-      this.displayLayer1.overlaps(allSprites);
-      this.displayLayer2.overlaps(allSprites);
+      playerSprite.overlaps(this.displayLayer0);
+      // playerSprite.overlaps(this.displayLayer1);
+      playerSprite.overlaps(this.displayLayer2);
+      playerSprite.collides(this.displayLayer3);
+      // playerSprite.collides(this.displayLayer4);
+      // playerSprite.collides(this.displayLayer5);
+
+      // this.displayLayer0.overlaps(allSprites);
+      // this.displayLayer1.overlaps(allSprites);
+      // this.displayLayer2.overlaps(allSprites);
       // this.displayLayer3.overlaps(null)
       // this.displayLayer4.overlaps(null)
       // this.displayLayer5.overlaps(null)
@@ -939,34 +985,59 @@ class mapBuilder{
       // this.displayLayer4.overlaps(allSprites);
       // this.displayLayer5.overlaps(allSprites);
     } else if (playerZ == 2){
+      playerSprite.collides(this.displayLayer0);
+      playerSprite.overlaps(this.displayLayer1);
+      // playerSprite.overlaps(this.displayLayer2);
+      playerSprite.overlaps(this.displayLayer3);
+      playerSprite.collides(this.displayLayer4);
+      // playerSprite.collides(this.displayLayer5);
       // this.displayLayer0.overlaps(allSprites);
       // this.displayLayer0.overlaps(null)
-      this.displayLayer1.overlaps(allSprites);
-      this.displayLayer2.overlaps(allSprites);
-      this.displayLayer3.overlaps(allSprites);
+      // this.displayLayer1.overlaps(allSprites);
+      // this.displayLayer2.overlaps(allSprites);
+      // this.displayLayer3.overlaps(allSprites);
       // this.displayLayer4.overlaps(null);
       // this.displayLayer5.overlaps(null);
     } else if (playerZ == 3){
+      // playerSprite.collides(this.displayLayer0);
+      playerSprite.collides(this.displayLayer1);
+      playerSprite.overlaps(this.displayLayer2);
+      // playerSprite.overlaps(this.displayLayer3);
+      playerSprite.overlaps(this.displayLayer4);
+      playerSprite.collides(this.displayLayer5);
+
       // this.displayLayer0.overlaps(null);
       // this.displayLayer1.overlaps(null);
-      this.displayLayer2.overlaps(allSprites);
-      this.displayLayer3.overlaps(allSprites);
-      this.displayLayer4.overlaps(allSprites);
+      // this.displayLayer2.overlaps(allSprites);
+      // this.displayLayer3.overlaps(allSprites);
+      // this.displayLayer4.overlaps(allSprites);
       // this.displayLayer5.overlaps(null);
     } else if (playerZ == 4){
+      // playerSprite.collides(this.displayLayer0);
+      // playerSprite.collides(this.displayLayer1);
+      playerSprite.collides(this.displayLayer2);
+      playerSprite.overlaps(this.displayLayer3);
+      // playerSprite.overlaps(this.displayLayer4);
+      playerSprite.overlaps(this.displayLayer5);
       // this.displayLayer0.overlaps(null);
       // this.displayLayer1.overlaps(null);
       // this.displayLayer2.overlaps(null);
-      this.displayLayer3.overlaps(allSprites);
-      this.displayLayer4.overlaps(allSprites);
-      this.displayLayer5.overlaps(allSprites);
+      // this.displayLayer3.overlaps(allSprites);
+      // this.displayLayer4.overlaps(allSprites);
+      // this.displayLayer5.overlaps(allSprites);
     } else if (playerZ == 5){
+      // playerSprite.collides(this.displayLayer0);
+      // playerSprite.collides(this.displayLayer1);
+      // playerSprite.collides(this.displayLayer2);
+      playerSprite.collides(this.displayLayer3);
+      // playerSprite.overlaps(this.displayLayer4);
+      // playerSprite.overlaps(this.displayLayer5);
       // this.displayLayer0.overlaps(null);
       // this.displayLayer1.overlaps(null);
       // this.displayLayer2.overlaps(null);
       // this.displayLayer3.overlaps(null);
-      this.displayLayer4.overlaps(allSprites);
-      this.displayLayer5.overlaps(allSprites);
+      // this.displayLayer4.overlaps(allSprites);
+      // this.displayLayer5.overlaps(allSprites);
     
     }
 
@@ -1128,6 +1199,101 @@ class mapBuilder{
     // console.log(this.graphics)
   }
 
+  initializeCollisions(playerZ, playerSprite){
+    if (playerZ == 0){
+      playerSprite.overlaps(this.displayLayer0);
+      playerSprite.overlaps(this.displayLayer1);
+      playerSprite.collides(this.displayLayer2);
+      playerSprite.collides(this.displayLayer3);
+      playerSprite.collides(this.displayLayer4);
+      playerSprite.collides(this.displayLayer5);
+      // this.displayLayer0.overlaps(allSprites);
+      // this.displayLayer1.overlaps(allSprites);
+      // this.displayLayer2.overlaps(null)
+      // this.displayLayer3.overlaps(null)
+      // this.displayLayer4.overlaps(null)
+      // this.displayLayer5.overlaps(null)
+
+      // this.displayLayer2.overlaps(allSprites, null);
+      // this.displayLayer3.overlaps(allSprites);
+      // this.displayLayer4.overlaps(allSprites);
+      // this.displayLayer5.overlaps(allSprites);
+    } else if (playerZ == 1){
+      playerSprite.overlaps(this.displayLayer0);
+      playerSprite.overlaps(this.displayLayer1);
+      playerSprite.overlaps(this.displayLayer2);
+      playerSprite.collides(this.displayLayer3);
+      playerSprite.collides(this.displayLayer4);
+      playerSprite.collides(this.displayLayer5);
+
+      // this.displayLayer0.overlaps(allSprites);
+      // this.displayLayer1.overlaps(allSprites);
+      // this.displayLayer2.overlaps(allSprites);
+      // this.displayLayer3.overlaps(null)
+      // this.displayLayer4.overlaps(null)
+      // this.displayLayer5.overlaps(null)
+      // console.log(this.displayLayer2)
+      // this.displayLayer3.overlaps(allSprites);
+      // this.displayLayer4.overlaps(allSprites);
+      // this.displayLayer5.overlaps(allSprites);
+    } else if (playerZ == 2){
+      playerSprite.collides(this.displayLayer0);
+      playerSprite.overlaps(this.displayLayer1);
+      playerSprite.overlaps(this.displayLayer2);
+      playerSprite.overlaps(this.displayLayer3);
+      playerSprite.collides(this.displayLayer4);
+      playerSprite.collides(this.displayLayer5);
+      // this.displayLayer0.overlaps(allSprites);
+      // this.displayLayer0.overlaps(null)
+      // this.displayLayer1.overlaps(allSprites);
+      // this.displayLayer2.overlaps(allSprites);
+      // this.displayLayer3.overlaps(allSprites);
+      // this.displayLayer4.overlaps(null);
+      // this.displayLayer5.overlaps(null);
+    } else if (playerZ == 3){
+      playerSprite.collides(this.displayLayer0);
+      playerSprite.collides(this.displayLayer1);
+      playerSprite.overlaps(this.displayLayer2);
+      playerSprite.overlaps(this.displayLayer3);
+      playerSprite.overlaps(this.displayLayer4);
+      playerSprite.collides(this.displayLayer5);
+
+      // this.displayLayer0.overlaps(null);
+      // this.displayLayer1.overlaps(null);
+      // this.displayLayer2.overlaps(allSprites);
+      // this.displayLayer3.overlaps(allSprites);
+      // this.displayLayer4.overlaps(allSprites);
+      // this.displayLayer5.overlaps(null);
+    } else if (playerZ == 4){
+      playerSprite.collides(this.displayLayer0);
+      playerSprite.collides(this.displayLayer1);
+      playerSprite.collides(this.displayLayer2);
+      playerSprite.overlaps(this.displayLayer3);
+      playerSprite.overlaps(this.displayLayer4);
+      playerSprite.overlaps(this.displayLayer5);
+      // this.displayLayer0.overlaps(null);
+      // this.displayLayer1.overlaps(null);
+      // this.displayLayer2.overlaps(null);
+      // this.displayLayer3.overlaps(allSprites);
+      // this.displayLayer4.overlaps(allSprites);
+      // this.displayLayer5.overlaps(allSprites);
+    } else if (playerZ == 5){
+      playerSprite.collides(this.displayLayer0);
+      playerSprite.collides(this.displayLayer1);
+      playerSprite.collides(this.displayLayer2);
+      playerSprite.collides(this.displayLayer3);
+      playerSprite.overlaps(this.displayLayer4);
+      playerSprite.overlaps(this.displayLayer5);
+      // this.displayLayer0.overlaps(null);
+      // this.displayLayer1.overlaps(null);
+      // this.displayLayer2.overlaps(null);
+      // this.displayLayer3.overlaps(null);
+      // this.displayLayer4.overlaps(allSprites);
+      // this.displayLayer5.overlaps(allSprites);
+    
+    }
+  }
+
 
 
 
@@ -1179,10 +1345,11 @@ function createPlayerSprite(name) {
     
 }
 
-function createVisiblePlayerSprite(mechanicSprite, name, map) {
+function createVisiblePlayerSprite(name, playerZ) { //scaling added after animation
     let playerSprite = new Sprite(0, 0, 32, 32);
     playerSprite.visible = true;
     playerSprite.collider = 'none';
+    playerSprite.img = "./new_tileset/tile_001.png";
     // Load sprite sheet
     // playerSprite.spriteSheet = mechanicSprite;
     // playerSprite.anis.offset.y = -4;
@@ -1201,9 +1368,15 @@ function createVisiblePlayerSprite(mechanicSprite, name, map) {
         textAlign(CENTER, CENTER);
         textSize(16);
         text(name, 0, -35);
+        // console.log(name)
 
         circle(0, 0, 32);
         rect(10, 0, 32, 50);
+        // scaling = 1 + playerZ * 0.1;
+        // console.log(playerZ, scaling)
+        image(playerSprite.img, 0, 0, 32, 16);
+        // img = loadImage('./new_tileset/tile_001.png');
+        // image(img, 0, 0, 32, 16);
 
         // playerSprite.ani.draw(playerSprite.offset.x, playerSprite.offset.y, 0, playerSprite.scale.x, playerSprite.scale.y);
     }

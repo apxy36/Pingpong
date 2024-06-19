@@ -12,7 +12,7 @@ let GRID_SCALE = 1.0;
 
 let mechplayer;
 let playerZ = 0;
-let prevPlayerZ = 0; 
+let prevPlayerZ = -1; 
 // let em;
 
 
@@ -26,30 +26,33 @@ let statusconditions = [];
 
 const socket = io.connect("ws://localhost:8001");
 
-window.onload = () => { // temporary
-    const room_code_input = prompt("Enter Room Code", "12345");
-    // validate room code
-    if (room_code_input.length !== 5) {
-        window.onload();
-    } else {
-        let localIGN = prompt('Enter IGN');
-        socket.emit("registerClient", localIGN, team, room_code_input);
-    }
-    // const join_option_input = prompt('Select: "CREATE" or "JOIN"', "CREATE");
-    // if (join_option_input === "CREATE") {
-    //     // socket.emit("requestCreateRoom");
-    //     let localIGN = prompt('Enter IGN');
-    //     let room
-    //     socket.emit("registerClient", localIGN, team, room_code_input);
-    // } else if (join_option_input === "JOIN") {
-    //     const room_code_input = prompt("Enter Room Code");
-    //     let localIGN = prompt('Enter IGN')
-    //     socket.emit("registerClient", localIGN, team, room_code_input);
-    //     // socket.emit("requestJoinRoom", room_code_input);
-    // } else {
-    //     window.onload();
-    // }
-};
+// window.onload = () => { // temporary
+//     const room_code_input = prompt("Enter Room Code", "12345");
+//     // validate room code
+//     if (room_code_input.length !== 5) {
+//         window.onload();
+//     } else {
+//         localIGN = prompt('Enter IGN');
+//         if (localIGN.length === 0) {
+//             window.onload();
+//         }
+//         socket.emit("registerClient", localIGN, team, room_code_input);
+//     }
+//     // const join_option_input = prompt('Select: "CREATE" or "JOIN"', "CREATE");
+//     // if (join_option_input === "CREATE") {
+//     //     // socket.emit("requestCreateRoom");
+//     //     let localIGN = prompt('Enter IGN');
+//     //     let room
+//     //     socket.emit("registerClient", localIGN, team, room_code_input);
+//     // } else if (join_option_input === "JOIN") {
+//     //     const room_code_input = prompt("Enter Room Code");
+//     //     let localIGN = prompt('Enter IGN')
+//     //     socket.emit("registerClient", localIGN, team, room_code_input);
+//     //     // socket.emit("requestJoinRoom", room_code_input);
+//     // } else {
+//     //     window.onload();
+//     // }
+// };
 
 socket.on("setRoomCode", (code) => {
     currentRoomCode = code;
@@ -60,9 +63,10 @@ socket.on("buildMap", (mapManager) => {
     mechplayer = createPlayerSprite(localIGN) // creates mechanics for player
     map.buildBaseMap(mapManager);
     map.buildVisualMap();
-    displayPlayer = createVisiblePlayerSprite(mechplayer, localIGN, map);
+    displayPlayer = createVisiblePlayerSprite(localIGN, playerZ);
     playerZ = map.setPlayerPosition(1, mechplayer);//map.getTile(round(map.)).z;
     cam.setTarget(displayPlayer);
+    map.initializeCollisions(playerZ, mechplayer);
     setupComplete = true;
 });
 
@@ -127,6 +131,12 @@ function manageVisiblePlayer(mechanicSprite, playerSprite, map){
     // console.log(tile.z, playerZ, map.getAdjacentTiles(tilecoords.x, tilecoords.y));
     // console.log(tilecoords, tile.z, playerZ)
     // console.log(mechanicSprite)
+    // playerSprite.img.scale.x = 1 + 0.25 * playerZ;
+    // playerSprite.img.scale.y = 1 + 0.25 * playerZ;
+
+    // playerSprite.scale.x = 1 + 0.55 * playerZ;
+    // playerSprite.scale.y = 1 + 0.55 * playerZ;
+    // console.log(playerSprite.scale)
     playerSprite.pos = createVector(mechanicSprite.pos.x, mechanicSprite.pos.y - playerZ * map.TILE_HEIGHT/2);
     // playerSprite.pos.x = mechanicSprite.pos.x;
     // playerSprite.pos.y = mechanicSprite.pos.y - playerZ * map.TILE_HEIGHT/2;
@@ -135,12 +145,29 @@ function manageVisiblePlayer(mechanicSprite, playerSprite, map){
 
 function setup() {
     new Canvas("fullscreen");
+    loadingBall = new LoadingBall();
+    // loadingBall.setCollider("circle", 0, 0, 20);
+
+    const urlParams = new URLSearchParams(
+        window.location.search,
+    );
+
+    localIGN = urlParams.get('ign');
+    Object.freeze(localIGN);
+
+    room_code_input = urlParams.get('roomCode');
+    Object.freeze(room_code_input);
+
+    // console.log(localIGN, room_code_input);
+    socket.emit("registerClient", localIGN, team, room_code_input);
+
     map =  new mapBuilder(70, 70, 32);
     em = new EntityManager();
     cam = new CameraManager(windowWidth / 2, windowHeight / 2, camera);
     // mechplayer = createPlayerSprite('test') // creates mechanics for player
 //   map.buildVisualMap();
     // displayPlayer = createVisiblePlayerSprite(mechplayer, 'test', map);
+     // Retrieve IGN and room code from url query
     
     // cam.setTarget(displayPlayer);
     // playerZ = map.setPlayerPosition(1, mechplayer);//map.getTile(round(map.)).z;
@@ -160,18 +187,21 @@ function setup() {
 }
 
 function draw() {
+    background("grey");
+    
     if (setupComplete){
-        background("grey");
+        
+        
         move();
         interpolateOtherPlayers();
         cam.update()
         manageVisiblePlayer(mechplayer, displayPlayer, map)
         if (playerZ != prevPlayerZ){
-            map.updateCollisionLayers(playerZ);
+            map.updateCollisionLayers(playerZ, mechplayer);
             prevPlayerZ = playerZ;
         }
 
-        socket.emit("position", displayPlayer.pos.x, displayPlayer.pos.y, playerZ);
+        socket.emit("position", mechplayer.pos.x, mechplayer.pos.y, playerZ);
     }
     // if (!currentRoomCode) {
     //     allSprites.visible = false;
@@ -264,7 +294,7 @@ function move() {
     }
     if (kb.pressing("a")) {
         // playerSprite.changeAni('run');
-        displayPlayer.scale.x = -1;
+        displayPlayer.scale.x =  - abs(displayPlayer.scale.x);
         mechplayer.pos.x -= SPEED * adjacentSPEED / SPEED;
         mechplayer.pos.y -= SPEED * oppSPEED / SPEED;
         // breakDir = 1;
@@ -290,7 +320,7 @@ function move() {
         // playerSprite.changeAni('idle');
     }
     else if (kb.released("a")) {
-        displayPlayer.scale.x = -1;
+        displayPlayer.scale.x = -abs(displayPlayer.scale.x);
         // playerSprite.changeAni('idle');
     }
 
