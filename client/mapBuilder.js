@@ -129,7 +129,15 @@ class mapBuilder{
     this.towers.w = this.TILE_SIDE_LENGTH;
     this.towers.h = this.TILE_SIDE_LENGTH * 2;
     this.towerarr = [];
+    this.towerobjarr = [];
 
+    this.pretowers = new Group();
+    this.pretowers.overlaps(allSprites);
+    this.pretowers.collider = 'static';
+    this.pretowers.layer = 9999;
+    this.pretowers.w = this.TILE_SIDE_LENGTH;
+    this.pretowers.h = this.TILE_SIDE_HEIGHT;
+    this.pretowerarr = [];
     // this.acti
 
   }
@@ -1063,6 +1071,16 @@ class mapBuilder{
     }
     console.log(towersprite.pos.x, towersprite.pos.y)
     this.towerarr.push(towersprite);
+    this.towerobjarr.push(tower);
+  }
+
+  toggleTower(index, team){
+    let tower = this.towerobjarr[index];
+    if (tower.active == false){
+      socket.emit('activateTower', index);
+    } else if (tower.linkedtower != null && tower.team == team){
+      socket.emit('deactivateTower', index);
+    }
   }
 
   updateTowers(mapManager){ //use?
@@ -1072,6 +1090,7 @@ class mapBuilder{
       }
   }
     this.towerarr = [];
+    this.towerobjarr = [];
 
     // Spawn coins on the map
     for (let i = 0; i < mapManager.towers.length; i++) {
@@ -1082,14 +1101,19 @@ class mapBuilder{
   }
 
   removeTower(index){
+    if (this.towerobjarr[index].linkedtower != null){
+      this.towerobjarr[index].linkedtower.linkedtower = null;
+    }
     this.towerarr[index].remove();
     this.towerarr.splice(index, 1);
+    this.towerobjarr.splice(index, 1);
   }
 
   updateTower(index, tower){
     // let tower = this.towers[index];
     let towersprite = this.towerarr[index];
-    //change draw function
+    this.towerobjarr[index] = tower;
+    //change draw function and add teams
     if (tower.active){
         towersprite.draw = () => {
         fill(255, 0, 0);
@@ -1106,6 +1130,22 @@ class mapBuilder{
     
 
   }
+  preGenerateTower(x, y, z){
+    let towersprite = new this.pretowers.Sprite();
+    let towerx = (x - y) * this.TILE_WIDTH / 2;
+    let towery = (x + y) * this.TILE_HEIGHT / 2 - z * this.TILE_HEIGHT / 2;
+    towersprite.pos = createVector(towerx, towery);
+    towersprite.rotation = 0;
+    towersprite.width = this.TILE_WIDTH;
+    towersprite.height = this.TILE_HEIGHT;
+    this.pretowerarr.push(towersprite);
+    setTimeout(() => {
+      towersprite.remove();
+      this.pretowerarr.splice(this.pretowerarr.indexOf(towersprite), 1);
+    }, 1000);
+  }
+    //scale?
+
 
 
   getDisplayTile(x, y){

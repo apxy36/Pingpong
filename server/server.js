@@ -93,9 +93,17 @@ io.on("connection", (socket) => {
     })
 
     socket.on("activateTower", (index) => {
-        client.room.mapManager.activateTower(index);
+        client.room.mapManager.activateTower(index, client.team);
         for (let c of client.room.clients) {
-            c.socket.emit("updateTower", index, client.room.mapManager.towers[index]);
+            c.socket.emit("updateTower", index, client.room.mapManager.towers[index], client.team);
+        }
+    }
+    );
+
+    socket.on("deactivateTower", (index) => {
+        client.room.mapManager.deactivateTower(index, client.team);
+        for (let c of client.room.clients) {
+            c.socket.emit("updateTower", index, client.room.mapManager.towers[index], client.team);
         }
     }
     );
@@ -146,6 +154,7 @@ function tick() {
                 id: c.socket.id,
                 ign: c.ign,
                 statusconditions: c.statusconditions,
+                team: c.team,
             };
         });
         for (let c of room.clients) {

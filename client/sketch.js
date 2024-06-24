@@ -108,9 +108,15 @@ socket.on("removeTower", (index) => {
 }
 );
 
-socket.on("updateTower", (index, tower) => {
-    map.updateTower(index, tower);
+socket.on("updateTower", (index, tower, team) => {
+    map.updateTower(index, tower, team);
     console.log(index, 'updated')
+}
+);
+
+socket.on("preGenerateTower", (randx, randy, randtype) => {
+    map.preGenerateTower(randx, randy, randtype);
+    console.log(tower, 'pre-generated')
 }
 );
 

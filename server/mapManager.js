@@ -259,8 +259,9 @@ export default class MapManager{
     this.towers.push(tower);
     return tower;
   }
-  activateTower(index){
+  activateTower(index, team){
     this.towers[index].active = true;
+    this.towers[index].team = team;
     this.towers[index].activecountdown = 15;
     if (this.towers.length >= 2){
       while (this.towers[index].linkedtower == null){
@@ -268,9 +269,12 @@ export default class MapManager{
         if (this.towers[randindex].linkedtower == null && randindex != index){
           this.towers[index].linkedtower = this.towers[randindex];
         }
-        this.towers[index].linkedtower.active = true;
-        this.towers[index].linkedtower.activecountdown = 15;
+        
       }
+      this.towers[index].linkedtower.active = true;
+      this.towers[index].linkedtower.activecountdown = 15;
+      this.towers[index].linkedtower.team = team;
+      this.towers[index].linkedtower.linkedtower = this.towers[index];
     }
     // countdown = setTimeout(() => {
     //   this.towers[index].active = false;
@@ -298,11 +302,24 @@ export default class MapManager{
 
   }
 
+  deactivateTower(index, team){
+    this.towers[index].active = false;
+    this.towers[index].team = null;
+    this.towers[index].activecountdown = -1;
+    this.towers[index].linkedtower.active = false;
+    this.towers[index].linkedtower.activecountdown = -1;
+    this.towers[index].linkedtower.team = null;
+    this.towers[index].linkedtower.linkedtower = null;
+    this.towers[index].linkedtower = null;
+  }
+
+  
+
   removeTower(index){
     this.towers.splice(index, 1);
   }
 
-  updateTowers(clients){ // the emit must be in server.js
+  updateTowers(clients){ // handling tower duration and spawning of new towers
     for (let i = 0; i < this.towers.length; i++){
       if (this.towers[i].active){
         this.towers[i].duration += 1;
@@ -322,13 +339,25 @@ export default class MapManager{
       if (this.towers.length < 5){
         let randx = Math.floor(Math.random() * this.GRID_SIZE);
         let randy = Math.floor(Math.random() * this.GRID_SIZE);
-        let randtype = Math.floor(Math.random() * 5);
-        let tower = this.generateTower(randx, randy, randtype);
-        console.log(tower)
+        let randtype = Math.round(Math.random() * 3);
+        let z = this.grid.get(`${randx}_${randy}`).z;
         for (let c of clients){
-          c.socket.emit('generateTower', tower);
+          c.socket.emit('preGenerateTower', randx, randy, z);
         }
-        console.log("new tower spawned", randx, randy, randtype);
+        console.log('preGenerateTower', randx, randy, z);
+        setTimeout(() => {
+          let tower = this.generateTower(randx, randy, randtype);
+          console.log(tower)
+          for (let c of clients){
+            // c.socket.emit('preGenerateTower', tower);
+            c.socket.emit('generateTower', tower);           
+            // setTimeout(() => {
+            //   c.socket.emit('generateTower', tower);
+            // }, 5000);
+          }
+          console.log("new tower spawned", randx, randy, randtype);
+        }
+        , 5000);
       }
     }
   }
@@ -368,5 +397,6 @@ class Tower{
     this.activecountdown = -1;
     this.linkedtower = null;
     this.duration = 0;
+    this.team = null;
   }
 }
