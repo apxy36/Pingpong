@@ -3,8 +3,8 @@ export default class MapManager{
         this.grid = [];
 
         this.roomCode = roomcode;
-        let w = 60;
-        let h = 60;
+        let w = 52;
+        let h = 52;
         let cellSize = 32;
         this.width = w;
         this.GRID_SIZE = w;
@@ -259,22 +259,59 @@ export default class MapManager{
     this.towers.push(tower);
     return tower;
   }
-  activateTower(index, team){
-    this.towers[index].active = true;
-    this.towers[index].team = team;
-    this.towers[index].activecountdown = 15;
+  activateTower(index, team, clients){
+    
     if (this.towers.length >= 2){
-      while (this.towers[index].linkedtower == null){
-        let randindex = round(random(0, this.towers.length - 1));
-        if (this.towers[randindex].linkedtower == null && randindex != index){
-          this.towers[index].linkedtower = this.towers[randindex];
+      this.towers[index].active = true;
+      this.towers[index].team = team;
+      this.towers[index].activecountdown = 10;
+      while (this.towers[index].linkedtowerindex == null){
+        let randindex = Math.round(this.random(0, this.towers.length - 1));
+        if (this.towers[randindex].linkedtowerindex == null && randindex != index){
+          this.towers[index].linkedtowerindex = randindex // this.towers[randindex];
         }
         
       }
-      this.towers[index].linkedtower.active = true;
-      this.towers[index].linkedtower.activecountdown = 15;
-      this.towers[index].linkedtower.team = team;
-      this.towers[index].linkedtower.linkedtower = this.towers[index];
+      this.towers[this.towers[index].linkedtowerindex].active = true;
+      this.towers[this.towers[index].linkedtowerindex].team = team;
+      this.towers[this.towers[index].linkedtowerindex].activecountdown = 10;
+      this.towers[this.towers[index].linkedtowerindex].linkedtowerindex = index;
+      // this.towers[index].linkedtower.active = true;
+      // this.towers[index].linkedtower.activecountdown = 15;
+      // this.towers[index].linkedtower.team = team;
+      // this.towers[index].linkedtower.linkedtowerindex = this.towers[index];
+
+      let counter = setInterval(() => {
+        if (this.towers[index].activecountdown == 0 && this.towers[index].active){
+          // console.log(this.towers[index], index, 'deactivated')
+          this.deactivateTower(index, team, clients);
+          this.deactivateTower(this.towers[index].linkedtowerindex, team, clients);
+          clearInterval(counter);
+          // clearTimeout(countdown);
+          // this.towers[index].active = false;
+          // this.towers[this.towers[index].linkedtowerindex].active = false;
+          // // this.towers[index].linkedtower.active = false;
+          // this.towers[index].team = null;
+          // this.towers[this.towers[index].linkedtowerindex].team = null;
+          // // this.towers[index].linkedtower.team = null;
+
+          // this.towers[index].activecountdown = -1;
+          // this.towers[this.towers[index].linkedtowerindex].activecountdown = -1;
+          // // this.towers[index].linkedtower.activecountdown = -1;
+          // this.towers[this.towers[index].linkedtowerindex].linkedtowerindex = null;
+          // // this.towers[index].linkedtower.linkedtowerindex = null;
+          
+          // this.towers[index].linkedtowerindex = null;
+        } else {
+          console.log(this.towers[index].activecountdown, index)
+          this.towers[index].activecountdown -= 1;
+          this.towers[this.towers[index].linkedtowerindex].activecountdown -= 1;
+          // this.towers[index].linkedtower.activecountdown -= 1;
+        }
+        // this.towers[index].activecountdown -= 1;
+        // this.towers[index].linkedtower.activecountdown -= 1;
+      }
+      , 1000);
     }
     // countdown = setTimeout(() => {
     //   this.towers[index].active = false;
@@ -283,34 +320,34 @@ export default class MapManager{
     //   this.towers[index].linkedtower.activecountdown = -1;
     // }
     // , this.towers[index].activecountdown * 1000);
-    counter = setInterval(() => {
-      if (this.towers[index].activecountdown == 0){
-        clearInterval(counter);
-        // clearTimeout(countdown);
-        this.towers[index].active = false;
-        this.towers[index].linkedtower.active = false;
-        this.towers[index].activecountdown = -1;
-        this.towers[index].linkedtower.activecountdown = -1;
-      } else {
-        this.towers[index].activecountdown -= 1;
-        this.towers[index].linkedtower.activecountdown -= 1;
-      }
-      // this.towers[index].activecountdown -= 1;
-      // this.towers[index].linkedtower.activecountdown -= 1;
-    }
-    , 1000);
+    
 
   }
 
-  deactivateTower(index, team){
+  deactivateTower(index, team, clients){
+    console.log(this.towers[index], index, 'deactivated')
     this.towers[index].active = false;
     this.towers[index].team = null;
     this.towers[index].activecountdown = -1;
-    this.towers[index].linkedtower.active = false;
-    this.towers[index].linkedtower.activecountdown = -1;
-    this.towers[index].linkedtower.team = null;
-    this.towers[index].linkedtower.linkedtower = null;
-    this.towers[index].linkedtower = null;
+    if (this.towers[index].linkedtowerindex != null){
+      this.towers[this.towers[index].linkedtowerindex].active = false;
+      this.towers[this.towers[index].linkedtowerindex].team = null;
+      this.towers[this.towers[index].linkedtowerindex].activecountdown = -1;
+      this.towers[this.towers[index].linkedtowerindex].linkedtowerindex = null;
+    }
+    this.towers[index].linkedtowerindex = null;
+    for (let c of clients){
+      c.socket.emit('updateTower', index, this.towers[index], team);
+      if (this.towers[index].linkedtowerindex != null){
+        c.socket.emit('updateTower', this.towers[index].linkedtowerindex, this.towers[this.towers[index].linkedtowerindex], team);
+      }
+    }
+    
+    // this.towers[index].linkedtower.active = false;
+    // this.towers[index].linkedtower.activecountdown = -1;
+    // this.towers[index].linkedtower.team = null;
+    // this.towers[index].linkedtower.linkedtowerindex = null;
+    // this.towers[index].linkedtowerindex = null;
   }
 
   
@@ -318,19 +355,27 @@ export default class MapManager{
   removeTower(index){
     this.towers.splice(index, 1);
   }
+  checkIfAnyTowerIsActivated(){
+    for (let i = 0; i < this.towers.length; i++){
+      if (this.towers[i].active){
+        return true;
+      }
+    }
+    return false;
+  }
 
   updateTowers(clients){ // handling tower duration and spawning of new towers
     for (let i = 0; i < this.towers.length; i++){
-      if (this.towers[i].active){
-        this.towers[i].duration += 1;
-        if (this.towers[i].duration > 100 && this.towers[i].linkedtower != null && this.towers[i].linkedtower.active){ 
+       this.towers[i].duration += 1;
+      //  console.log(this.towers[i].duration)
+        if (this.towers[i].duration > 20 && this.towers[i].active == false && this.towers[i].linkedtowerindex == null && !this.checkIfAnyTowerIsActivated()){ 
           this.removeTower(i);
-
+          console.log("tower removed", i);
           for (let c of clients){
             c.socket.emit('removeTower', i);
           }
         }
-      }
+      
     }
     //handle spawning of new towers
     //random chance of spawning a new tower
@@ -347,7 +392,7 @@ export default class MapManager{
         console.log('preGenerateTower', randx, randy, z);
         setTimeout(() => {
           let tower = this.generateTower(randx, randy, randtype);
-          console.log(tower)
+          // console.log(tower)
           for (let c of clients){
             // c.socket.emit('preGenerateTower', tower);
             c.socket.emit('generateTower', tower);           
@@ -355,11 +400,12 @@ export default class MapManager{
             //   c.socket.emit('generateTower', tower);
             // }, 5000);
           }
-          console.log("new tower spawned", randx, randy, randtype);
+          // console.log("new tower spawned", randx, randy, this.towers);
         }
         , 5000);
       }
     }
+    console.log(this.towers.length)
   }
   //   if (this.towers.length < 5){
   //     let randx = Math.floor(Math.random() * this.GRID_SIZE);
@@ -371,6 +417,29 @@ export default class MapManager{
   //     }
     
   // }
+  random(min, max) {
+        let rand;
+
+        rand = Math.random();
+
+        if (typeof min === 'undefined') {
+            return rand;
+        } else if (typeof max === 'undefined') {
+            if (Array.isArray(min)) {
+                return min[Math.floor(rand * min.length)];
+            } else {
+                return rand * min;
+            }
+        } else {
+            if (min > max) {
+                const tmp = min;
+                min = max;
+                max = tmp;
+            }
+
+            return rand * (max - min) + min;
+        }
+    };
 
 
 
@@ -393,10 +462,14 @@ class Tower{
     this.z = z;
     this.type = type;
     this.id = id
+
     this.active = false;
     this.activecountdown = -1;
-    this.linkedtower = null;
+    this.linkedtowerindex = null;
     this.duration = 0;
     this.team = null;
+
+    this.w = 32
+    this.h = 32
   }
 }

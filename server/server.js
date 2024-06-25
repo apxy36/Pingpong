@@ -93,18 +93,25 @@ io.on("connection", (socket) => {
     })
 
     socket.on("activateTower", (index) => {
-        client.room.mapManager.activateTower(index, client.team);
+        client.room.mapManager.activateTower(index, client.team, client.room.clients);
+        console.log('activating tower', index, client.team)
         for (let c of client.room.clients) {
+            console.log('sending update tower', index, client.room.mapManager.towers[index], client.team)
             c.socket.emit("updateTower", index, client.room.mapManager.towers[index], client.team);
+            c.socket.emit("updateTower", client.room.mapManager.towers[index].linkedtowerindex, client.room.mapManager.towers[client.room.mapManager.towers[index].linkedtowerindex], client.team);
         }
     }
     );
 
     socket.on("deactivateTower", (index) => {
-        client.room.mapManager.deactivateTower(index, client.team);
-        for (let c of client.room.clients) {
-            c.socket.emit("updateTower", index, client.room.mapManager.towers[index], client.team);
+        // updatetransmission handled here in the deactivateTower function
+        client.room.mapManager.deactivateTower(index, client.team, client.room.clients);
+        if (client.room.mapManager.towers[index].linkedtowerindex != null) {
+            client.room.mapManager.deactivateTower(client.room.mapManager.towers[index].linkedtowerindex, client.team, client.room.clients); 
         }
+        // for (let c of client.room.clients) { // the update transmission handled here
+        //     c.socket.emit("updateTower", index, client.room.mapManager.towers[index], client.team);
+        // }
     }
     );
 

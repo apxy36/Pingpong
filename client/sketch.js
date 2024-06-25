@@ -23,6 +23,8 @@ let localIGN = '';
 let setupComplete = false;
 let team = 0;
 let statusconditions = [];
+let interactionBtn;
+let startGame = false;
 
 const socket = io.connect("ws://localhost:8001");
 
@@ -70,6 +72,7 @@ socket.on("buildMap", (mapManager) => {
     cam.setTarget(displayPlayer);
     map.initializeCollisions(playerZ, mechplayer);
     setupComplete = true;
+    mapBuilt = true;
     
 });
 
@@ -116,7 +119,7 @@ socket.on("updateTower", (index, tower, team) => {
 
 socket.on("preGenerateTower", (randx, randy, randtype) => {
     map.preGenerateTower(randx, randy, randtype);
-    console.log(tower, 'pre-generated')
+    console.log(randx, randy, 'pre-generated')
 }
 );
 
@@ -170,7 +173,7 @@ function setup() {
     // console.log(localIGN, room_code_input);
     socket.emit("registerClient", localIGN, team, room_code_input);
 
-    map =  new mapBuilder(60, 60, 32);
+    map =  new mapBuilder(52, 52, 32);
     em = new EntityManager();
     cam = new CameraManager(windowWidth / 2, windowHeight / 2, camera);
     // mechplayer = createPlayerSprite('test') // creates mechanics for player
@@ -193,6 +196,7 @@ function setup() {
         textSize(32);
         text(`Room Code: ${currentRoomCode}`, 0, 50, width, 50);
     };
+    startGame = true;
 }
 
 function draw() {
@@ -208,6 +212,19 @@ function draw() {
         if (playerZ != prevPlayerZ){
             map.updateCollisionLayers(playerZ, mechplayer);
             prevPlayerZ = playerZ;
+        }
+        // mapBuilder.checkIfPlayerIsNearTower
+        // checkIfPlayerIsNearTower(player);
+        if (map.checkIfPlayerIsNearTower(mechplayer) != false && interactionBtn == undefined && startGame == true) {
+            console.log(map.checkIfPlayerIsNearTower(mechplayer))
+            interactionBtn = createButton('Examine');
+            interactionBtn.addClass('flex m-0 my-2 p-4 scale-90 btn btn-primary hover:scale-100 text-center justify-self-center hover:border-2 hover:border-secondary hover:border-offset-2 overflow-visible w-32');
+            interactionBtn.position(width / 2 - 64, height - 100);
+            interactionBtn.mouseClicked(towerToggled);
+        }
+        else if (map.checkIfPlayerIsNearTower(mechplayer) == false && interactionBtn != undefined && startGame == true) {
+            interactionBtn.remove();
+            interactionBtn = undefined;
         }
         // console.log(map.towerarr)
 
@@ -225,6 +242,24 @@ function draw() {
     // }
     
 }
+
+function towerToggled() {
+    let index = map.checkIfPlayerIsNearTower(mechplayer);
+    let tower = map.towerobjarr[index];
+    if (tower.active && tower.team != team) {
+        socket.emit("deactivateTower", index);
+    } else if (tower.active == false){
+        socket.emit("activateTower", index);
+
+        console.log("activated")
+    } else if (tower.active && tower.team == team) {
+        socket.emit("comboTower", index);
+    }
+    if (map.checkIfPlayerIsNearTower(mechplayer) != false) {
+        
+    }
+}
+
 
 function interpolateOtherPlayers() {
     const now = +new Date();

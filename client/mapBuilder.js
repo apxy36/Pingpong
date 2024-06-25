@@ -39,7 +39,7 @@ class mapBuilder{
     // this.graphics = this.draw_grid(windowWidth/2, windowHeight/2, this.graphics);
     this.xstart = this.truewidth / 2 - this.TILE_WIDTH / 2;
     this.ystart = this.trueheight / 2 - this.GRID_SIZE * this.TILE_HEIGHT / 2;
-
+    this.mapBuilt = false;
 
     // this.grid = this.generateRandomMap();
     // // this.tile_images = tile_images;
@@ -62,7 +62,7 @@ class mapBuilder{
 
 
     this.mapDiagram = null;
-    this.mapBuilt = false;
+    // this.mapBuilt = false;
     this.mapX = 0;
     this.mapY = 0;
 
@@ -130,14 +130,18 @@ class mapBuilder{
     this.towers.h = this.TILE_SIDE_LENGTH * 2;
     this.towerarr = [];
     this.towerobjarr = [];
+    this.towerprevcountdowns = [];
 
     this.pretowers = new Group();
     this.pretowers.overlaps(allSprites);
     this.pretowers.collider = 'static';
-    this.pretowers.layer = 9999;
+    this.pretowers.layer = 99999;
     this.pretowers.w = this.TILE_SIDE_LENGTH;
-    this.pretowers.h = this.TILE_SIDE_HEIGHT;
+    this.pretowers.h = this.TILE_HEIGHT;
     this.pretowerarr = [];
+    this.pretowers.image = loadImage('./textures/Towers/prespawnedtower.png');
+    this.pretowers.image.scale = 0.25;
+    // client\textures\Towers\prespawnedtower.png
     // this.acti
 
   }
@@ -948,6 +952,7 @@ class mapBuilder{
 
     // }
     // console.log(" displayer",this.displayMapTiles)
+    this.mapBuilt = true;
   }
 
   updateCollisionLayers(playerZ, playerSprite){ // reconfig to make it player based? ie playersprite.overlaps(displayLayer0)
@@ -1057,8 +1062,8 @@ class mapBuilder{
     let towersprite = new this.towers.Sprite();
     // this.towers.push(tower);
     // translate into isometric
-    let towerx = (tower.x - tower.y) * this.TILE_WIDTH / 2;
-    let towery = (tower.x + tower.y) * this.TILE_HEIGHT / 2 - tower.z * this.TILE_HEIGHT / 2;
+    let towerx = (tower.x - tower.y) * this.TILE_WIDTH / 2 + this.xstart;
+    let towery = (tower.x + tower.y) * this.TILE_HEIGHT / 2 - tower.z * this.TILE_HEIGHT / 2 + this.ystart;
     towersprite.pos = createVector(towerx, towery);
     towersprite.rotation = 0;
     towersprite.width = this.TILE_WIDTH;
@@ -1072,15 +1077,60 @@ class mapBuilder{
     console.log(towersprite.pos.x, towersprite.pos.y)
     this.towerarr.push(towersprite);
     this.towerobjarr.push(tower);
+    this.towerprevcountdowns.push(tower.activecountdown);
   }
 
   toggleTower(index, team){
     let tower = this.towerobjarr[index];
     if (tower.active == false){
       socket.emit('activateTower', index);
-    } else if (tower.linkedtower != null && tower.team == team){
+    } else if (tower.linkedtowerindex != null && tower.team != team){
       socket.emit('deactivateTower', index);
+    } // need to add else if for shooting tower
+  }
+
+  checkIfPlayerIsNearTower(player){ //iterates through all towers
+    if (mapBuilt == true){
+      for (let i = 0; i < this.towerobjarr.length; i++){
+        let tower = this.towerobjarr[i];
+        let playerx = player.pos.x;
+        let playery = player.pos.y;
+
+        let padding = 3;
+        // let startx = ();
+        let x = (tower.x - tower.y) * this.TILE_WIDTH / 2 + this.xstart - padding * this.TILE_WIDTH;
+        let y = (tower.x + tower.y) * this.TILE_HEIGHT / 2  + this.ystart - padding * this.TILE_HEIGHT;
+        let w = this.TILE_WIDTH + padding * this.TILE_WIDTH; //tile width is tower width
+        let h = this.TILE_HEIGHT * 2 + padding * this.TILE_HEIGHT; //tile height is tower height
+        // let x = (mapOverlayArea.x - areaPadding) * this.mapCellSize + this.mapX;- tower.z * this.TILE_HEIGHT / 2
+        // let y = (mapOverlayArea.y - areaPadding) * this.mapCellSize + this.mapY;
+        // let w = (mapOverlayArea.w + areaPadding * 2) * this.mapCellSize;
+        // let h = (mapOverlayArea.h + areaPadding * 2) * this.mapCellSize;
+        // console.log(tower, i)
+        if (playerx > x && playerx < x + w && playery > y && playery < y + h) {
+          // console.log('player near tower', i)
+            return i;
+        }
+        
+
+      }
+      return false;
+
+
+          // let tower = this.towerobjarr[index];
+          // let playerx = player.pos.x;
+          // let playery = player.pos.y;
+          // let towerx = this.towerarr[index].pos.x;
+          // let towery = this.towerarr[index].pos.y;
+          // let distance = dist(playerx, playery, towerx, towery);
+          // if (distance < 50){
+          //   return true;
+          // } else {
+          //   return false;
+          // }
     }
+
+    
   }
 
   updateTowers(mapManager){ //use?
@@ -1091,6 +1141,7 @@ class mapBuilder{
   }
     this.towerarr = [];
     this.towerobjarr = [];
+    this.towerprevcountdowns = [];
 
     // Spawn coins on the map
     for (let i = 0; i < mapManager.towers.length; i++) {
@@ -1101,24 +1152,53 @@ class mapBuilder{
   }
 
   removeTower(index){
-    if (this.towerobjarr[index].linkedtower != null){
-      this.towerobjarr[index].linkedtower.linkedtower = null;
+    if (this.towerobjarr[index].linkedtowerindex != null){
+      this.updateTower(this.towerobjarr[index].linkedtowerindex, this.towerobjarr[this.towerobjarr[index].linkedtowerindex]);
+      this.towerobjarr[this.towerobjarr.linkedtowerindex].linkedtowerindex = null;
     }
     this.towerarr[index].remove();
     this.towerarr.splice(index, 1);
     this.towerobjarr.splice(index, 1);
+    this.towerprevcountdowns.splice(index, 1);
+    console.log('removed tower', index)
+  }
+  scanForUpdatedCountdowns(){
+    for (let i = 0; i < this.towerobjarr.length; i++){
+        console.log(this.towerobjarr[i].activecountdown, this.towerprevcountdowns[i], 'countdowns')
+        //what if the obj is immediately deleted after active is false?
+        if (this.towerprevcountdowns[i] == -1){
+          if (this.towerobjarr[i].activecountdown > 0){
+            setInterval(() => {
+              if (this.towerobjarr[i].activecountdown > 0){
+                this.towerobjarr[i].activecountdown -= 1;
+                console.log(this.towerobjarr[i].activecountdown, 'countdown')
+              } else {
+                this.towerobjarr[i].activecountdown = -1;
+                clearInterval();
+
+              }
+              // this.towerobjarr[i].activecountdown -= 1;
+            }, 1000);
+          }
+        }
+        this.towerprevcountdowns[i] = this.towerobjarr[i].activecountdown;
+      
+    }
   }
 
   updateTower(index, tower){
     // let tower = this.towers[index];
     let towersprite = this.towerarr[index];
     this.towerobjarr[index] = tower;
+    console.log(tower.activecountdown, 'countdown')
+    this.scanForUpdatedCountdowns();
+    // this.towerprevcountdowns[index] = tower.activecountdown;
     //change draw function and add teams
     if (tower.active){
         towersprite.draw = () => {
         fill(255, 0, 0);
         rect(0, 0, this.TILE_WIDTH, this.TILE_HEIGHT * 3);
-        text("new", 0, 0);
+        text("new" + this.towerobjarr[index].activecountdown, 0, 0);
       }
     } else {
       towersprite.draw = () => {
@@ -1132,8 +1212,8 @@ class mapBuilder{
   }
   preGenerateTower(x, y, z){
     let towersprite = new this.pretowers.Sprite();
-    let towerx = (x - y) * this.TILE_WIDTH / 2;
-    let towery = (x + y) * this.TILE_HEIGHT / 2 - z * this.TILE_HEIGHT / 2;
+    let towerx = (x - y) * this.TILE_WIDTH / 2 + this.xstart;
+    let towery = (x + y) * this.TILE_HEIGHT / 2 - z * this.TILE_HEIGHT / 2 + this.ystart;
     towersprite.pos = createVector(towerx, towery);
     towersprite.rotation = 0;
     towersprite.width = this.TILE_WIDTH;
@@ -1142,7 +1222,7 @@ class mapBuilder{
     setTimeout(() => {
       towersprite.remove();
       this.pretowerarr.splice(this.pretowerarr.indexOf(towersprite), 1);
-    }, 1000);
+    }, 5000);
   }
     //scale?
 
