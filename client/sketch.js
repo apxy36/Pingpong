@@ -123,6 +123,12 @@ socket.on("preGenerateTower", (randx, randy, randtype) => {
 }
 );
 
+socket.on("updateHealth", (health) => {
+    map.updateHealth(health);
+    console.log('updated health', health)
+}
+);
+
 function manageVisiblePlayer(mechanicSprite, playerSprite, map){
     // console.log(mechanicSprite.pos.x, mechanicSprite.pos.y, playerSprite.pos.x, playerSprite.pos.y, map)
     // project the sprite onto isometric grid from x and y
@@ -261,6 +267,45 @@ function towerToggled() {
     }
 }
 
+let SPEED = 5;
+let adjacentSPEED = 2 * 5**0.5;
+let oppSPEED = 5**0.5;
+function updateStatusConditions() {
+    // console.log(statusconditions);
+    // console.log(muted)
+    // Update statusconditions (from playerStats.js)
+    SPEED = 5;
+    adjacentSPEED = 2 * 5**0.5;
+    oppSPEED = 5**0.5;
+
+    for (let status of statusconditions) {
+        if (status == "speedBoost") {
+            SPEED = 7;
+            adjacentSPEED = 2 * 7**0.5;
+            oppSPEED = 7**0.5;
+        } else if (status == "slow") {
+            SPEED = 3;
+            adjacentSPEED = 2 * 3**0.5;
+            oppSPEED = 3**0.5;
+        }
+        else if (status == "mute") {
+            if (prevmute == 0) {
+                setInterval(function () {
+                    if (muted > 0) {
+                        muted -= 1;
+                    }
+                    else {
+                        muted = 0;
+                    }
+                }, 1000);
+                //prevmute = 1;
+            }
+            prevmute = muted;
+            allowMapModification = false;
+
+        }
+    }
+}
 
 function interpolateOtherPlayers() {
     const now = +new Date();
@@ -322,9 +367,7 @@ function interpolateOtherPlayers() {
 // }
 
 function move() {
-    const SPEED = 5;
-    const adjacentSPEED = 2 * 5**0.5;
-    const oppSPEED = 5**0.5;
+    
 
     // Play running animation when moving
     // Invert animation where necessary

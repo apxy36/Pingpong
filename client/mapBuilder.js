@@ -143,6 +143,16 @@ class mapBuilder{
     this.pretowers.image.scale = 0.25;
     // client\textures\Towers\prespawnedtower.png
     // this.acti
+    this.basehealths = [100, 100];
+    this.basetowers = new Group();
+    this.basetowers.overlaps(allSprites);
+    this.basetowers.collider = 'static';
+    this.basetowers.layer = 99999;
+    this.basetowers.w = this.TILE_SIDE_LENGTH;
+    this.basetowers.h = this.TILE_HEIGHT;
+    this.basetowerarr = [];
+
+    // this.basetowers.image = loadImage('./textures/Towers/basetower.png');
 
   }
 
@@ -952,6 +962,28 @@ class mapBuilder{
 
     // }
     // console.log(" displayer",this.displayMapTiles)
+    for (let i = 0; i < 2; i++){
+      let base = new this.basetowers.Sprite();
+      if (i == 0){
+        // let xpos = this.xstart + (this.numCols - this.numRows) * this.TILE_WIDTH / 2;
+        base.pos = createVector(this.xstart, this.ystart + (2) * this.TILE_HEIGHT / 2);
+        // find z pos
+        let z = this.getTile(1, 1).z;
+        base.pos.y -= z * this.TILE_HEIGHT / 2;
+        base.img = "./textures/Towers/Green towers/tower_green(1).png"
+      } else {
+        let xpos = this.xstart + (this.numCols - this.numRows) * this.TILE_WIDTH / 2;
+        let ypos = this.ystart + (this.numCols + this.numRows - 2) * this.TILE_HEIGHT / 2;
+        base.pos = createVector(xpos, ypos);
+        base.img = "./textures/Towers/Orange towers/tower_orange(1).png"
+        let z = this.getTile(this.numCols - 3, this.numRows - 3).z;
+        base.pos.y -= z * this.TILE_HEIGHT / 2;
+      }
+      base.img.scale = 0.18;
+      base.img.offset.x = 105;
+      base.img.offset.y = -90;
+      this.basetowerarr.push(base);
+    }
     this.mapBuilt = true;
   }
 
@@ -1086,6 +1118,9 @@ class mapBuilder{
       socket.emit('activateTower', index);
     } else if (tower.linkedtowerid != null && tower.team != team){
       socket.emit('deactivateTower', index);
+    } else if (tower.linkedtowerid != null && tower.team == team){
+      socket.emit('deactivateTower', index);
+    
     } // need to add else if for shooting tower
   }
 
@@ -1214,6 +1249,14 @@ class mapBuilder{
     
 
   }
+  updateHealth(health){
+    // takes in arr of healths
+    for (let i = 0; i < this.towerobjarr.length; i++){
+      this.basehealths[i] = health[i];
+    }
+    // add UI for health
+  }
+
   preGenerateTower(x, y, z){
     let towersprite = new this.pretowers.Sprite();
     let towerx = (x - y) * this.TILE_WIDTH / 2 + this.xstart;

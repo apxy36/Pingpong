@@ -106,6 +106,20 @@ io.on("connection", (socket) => {
     }
     );
 
+    socket.on("comboTower", (id) => {
+        console.log('combining tower', id, client.team)
+        client.room.mapManager.comboTower(id, client.team, client.room.clients);
+        // console.log('activating tower', index, client.team)
+        for (let c of client.room.clients) {
+            let index = client.room.mapManager.towers.findIndex(tower => tower.id == id);
+            let linkedtower = client.room.mapManager.towers.find(tower => tower.id == client.room.mapManager.towers[index].linkedtowerid);
+            console.log('sending update tower', id, client.room.mapManager.towers[index], client.team)
+            c.socket.emit("updateTower", id, client.room.mapManager.towers[index], client.team);
+            c.socket.emit("updateTower", client.room.mapManager.towers[index].linkedtowerid, linkedtower, client.team);
+        }
+    }
+    );
+
     socket.on("deactivateTower", (id) => {
         // updatetransmission handled here in the deactivateTower function
         client.room.mapManager.deactivateTower(id, client.team, client.room.clients);
