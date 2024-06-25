@@ -1084,7 +1084,7 @@ class mapBuilder{
     let tower = this.towerobjarr[index];
     if (tower.active == false){
       socket.emit('activateTower', index);
-    } else if (tower.linkedtowerindex != null && tower.team != team){
+    } else if (tower.linkedtowerid != null && tower.team != team){
       socket.emit('deactivateTower', index);
     } // need to add else if for shooting tower
   }
@@ -1151,10 +1151,13 @@ class mapBuilder{
     }
   }
 
-  removeTower(index){
-    if (this.towerobjarr[index].linkedtowerindex != null){
-      this.updateTower(this.towerobjarr[index].linkedtowerindex, this.towerobjarr[this.towerobjarr[index].linkedtowerindex]);
-      this.towerobjarr[this.towerobjarr.linkedtowerindex].linkedtowerindex = null;
+  removeTower(id){
+    let index = this.towerobjarr.findIndex(tower => tower.id == id);
+    console.log(index, 'removing index', id, 'id')
+    if (this.towerobjarr[index].linkedtowerid != null){
+      let linkedtower = this.towerobjarr.find(tower => tower.id == this.towerobjarr[index].linkedtowerid);
+      this.updateTower(this.towerobjarr[index].linkedtowerid, linkedtower);
+      linkedtower.linkedtowerid = null;
     }
     this.towerarr[index].remove();
     this.towerarr.splice(index, 1);
@@ -1186,8 +1189,9 @@ class mapBuilder{
     }
   }
 
-  updateTower(index, tower){
-    // let tower = this.towers[index];
+  updateTower(id, tower){
+    // let tower = tower;
+    let index = this.towerobjarr.findIndex(tower => tower.id == id);
     let towersprite = this.towerarr[index];
     this.towerobjarr[index] = tower;
     console.log(tower.activecountdown, 'countdown')

@@ -92,22 +92,26 @@ io.on("connection", (socket) => {
         socket.emit("setRoomCode", roomCode);
     })
 
-    socket.on("activateTower", (index) => {
-        client.room.mapManager.activateTower(index, client.team, client.room.clients);
-        console.log('activating tower', index, client.team)
+    socket.on("activateTower", (id) => {
+        console.log('activating tower', id, client.team)
+        client.room.mapManager.activateTower(id, client.team, client.room.clients);
+        // console.log('activating tower', index, client.team)
         for (let c of client.room.clients) {
-            console.log('sending update tower', index, client.room.mapManager.towers[index], client.team)
-            c.socket.emit("updateTower", index, client.room.mapManager.towers[index], client.team);
-            c.socket.emit("updateTower", client.room.mapManager.towers[index].linkedtowerindex, client.room.mapManager.towers[client.room.mapManager.towers[index].linkedtowerindex], client.team);
+            let index = client.room.mapManager.towers.findIndex(tower => tower.id == id);
+            let linkedtower = client.room.mapManager.towers.find(tower => tower.id == client.room.mapManager.towers[index].linkedtowerid);
+            console.log('sending update tower', id, client.room.mapManager.towers[index], client.team)
+            c.socket.emit("updateTower", id, client.room.mapManager.towers[index], client.team);
+            c.socket.emit("updateTower", client.room.mapManager.towers[index].linkedtowerid, linkedtower, client.team);
         }
     }
     );
 
-    socket.on("deactivateTower", (index) => {
+    socket.on("deactivateTower", (id) => {
         // updatetransmission handled here in the deactivateTower function
-        client.room.mapManager.deactivateTower(index, client.team, client.room.clients);
-        if (client.room.mapManager.towers[index].linkedtowerindex != null) {
-            client.room.mapManager.deactivateTower(client.room.mapManager.towers[index].linkedtowerindex, client.team, client.room.clients); 
+        client.room.mapManager.deactivateTower(id, client.team, client.room.clients);
+        let tower = client.room.mapManager.towers.find(towers => towers.id == id);
+        if (tower.linkedtowerid != null) {
+            client.room.mapManager.deactivateTower(tower.linkedtowerid, client.team, client.room.clients); 
         }
         // for (let c of client.room.clients) { // the update transmission handled here
         //     c.socket.emit("updateTower", index, client.room.mapManager.towers[index], client.team);

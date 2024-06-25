@@ -111,9 +111,9 @@ socket.on("removeTower", (index) => {
 }
 );
 
-socket.on("updateTower", (index, tower, team) => {
-    map.updateTower(index, tower, team);
-    console.log(index, 'updated')
+socket.on("updateTower", (id, tower, team) => {
+    map.updateTower(id, tower, team);
+    console.log(id, 'updated')
 }
 );
 
@@ -246,14 +246,15 @@ function draw() {
 function towerToggled() {
     let index = map.checkIfPlayerIsNearTower(mechplayer);
     let tower = map.towerobjarr[index];
+    let id = tower.id;
     if (tower.active && tower.team != team) {
-        socket.emit("deactivateTower", index);
+        socket.emit("deactivateTower", id);
     } else if (tower.active == false){
-        socket.emit("activateTower", index);
+        socket.emit("activateTower", id);
 
         console.log("activated")
     } else if (tower.active && tower.team == team) {
-        socket.emit("comboTower", index);
+        socket.emit("comboTower", id);
     }
     if (map.checkIfPlayerIsNearTower(mechplayer) != false) {
         
