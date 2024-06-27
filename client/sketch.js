@@ -161,6 +161,10 @@ function manageVisiblePlayer(mechanicSprite, playerSprite, map){
   
   }
 
+function preload() {
+    map = new mapBuilder(52, 52, 32);
+}
+
 function setup() {
     new Canvas("fullscreen");
     loadingBall = new LoadingBall();
@@ -179,7 +183,7 @@ function setup() {
     // console.log(localIGN, room_code_input);
     socket.emit("registerClient", localIGN, team, room_code_input);
 
-    map =  new mapBuilder(52, 52, 32);
+    // map =  new mapBuilder(52, 52, 32);
     em = new EntityManager();
     cam = new CameraManager(windowWidth / 2, windowHeight / 2, camera);
     // mechplayer = createPlayerSprite('test') // creates mechanics for player
@@ -222,7 +226,7 @@ function draw() {
         // mapBuilder.checkIfPlayerIsNearTower
         // checkIfPlayerIsNearTower(player);
         if (map.checkIfPlayerIsNearTower(mechplayer) != false && interactionBtn == undefined && startGame == true) {
-            console.log(map.checkIfPlayerIsNearTower(mechplayer))
+            console.log(map.checkIfPlayerIsNearTower(displayPlayer))
             interactionBtn = createButton('Examine');
             interactionBtn.addClass('flex m-0 my-2 p-4 scale-90 btn btn-primary hover:scale-100 text-center justify-self-center hover:border-2 hover:border-secondary hover:border-offset-2 overflow-visible w-32');
             interactionBtn.position(width / 2 - 64, height - 100);

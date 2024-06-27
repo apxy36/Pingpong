@@ -272,6 +272,7 @@ export default class MapManager{
       tower.active = true;
       tower.team = team;
       tower.activecountdown = 10;
+      tower.chargingindicator = 1;
       while (tower.linkedtowerid == null){
         let randindex = Math.round(this.random(0, this.towers.length - 1));
         if (this.towers[randindex].linkedtowerid == null && randindex != index){
@@ -284,6 +285,7 @@ export default class MapManager{
       linkedtower.team = team;
       linkedtower.activecountdown = 10;
       linkedtower.linkedtowerid = id;
+      linkedtower.chargingindicator = 1;
       // tower.linkedtower.active = true;
 
       // this.towers[tower.linkedtowerindex].active = true;
@@ -339,96 +341,7 @@ export default class MapManager{
 
   }
 
-  comboTower(id, team, clients){ // causes the towers to deactivate while decreasing team health
-    let tower = this.towers.find(tower => tower.id == id);
-    let linkedtower = this.towers.find(tower => tower.id == tower.linkedtowerid);
-    if (tower.active && linkedtower.active){
-      this.deactivateTower(id, team, clients);
-      this.deactivateTower(tower.linkedtowerid, team, clients);
-      if (team == 0){
-        this.teamhealth[1] -= this.teamdamage[0];
-      } else {
-        this.teamhealth[0] -= this.teamdamage[1];
-      }
-      if (this.teamhealth[0] <= 0 || this.teamhealth[1] <= 0){
-        for (let c of clients){
-          c.socket.emit('gameOver', team);
-        }
-      }
-      if (tower.type == 1){
-        for (let c of clients){
-          if (team == 0){
-            if (c.team == 0){
-              c.statusconditions.push('speedBoost');
-              setTimeout(() => {
-                c.statusconditions.splice(c.statusconditions.indexOf('speedBoost'), 1);
-              }, 20000); // 20 seconds
-            }
-          } else {
-            if (c.team == 1){
-              c.statusconditions.push('speedBoost');
-              setTimeout(() => {
-                c.statusconditions.splice(c.statusconditions.indexOf('speedBoost'), 1);
-              }, 20000); // 20 seconds
-            }
-          }
-        }
-      } else if (tower.type == 2){
-        if (team == 0){
-          this.teamdamage[0] += 5;
-          setTimeout(() => {
-            this.teamdamage[0] -= 5;
-          }, 20000); // 20 seconds
-        } else {
-          this.teamdamage[1] += 5;
-          setTimeout(() => {
-            this.teamdamage[1] -= 5;
-          }, 20000); // 20 seconds
-        }
-      } else if (tower.type == 3){ // heal towers
-        if (team == 0){
-          this.teamhealth[0] += 9;
-        } else {
-          this.teamhealth[1] += 9;
-        }
-      } else if (tower.type == 4){ // slow towers
-        for (let c of clients){
-          if (team == 0){
-            if (c.team == 1){
-              c.statusconditions.push('slow');
-              setTimeout(() => {
-                c.statusconditions.splice(c.statusconditions.indexOf('slow'), 1);
-              }, 20000); // 20 seconds
-            }
-          } else {
-            if (c.team == 0){
-              c.statusconditions.push('slow');
-              setTimeout(() => {
-                c.statusconditions.splice(c.statusconditions.indexOf('slow'), 1);
-              }, 20000); // 20 seconds
-            }
-          }
-        }
-      } else if (tower.type == 5){ // debuff towers
-        if (team == 0){
-          this.teamdamage[1] -= 5;
-          setTimeout(() => {
-            this.teamdamage[1] += 5;
-          }, 20000); // 20 seconds
-        } else {
-          this.teamdamage[0] -= 5;
-          setTimeout(() => {
-            this.teamdamage[0] += 5;
-          }, 20000); // 20 seconds
-        }
-      }
-
-      
-    }
-    for (let c of clients){
-      c.socket.emit('updateHealth', this.teamhealth);
-    }
-  }
+  
 
   deactivateTower(id, team, clients){
     if (id == null){
@@ -439,12 +352,14 @@ export default class MapManager{
     tower.active = false;
     tower.team = null;
     tower.activecountdown = -1;
+    tower.chargingindicator = 0;
     if (tower.linkedtowerid != null){
       let linkedtower = this.towers.find(towers => towers.id == tower.linkedtowerid);
       linkedtower.active = false;
       linkedtower.team = null;
       linkedtower.activecountdown = -1;
       linkedtower.linkedtowerid = null;
+      linkedtower.chargingindicator = 0;
     }
     tower.linkedtowerid = null;
     for (let c of clients){
@@ -557,7 +472,96 @@ export default class MapManager{
             return rand * (max - min) + min;
         }
     };
+  comboTower(id, team, clients){ // causes the towers to deactivate while decreasing team health
+    let tower = this.towers.find(tower => tower.id == id);
+    let linkedtower = this.towers.find(tower => tower.id == tower.linkedtowerid);
+    if (tower.active && linkedtower.active){
+      this.deactivateTower(id, team, clients);
+      this.deactivateTower(tower.linkedtowerid, team, clients);
+      if (team == 0){
+        this.teamhealth[1] -= this.teamdamage[0];
+      } else {
+        this.teamhealth[0] -= this.teamdamage[1];
+      }
+      if (this.teamhealth[0] <= 0 || this.teamhealth[1] <= 0){
+        for (let c of clients){
+          c.socket.emit('gameOver', team);
+        }
+      }
+      if (tower.type == 1){
+        for (let c of clients){
+          if (team == 0){
+            if (c.team == 0){
+              c.statusconditions.push('speedBoost');
+              setTimeout(() => {
+                c.statusconditions.splice(c.statusconditions.indexOf('speedBoost'), 1);
+              }, 20000); // 20 seconds
+            }
+          } else {
+            if (c.team == 1){
+              c.statusconditions.push('speedBoost');
+              setTimeout(() => {
+                c.statusconditions.splice(c.statusconditions.indexOf('speedBoost'), 1);
+              }, 20000); // 20 seconds
+            }
+          }
+        }
+      } else if (tower.type == 2){
+        if (team == 0){
+          this.teamdamage[0] += 5;
+          setTimeout(() => {
+            this.teamdamage[0] -= 5;
+          }, 20000); // 20 seconds
+        } else {
+          this.teamdamage[1] += 5;
+          setTimeout(() => {
+            this.teamdamage[1] -= 5;
+          }, 20000); // 20 seconds
+        }
+      } else if (tower.type == 3){ // heal towers
+        if (team == 0){
+          this.teamhealth[0] += 9;
+        } else {
+          this.teamhealth[1] += 9;
+        }
+      } else if (tower.type == 4){ // slow towers
+        for (let c of clients){
+          if (team == 0){
+            if (c.team == 1){
+              c.statusconditions.push('slow');
+              setTimeout(() => {
+                c.statusconditions.splice(c.statusconditions.indexOf('slow'), 1);
+              }, 20000); // 20 seconds
+            }
+          } else {
+            if (c.team == 0){
+              c.statusconditions.push('slow');
+              setTimeout(() => {
+                c.statusconditions.splice(c.statusconditions.indexOf('slow'), 1);
+              }, 20000); // 20 seconds
+            }
+          }
+        }
+      } else if (tower.type == 5){ // debuff towers
+        if (team == 0){
+          this.teamdamage[1] -= 5;
+          setTimeout(() => {
+            this.teamdamage[1] += 5;
+          }, 20000); // 20 seconds
+        } else {
+          this.teamdamage[0] -= 5;
+          setTimeout(() => {
+            this.teamdamage[0] += 5;
+          }, 20000); // 20 seconds
+        }
+      }
 
+      
+    }
+    for (let c of clients){
+      c.socket.emit('updateHealth', this.teamhealth);
+    }
+  }
 
 
 }
@@ -588,5 +592,7 @@ class Tower{
 
     this.w = 32
     this.h = 32
+    // this.charginganimation = null;
+    this.chargingindicator = 0;
   }
 }
