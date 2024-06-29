@@ -27,6 +27,8 @@ let interactionBtn;
 let startGame = false;
 let team0healthdisplay;
 let team1healthdisplay;
+let timeRemaining = 180;
+let fps;
 
 let healths = [100, 100];
 
@@ -87,6 +89,7 @@ socket.on("playerDataUpdate", (id, playerData) => {
         if (data.id === id) {
             // coins = data.coins;
             statusconditions = data.statusconditions;
+            timeRemaining = data.timer;
             // timeRemaining = data.timer;
             continue;
         };
@@ -232,9 +235,11 @@ function preload() {
 
 let healthBar0;
 let healthBar1;
+let timerFrame;
+let FPSFrame;
 
 function setup() {
-    new Canvas("fullscreen");
+    createCanvas(windowWidth, windowHeight, WEBGL);
     loadingBall = new LoadingBall();
     // loadingBall.setCollider("circle", 0, 0, 20);
 
@@ -290,6 +295,8 @@ function setup() {
     healthBar1.addClass('opacity-75 hover:opacity-100 transition ease-in-out rounded-md');
     healthBar1.position(windowWidth - 330,0);
     healthBar1.attribute('src', './ui/healthbar1.html');
+
+
     // healthBar0.attribute('src', './ui/healthbar.html');
     console.log(healthBar0)
     map.basehealths[0] -= 10;
@@ -298,11 +305,23 @@ function setup() {
         map.basehealths[0] += 10;
         map.basehealths[1] += 10;
     }, 50);
+
+
+    timerFrame = createElement('iframe').size(200, 60);
+    timerFrame.addClass('opacity-80 hover:opacity-100 rounded-lg border-2 transition ease-in-out border-primary bg-gray-800');
+    timerFrame.position(width / 2 - 100, -5);
+    timerFrame.attribute('src', './ui/timer.html');
+
+    FPSFrame = createElement('iframe').size(150, 60);
+    FPSFrame.addClass('opacity-80 hover:opacity-100 rounded-lg border-2 transition ease-in-out border-primary bg-gray-800');
+    FPSFrame.position(width - 140, height -47);
+    FPSFrame.attribute('src', './ui/fps.html');
 }
 
 function draw() {
-    background("grey");
     
+    background("grey");
+    fps = frameRate().toFixed(2);
     if (setupComplete){
         
         
@@ -391,11 +410,14 @@ function draw() {
 
         updateTeamHealth((healthBar0.elt.contentDocument || healthBar0.elt.contentWindow.document), map.basehealths[0], 0, healths[0]);
         updateTeamHealth((healthBar1.elt.contentDocument || healthBar1.elt.contentWindow.document), map.basehealths[1], 1, healths[1]);
-
+        updateTimer((timerFrame.elt.contentDocument || timerFrame.elt.contentWindow.document), timeRemaining);
+       
+        console.log(fps)
+        
         map.updateHealth(healths);
     }
 
-    
+     updateFPS((FPSFrame.elt.contentDocument || FPSFrame.elt.contentWindow.document), fps);
 
     // if (!currentRoomCode) {
     //     allSprites.visible = false;
@@ -441,7 +463,7 @@ function towerToggled() {
     let id = tower.id;
     if (tower.active && tower.team != team) {
         socket.emit("deactivateTower", id);
-    } else if (tower.active == false){
+    } else if (tower.active == false && map.towerobjarr.length > 1){
         socket.emit("activateTower", id);
 
         console.log("activated")

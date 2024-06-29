@@ -208,6 +208,7 @@ function tick() {
                 ign: c.ign,
                 statusconditions: c.statusconditions,
                 team: c.team,
+                timer: room.gamecountdown,
             };
         });
         for (let c of room.clients) {

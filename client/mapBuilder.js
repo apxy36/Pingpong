@@ -192,6 +192,10 @@ class mapBuilder{
     this.exchangebullets.layer = 99999;
     this.exchangebullets.w = this.TILE_SIDE_LENGTH;
     this.exchangebullets.h = this.TILE_HEIGHT;
+    this.exchangebullets.spriteSheet = loadImage('./textures/Towers/New_All_Fire_Bullet_Pixel_16x16/All_Fire_Bullet_Pixel_16x16_00.png');
+    this.exchangebullets.addAnis({
+        idle: { row: 16, frames: 5, w: 16, h: 16},
+    });
 
     this.explosions = new Group();
     this.explosions.overlaps(allSprites);
@@ -988,6 +992,8 @@ class mapBuilder{
     //   this.displayElevatedTileLayers[i].layer = i*999;
     //   this.displayElevatedTileLayers[i].img = './new_tileset/tile_027.png';
     // }
+    
+    //an idea to combine the two and tinker with the draw function
 
     this.displayElevatedTileLayer0.w = this.TILE_WIDTH;
     this.displayElevatedTileLayer0.h = this.TILE_HEIGHT;
@@ -1621,6 +1627,7 @@ class mapBuilder{
 
       // console.log('active', this.towerobjarr[index].charginganimation, 'charging animation')
       if (tower.chargingindicator == 1){
+        linkedtower = this.towerobjarr.find(tower => tower.id == tower.linkedtowerid);
         console.log('generating charging animation')
         let frogindex = this.towerfrogarr.findIndex(frog => frog.id == tower.id);
         if (this.towerfrogarr[frogindex] != null && frogindex >= 0){
@@ -1654,6 +1661,16 @@ class mapBuilder{
           this.chargingarr.push({animation: charginganimation, id : tower.id});
           // this.towerobjarr[index].charginganimation = charginganimation;
         }
+        setInterval(() => {
+          linkedtower = this.towerobjarr.find(towers => towers.id == tower.linkedtowerid);
+          if (tower.chargingindicator == 1 && linkedtower.chargingindicator == 1 && tower.active == true){
+            this.shootBullet(tower, linkedtower);
+          } else {
+            console.log('clearing interval')
+            clearInterval();
+          }
+        }
+        , 100);
       }
 
       // towersprite.draw = () => {
@@ -1950,6 +1967,62 @@ class mapBuilder{
       // this.displayLayer5.overlaps(allSprites);
     
     }
+  }
+
+  shootBullet(tower, target){
+    console.log('shooting bullet')
+    let bullet = new this.exchangebullets.Sprite();
+    bullet.collider = 'none';
+    let realx = (tower.x - tower.y) * this.TILE_WIDTH / 2 + this.xstart;
+    let realy = (tower.x + tower.y) * this.TILE_HEIGHT / 2 - tower.z * this.TILE_HEIGHT / 2 + this.ystart;
+    let frogindex = this.towerfrogarr.findIndex(frog => frog.id == tower.id);
+    let frog = this.towerfrogarr[frogindex].frog;
+    console.log(frog, 'frog')
+    bullet.pos = createVector(frog.pos.x, frog.pos.y);
+    // bullet.target = target;
+    console.log(tower, target, 'tower and target')
+    let speed = 25;
+    // bullet.damage = 5;
+    // bullet.active = true;
+    bullet.draw = () => {
+        let targetx = (target.x - target.y) * this.TILE_WIDTH / 2 + this.xstart;
+        let targety = (target.x + target.y) * this.TILE_HEIGHT / 2 - target.z * this.TILE_HEIGHT / 2 + this.ystart;
+        let bulletx = bullet.pos.x;
+        let bullety = bullet.pos.y;
+        let distance = dist(targetx, targety, bulletx, bullety);
+        let angle = atan2(targety - bullety, targetx - bulletx);
+        if (angle < 0){
+          angle = 2 * PI + angle;
+        }
+        // bullet.anis.rotation = angle * 180 / PI;
+        // if (targetx - bulletx < 0 && targety - bullety > 0){
+        //   angle = PI - angle;
+        // } else if (targetx - bulletx < 0 && targety - bullety < 0){
+        //   angle = PI + angle;
+        // } else if (targetx - bulletx > 0 && targety - bullety < 0){
+        //   angle = 2 * PI - angle;
+        // }
+        let animationangle = (angle * 180 / PI + 90) * PI / 180;
+        bullet.rotation = animationangle;
+        let x = cos(angle) * speed;
+        let y = sin(angle) * speed;
+        bullet.pos.x += x;
+        bullet.pos.y += y;
+        console.log(bullet.pos.x, bullet.pos.y, 'bullet pos')
+        // fill(255, 0, 0);
+        // ellipse(0, 0, 10, 10);
+        bullet.ani.draw(0, 0, 0, 1, 1);
+        if (distance < 25){
+          // target.health -= bullet.damage;
+          // bullet.active = false;
+          bullet.remove();
+        }
+        // console.log(bullet.pos.x, bullet.pos.y, 'bullet pos')
+        
+      }
+      
+     
+    // this.bulletsarr.push(bullet);
   }
 
 
