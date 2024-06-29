@@ -324,7 +324,7 @@ function draw() {
             interactionBtn.addClass('flex m-0 my-2 p-4 scale-90 btn btn-primary hover:scale-100 border-offset-0 text-center justify-self-center hover:border-2 border-secondary hover:border-offset-4 overflow-visible w-32');
             interactionBtn.position(width / 2 - 64, height - 100);
             interactionBtn.mouseClicked(() => {
-                if (em.entities.size < 1) {
+                if (em.entities.size < 0) {
                     Swal.fire({
                         title: "Not enough players...",
                         text: "Not enough players to start the game. A minimum of 2 players are needed for the game to start. Please wait for more players to join.",
@@ -362,7 +362,10 @@ function draw() {
             }
             })
 
-        } 
+        } else if (startGame == true && interactionBtn != undefined) {
+            interactionBtn.remove();
+            interactionBtn = undefined;
+        }
         if (startGame) {
             updateStatusConditions();
             if (map.checkIfPlayerIsNearTower(mechplayer) != false && interactionBtn == undefined && startGame == true) {

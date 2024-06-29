@@ -140,9 +140,18 @@ class mapBuilder{
     this.pretowers.layer = 99999;
     this.pretowers.w = this.TILE_SIDE_LENGTH;
     this.pretowers.h = this.TILE_HEIGHT;
+    this.pretowers.spriteSheet = loadImage('./textures/Towers/spawningcircles.png');
+    this.pretowers.addAnis({
+        idle: { row: 0, frames: 15 * 10, w: 385, h: 385},
+    });
+    this.pretowers.anis.frameDelay = 2;
+    this.pretowers.anis.scale.x = 0.5;
+    this.pretowers.anis.scale.y = 0.25;
+    this.pretowers.scale.x = 0.2;
+    this.pretowers.scale.y = 0.05;
+    this.pretowers.anis.rotation = 0;
+
     this.pretowerarr = [];
-    this.pretowers.image = loadImage('./textures/Towers/prespawnedtower.png');
-    this.pretowers.image.scale = 0.25;
     // client\textures\Towers\prespawnedtower.png
     // this.acti
     this.basehealths = [100, 100];
@@ -329,8 +338,8 @@ class mapBuilder{
       let idlefrog = new this.type0towerfrogs.Sprite();
       let isox = random(0, this.width);
       let isoy = random(0, this.height);
-      idlefrog.position.x = (isox - isoy) * this.TILE_WIDTH / 2;
-      idlefrog.position.y = (isox + isoy) * this.TILE_HEIGHT / 2;
+      idlefrog.position.x = (isox - isoy) * this.TILE_WIDTH / 2 + this.xstart;
+      idlefrog.position.y = (isox + isoy) * this.TILE_HEIGHT / 2 + this.ystart;
       this.idlefrogs.push(idlefrog);
       idlefrog.changeAni('jump');
     }
@@ -1724,6 +1733,10 @@ class mapBuilder{
     towersprite.rotation = 0;
     towersprite.width = this.TILE_WIDTH;
     towersprite.height = this.TILE_HEIGHT;
+    towersprite.changeAni('idle');
+    towersprite.draw = () => {
+      towersprite.ani.draw(0,20,0, 0.1, 0.05);
+    }
     this.pretowerarr.push(towersprite);
     setTimeout(() => {
       towersprite.remove();
