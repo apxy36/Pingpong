@@ -174,7 +174,7 @@ class mapBuilder{
     this.charginganim.anis.rotation = 0;
 
 
-    this.towerhealths = [100, 100];
+    // this.towerhealths = [100, 100];
 
     this.exchangebulletarr = [];
     this.exchangebullets = new Group();
@@ -1411,13 +1411,17 @@ class mapBuilder{
     }
     let explosion = new this.explosions.Sprite();
     explosion.pos = createVector(this.towerarr[index].pos.x, this.towerarr[index].pos.y);
-    explosion.scale = 1;
+    explosion.anis.scale = 2.5;
+    explosion.scale = {x: 2.5, y: 2.5};
     setTimeout(() => {
       let index = this.towerobjarr.findIndex(tower => tower.id == id);
       this.towerarr[index].remove();
       this.towerarr.splice(index, 1);
       this.towerobjarr.splice(index, 1);
       this.towerprevcountdowns.splice(index, 1);
+      // explosion.remove();
+    }, 300);
+    setTimeout(() => {
       explosion.remove();
     }, 1000);
     let chargingindex = this.chargingarr.findIndex(animation => animation.id == id);
@@ -1628,7 +1632,7 @@ class mapBuilder{
   }
   updateHealth(health){
     // takes in arr of healths
-    for (let i = 0; i < this.towerobjarr.length; i++){
+    for (let i = 0; i < this.basehealths.length; i++){
       this.basehealths[i] = health[i];
     }
     // add UI for health
