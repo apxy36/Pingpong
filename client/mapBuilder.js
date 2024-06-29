@@ -305,6 +305,15 @@ class mapBuilder{
     this.type5towerfrogs.anis.scale = 2/3;
     this.type5towerfrogs.anis.rotation = 0;
 
+    this.healthbars = new Group();
+    this.healthbars.overlaps(allSprites);
+    this.healthbars.collider = 'static';
+    this.healthbars.layer = 99999;
+    this.healthbars.w = 100;
+    this.healthbars.h = this.TILE_HEIGHT;
+    this.basehealthbars = [];
+
+
     // this.exchangebullets.image = loadImage('./textures/Towers/bullet.png');
     // add boid follow mechanics for bullets
 
@@ -852,29 +861,7 @@ class mapBuilder{
       this.displayMapTiles.removeAll();
     }
 
-    // for (let i = 0; i < this.numLayers ; i++){
-    //   this.displayLayers[i].w = this.TILE_WIDTH; // Width of each brick
-    //   this.displayLayers[i].h = this.TILE_HEIGHT; // Height of each brick
-    //   if (i != this.numLayers - 1){
-    //     this.displayLayers[i].tile = toString(i);
-    //   } else {
-    //     this.displayLayers[i].tile = "B";
-    //   }
-    //   this.displayLayers[i].collider = 'static';
-    //   if (i == 0 || i == 1){
-    //     this.displayLayers[i].overlaps(allSprites);
-    //   }
-    //   // this.displayLayers[i].overlaps(allSprites);
-    //   this.displayLayers[i].layer = (i - 1)*999;
-    //   if (i == 0){
-    //     this.displayLayers[i].img = './new_tileset/tile_066.png';
-    //   } else if (i == this.numLayers - 1){
-    //     this.displayLayers[i].img = './new_tileset/tile_071.png'; //boundary
-    //   } else {
-    //     this.displayLayers[i].visible = false;
-    //   // this.displayLayers[i].img = "./textures/wall.png";
-    //   }
-    // }
+
 
     this.displayLayer0.w = this.TILE_WIDTH; // Width of each brick
     this.displayLayer0.h = this.TILE_HEIGHT; // Height of each brick
@@ -1118,6 +1105,7 @@ class mapBuilder{
 
     // }
     // console.log(" displayer",this.displayMapTiles)
+    this.basehealthbars = [];
     for (let i = 0; i < 2; i++){
       let base = new this.basetowers.Sprite();
       if (i == 0){
@@ -1138,6 +1126,50 @@ class mapBuilder{
       base.img.scale = 0.18;
       base.img.offset.x = 105;
       base.img.offset.y = -90;
+
+      let healthbar = new this.healthbars.Sprite();
+      healthbar.pos = createVector(base.pos.x  - 50, base.pos.y - 100);
+      healthbar.collider = "none";
+    // making it a health bar that dynamically updates its colours and size
+      healthbar.draw = () => {
+        let team0health = this.basehealths[i];
+        // let team1health = map.team1health;
+        // let totalhealth = team0health + team1health;
+        let team0healthpercentage = team0health / 100;
+        
+        //first, an outline with rounded edges
+        // fill("black");
+        stroke("black");
+        fill("white"); //
+        strokeWeight(2);
+        // rect(0,0, windowWidth / 4, windowHeight / 10, 8);
+        //then, the actual health bar through lerpcolor
+        let green = color('#03C04A'); //green
+        let red = color('#FF7F50'); //red
+        let intermediate = lerpColor(green, red, team0healthpercentage);
+        for (let j = 0; j < team0healthpercentage * 100; j++) {
+            // fill("green");
+            // noStroke();
+            let newcolor = lerpColor(green, intermediate, j / (team0healthpercentage * 100));
+            fill(newcolor);
+            strokeWeight(0);
+            rect(j + 20, 30, 1, 10);
+        }
+
+        // let team1healthpercentage = team1health / totalhealth;
+        // let team0healthbar = new Sprite(0, 0, team0healthpercentage * 100, 10);
+        // let team1healthbar = new Sprite(0, 0, team1healthpercentage * 100, 10);
+        // team0healthbar.fill = "green";
+        // team1healthbar.fill = "red";
+        // team0healthbar.pos.x = width / 2 - 50;
+        // team0healthbar.pos.y = height - 50;
+        // team1healthbar.pos.x = width / 2 + 50;
+        // team1healthbar.pos.y = height - 50;
+        // team0healthbar.draw();
+        // team1healthbar.draw();
+      }
+      this.basehealthbars.push(healthbar);
+
       this.basetowerarr.push(base);
     }
     this.mapBuilt = true;
@@ -1432,7 +1464,7 @@ class mapBuilder{
     let frogindex = this.towerfrogarr.findIndex(frog => frog.id == id);
     if (this.towerfrogarr[frogindex] != null && frogindex >= 0){
       this.towerfrogarr[frogindex].frog.changeAni('explode');
-      console.log('frogarr', this.towerfrogarr[frogindex].frog, 'frog')
+      // console.log('frogarr', this.towerfrogarr[frogindex].frog, 'frog')
       setTimeout(() => {
         frogindex = this.towerfrogarr.findIndex(frog => frog.id == id);
         this.towerfrogarr[frogindex].frog.remove();
@@ -1916,7 +1948,16 @@ function createVisiblePlayerSprite(name, playerZ) { //scaling added after animat
     let playerSprite = new Sprite(0, 0, 32, 32);
     playerSprite.visible = true;
     playerSprite.collider = 'none';
-    playerSprite.img = "./new_tileset/tile_001.png";
+    // playerSprite.img = "./new_tileset/tile_001.png";
+    playerSprite.spriteSheet = './textures/charani.png';
+    playerSprite.anis.offset.y = -4
+    playerSprite.anis.frameDelay = 2
+    playerSprite.addAnis({
+      idle: {row:0, frames: 8, w:70, h:70}, 
+
+    });
+    
+
     // Load sprite sheet
     // playerSprite.spriteSheet = mechanicSprite;
     // playerSprite.anis.offset.y = -4;
@@ -1941,7 +1982,7 @@ function createVisiblePlayerSprite(name, playerZ) { //scaling added after animat
         rect(10, 0, 32, 50);
         // scaling = 1 + playerZ * 0.1;
         // console.log(playerZ, scaling)
-        image(playerSprite.img, 0, 0, 32, 16);
+        // image(playerSprite.img, 0, 0, 32, 16);
         // img = loadImage('./new_tileset/tile_001.png');
         // image(img, 0, 0, 32, 16);
 

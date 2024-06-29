@@ -132,6 +132,13 @@ socket.on("preGenerateTower", (randx, randy, randtype) => {
 
 socket.on("updateHealth", (health) => {
     healths = health;
+    for (let i = 0; i < health.length; i++) {
+        if (health[i] - map.basehealths[i] > 0) {
+            console.log('health increased')
+        } else if (health[i] - map.basehealths[i] < 0) {
+            console.log('health decreased')
+        }
+    }
     
     console.log('updated health', health)
 }
@@ -223,53 +230,13 @@ function setup() {
     };
     startGame = true;
     totalhealth = 100;
-    team0healthdisplay = new Sprite(0, 0, 100, 100);
-    team0healthdisplay.visible = false;
-    team0healthdisplay.collider = "none";
-    // making it a health bar that dynamically updates its colours and size
-    team0healthdisplay.update = () => {
-        let team0health = map.basehealths[0];
-        // let team1health = map.team1health;
-        // let totalhealth = team0health + team1health;
-        let team0healthpercentage = team0health / totalhealth;
-        
-        //first, an outline with rounded edges
-        // fill("black");
-        stroke("black");
-        fill("white"); //
-        strokeWeight(2);
-        rect(0,0, windowWidth / 4, windowHeight / 10, 8);
-        //then, the actual health bar through lerpcolor
-        let green = color('#03C04A'); //green
-        let red = color('#FF7F50'); //red
-        let intermediate = lerpColor(green, red, team0healthpercentage);
-        for (let i = 0; i < team0healthpercentage * 100; i++) {
-            // fill("green");
-            // noStroke();
-            let newcolor = lerpColor(green, intermediate, i / (team0healthpercentage * 100));
-            fill(newcolor);
-            strokeWeight(0);
-            rect(i + 20, 30, 1, 10);
-        }
-
-        // let team1healthpercentage = team1health / totalhealth;
-        // let team0healthbar = new Sprite(0, 0, team0healthpercentage * 100, 10);
-        // let team1healthbar = new Sprite(0, 0, team1healthpercentage * 100, 10);
-        // team0healthbar.fill = "green";
-        // team1healthbar.fill = "red";
-        // team0healthbar.pos.x = width / 2 - 50;
-        // team0healthbar.pos.y = height - 50;
-        // team1healthbar.pos.x = width / 2 + 50;
-        // team1healthbar.pos.y = height - 50;
-        // team0healthbar.draw();
-        // team1healthbar.draw();
-    }
-    healthBar0 = createElement('iframe').size(330, 130);
+    
+    healthBar0 = createElement('iframe').size(330, 70);
     healthBar0.addClass('opacity-75 hover:opacity-100 transition ease-in-out rounded-md');
     healthBar0.position(0,0);
     healthBar0.attribute('src', './ui/healthbar.html');
 
-    healthBar1 = createElement('iframe').size(330, 130);
+    healthBar1 = createElement('iframe').size(330, 70);
     healthBar1.addClass('opacity-75 hover:opacity-100 transition ease-in-out rounded-md');
     healthBar1.position(windowWidth - 330,0);
     healthBar1.attribute('src', './ui/healthbar1.html');
@@ -353,6 +320,11 @@ function keyPressed() {
         healths[0] -= 10;
         healths[1] -= 10;
         
+    } else if (keyCode == 74){
+        console.log('j')
+        healths[0] += 10;
+        healths[1] += 10;
+    
     }
 }
 

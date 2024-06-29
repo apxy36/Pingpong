@@ -12,6 +12,8 @@ const widthClasses = [
 function updateTeamHealth(frameDocument, currentHealth, team, newHealth) {
   // Get health bar element
   try{
+    newHealth = min(100, newHealth)
+    currentHealth = min(100, currentHealth)
   let healthBar = frameDocument.getElementById('healthbar');
   let tempChangeBar = frameDocument.getElementById('temp-change-bar');
   // currentHealth -= 1;
@@ -46,10 +48,23 @@ function updateTeamHealth(frameDocument, currentHealth, team, newHealth) {
     if (tempChangeBar.classList.contains('bg-lime-500')) {
       tempChangeBar.classList.remove('bg-lime-500');
     }
-    
+
     tempChangeBar.classList.add(healthDiff > 0 ? 'bg-lime-500' : 'bg-slate-400');
+    if (team == 0){
+      if (healthDiff > 0) {
+        tempChangeBar.dir = 'rtl';
+      } else {
+        tempChangeBar.dir = 'ltr';
+      }
+    } else {
+      if (healthDiff > 0) {
+        tempChangeBar.dir = 'ltr';
+      } else {
+        tempChangeBar.dir = 'rtl';
+      }
+    }
     
-    tempChangeBar.style.background = healthDiff > 0 ? 'limegreen' : 'palegray';
+    // tempChangeBar.style.background = healthDiff > 0 ? 'limegreen' : 'palegray';
     tempChangeBar.style.right = healthDiff > 0 ? '0' : 'auto';
     tempChangeBar.style.left = healthDiff > 0 ? 'auto' : '0';
     console.log('tempChangeBar', tempChangeBar.style.width)
