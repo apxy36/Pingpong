@@ -237,6 +237,15 @@ export default class MapManager{
     }
     return arr;
   }
+  checkIfTowersWithinProximityofotherTowers(x, y){
+    for (let i = 0; i < this.towers.length; i++){
+      let dist = Math.sqrt((this.towers[i].x - x)**2 + (this.towers[i].y - y)**2);
+      if (dist < 8){
+        return true;
+      }
+    }
+    return false;
+  }
 
   updateMap(tileIndex, tileChar) {
     // Find which char in this.mapTiles to update
@@ -282,6 +291,7 @@ export default class MapManager{
       }
       let linkedtower = this.towers.find(towers => towers.id == tower.linkedtowerid);
       linkedtower.active = true;
+      linkedtower.comboavailable = true;
       linkedtower.team = team;
       linkedtower.activecountdown = 10;
       linkedtower.linkedtowerid = id;
@@ -298,7 +308,7 @@ export default class MapManager{
       // tower.linkedtower.linkedtowerindex = tower;
 
       let counter = setInterval(() => {
-        if (tower.activecountdown == 0 && tower.active){
+        if (tower.activecountdown <= 0 && tower.active){
           // console.log(tower, index, 'deactivated')
           
           this.deactivateTower(tower.linkedtowerid, team, clients);
@@ -321,8 +331,10 @@ export default class MapManager{
           // tower.linkedtowerindex = null;
         } else {
           console.log(tower.activecountdown, id)
-          tower.activecountdown -= 1;
-          linkedtower.activecountdown -= 1;
+          if (tower.active == false){
+            tower.activecountdown -= 1;
+            linkedtower.activecountdown -= 1;
+          }
           // tower.linkedtower.activecountdown -= 1;
         }
         // tower.activecountdown -= 1;
@@ -353,6 +365,7 @@ export default class MapManager{
     tower.team = null;
     tower.activecountdown = -1;
     tower.chargingindicator = 0;
+    tower.comboavailable = false;
     if (tower.linkedtowerid != null){
       let linkedtower = this.towers.find(towers => towers.id == tower.linkedtowerid);
       linkedtower.active = false;
@@ -360,6 +373,7 @@ export default class MapManager{
       linkedtower.activecountdown = -1;
       linkedtower.linkedtowerid = null;
       linkedtower.chargingindicator = 0;
+      linkedtower.comboavailable = false;
     }
     tower.linkedtowerid = null;
     for (let c of clients){
@@ -384,6 +398,13 @@ export default class MapManager{
     this.towers.splice(index, 1);
   }
   removeTowerByIndex(index){
+    // let toweranim = this.towers[index].charginganimation.animation;
+    // if (toweranim != null){
+    //   toweranim.remove();
+    //   // for (let c of clients){
+    //   //   c.socket.emit('removeTower', this.towers[index].id);
+    //   // }
+    // }
     this.towers.splice(index, 1);
   }
   checkIfAnyTowerIsActivated(){
@@ -404,7 +425,7 @@ export default class MapManager{
           for (let c of clients){
             c.socket.emit('removeTower', towerid);
           }
-          this.removeTowerByIndex(i);
+          this.removeTowerByIndex(i, clients);
           console.log("tower removed", i);
         }
       
@@ -418,6 +439,7 @@ export default class MapManager{
         let randy = Math.floor(Math.random() * this.GRID_SIZE);
         let randtype = Math.round(Math.random() * 3);
         let z = this.grid.get(`${randx}_${randy}`).z;
+        if (!this.checkIfTowersWithinProximityofotherTowers(randx, randy)){
         for (let c of clients){
           c.socket.emit('preGenerateTower', randx, randy, z);
         }
@@ -437,7 +459,13 @@ export default class MapManager{
         , 5000);
       }
     }
+    }
     console.log(this.towers.length)
+    // for (let c of clients){
+    //   for (let tower of this.towers){
+    //     c.socket.emit('updateTower', tower.id, tower, tower.team);
+    //   }
+    // }
   }
   //   if (this.towers.length < 5){
   //     let randx = Math.floor(Math.random() * this.GRID_SIZE);
@@ -473,8 +501,13 @@ export default class MapManager{
         }
     };
   comboTower(id, team, clients){ // causes the towers to deactivate while decreasing team health
-    let tower = this.towers.find(tower => tower.id == id);
-    let linkedtower = this.towers.find(tower => tower.id == tower.linkedtowerid);
+    let tower = this.towers.find(towers => towers.id == id);
+    console.log(tower.linkedtowerid);
+    for (let i = 0; i < this.towers.length; i++){
+      console.log(this.towers[i].linkedtowerid);
+    }
+    let linkedtower = this.towers.find(towers => towers.id == tower.linkedtowerid);
+    console.log(tower, linkedtower);
     if (tower.active && linkedtower.active){
       this.deactivateTower(id, team, clients);
       this.deactivateTower(tower.linkedtowerid, team, clients);
@@ -594,5 +627,6 @@ class Tower{
     this.h = 32
     // this.charginganimation = null;
     this.chargingindicator = 0;
+    this.comboavailable = false;
   }
 }

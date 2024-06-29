@@ -172,6 +172,19 @@ class mapBuilder{
     this.charginganim.anis.scale = 4;
     this.charginganim.anis.rotation = 0;
 
+
+    this.towerhealths = [100, 100];
+
+    this.exchangebulletarr = [];
+    this.exchangebullets = new Group();
+    this.exchangebullets.overlaps(allSprites);
+    this.exchangebullets.collider = 'static';
+    this.exchangebullets.layer = 99999;
+    this.exchangebullets.w = this.TILE_SIDE_LENGTH;
+    this.exchangebullets.h = this.TILE_HEIGHT;
+    // this.exchangebullets.image = loadImage('./textures/Towers/bullet.png');
+    // add boid follow mechanics for bullets
+
     // this.basetowers.image = loadImage('./textures/Towers/basetower.png');
 
   }
@@ -1131,7 +1144,7 @@ class mapBuilder{
     this.towerarr.push(towersprite);
     this.towerobjarr.push(tower);
     this.towerprevcountdowns.push(tower.activecountdown);
-    this.chargingarr.push(null);
+    // this.chargingarr.push(null);
   }
 
   toggleTower(index, team){
@@ -1140,8 +1153,8 @@ class mapBuilder{
       socket.emit('activateTower', index);
     } else if (tower.linkedtowerid != null && tower.team != team){
       socket.emit('deactivateTower', index);
-    } else if (tower.linkedtowerid != null && tower.team == team){
-      socket.emit('deactivateTower', index);
+    } else if (tower.linkedtowerid != null && tower.team == team && tower.comboavailable == true){
+      // socket.emit('deactivateTower', index);
     
     } // need to add else if for shooting tower
   }
@@ -1165,7 +1178,7 @@ class mapBuilder{
         // let h = (mapOverlayArea.h + areaPadding * 2) * this.mapCellSize;
         // console.log(tower, i)
         if (playerx > x && playerx < x + w && playery > y && playery < y + h) {
-          // console.log('player near tower', i)
+          console.log('player near tower', i)
             return i;
         }
         
@@ -1190,7 +1203,7 @@ class mapBuilder{
     
   }
 
-  updateTowers(mapManager){ //use?
+  updateTowers(towers){ //use?
     for (let i = 0; i < this.towerarr.length; i++) {
       if (this.towerarr[i] != null) {
           this.towerarr[i].remove();
@@ -1201,15 +1214,19 @@ class mapBuilder{
     this.towerprevcountdowns = [];
 
     // Spawn coins on the map
-    for (let i = 0; i < mapManager.towers.length; i++) {
+    for (let i = 0; i < towers.length; i++) {
         // We know which tile the coin is on
-        let tower = mapManager.towers[i];
+        let tower = towers[i];
         this.addTower(tower)
+        this.updateTower(tower.id, tower);
     }
   }
 
   removeTower(id){
     let index = this.towerobjarr.findIndex(tower => tower.id == id);
+    if (index < 0){
+      return;
+    }
     console.log(index, 'removing index', id, 'id')
     if (this.towerobjarr[index].linkedtowerid != null){
       let linkedtower = this.towerobjarr.find(tower => tower.id == this.towerobjarr[index].linkedtowerid);
@@ -1217,14 +1234,17 @@ class mapBuilder{
       linkedtower.linkedtowerid = null;
     }
     this.towerarr[index].remove();
-
-    if (this.chargingarr[index] != null){
-      this.chargingarr[index].remove();
+    let chargingindex = this.chargingarr.findIndex(animation => animation.id == id);
+    if (this.chargingarr[chargingindex] != null && chargingindex >= 0){
+      this.chargingarr[chargingindex].animation.remove();
+      this.chargingarr.splice(chargingindex, 1);
     }
     this.towerarr.splice(index, 1);
     this.towerobjarr.splice(index, 1);
     this.towerprevcountdowns.splice(index, 1);
-    this.chargingarr.splice(index, 1);
+    // let animationindex = this.chargingarr.findIndex(animation => animation.id == id);
+    
+    
     console.log('removed tower', index)
   }
   scanForUpdatedCountdowns(){
@@ -1271,6 +1291,7 @@ class mapBuilder{
     // const chargeanimation = this.towerobjarr[index].charginganimation;
     // console.log(chargeanimation, 'chargeanimation')
     this.towerobjarr[index] = tower;
+
     // this.towerobjarr[index].chargeanimation = chargeanimation;
 
     console.log(tower.activecountdown, 'countdown')
@@ -1279,6 +1300,9 @@ class mapBuilder{
     //change draw function and add teams
     console.log('animationcharge', this.towerobjarr[index].charginganimation, 'charging animation')
     if (tower.active){
+      let linkedtower = this.towerobjarr.find(tower => tower.id == tower.linkedtowerid);
+      // shoot bullet sprites at each other
+
       // console.log('active', this.towerobjarr[index].charginganimation, 'charging animation')
       if (tower.chargingindicator == 1){
         console.log('generating charging animation')
@@ -1303,11 +1327,11 @@ class mapBuilder{
           //mimic a beam of light that grows brighter
           let diff = frameCount - initialframe;
 
-          this.drawLightColumn(0, 20, 45, 250, diff)
+          this.drawLightColumn(0, 33, 20, 250, diff)
 
           charginganimation.ani.draw(0,0,0, charginganimation.scale.x, charginganimation.scale.y);
         }
-        this.chargingarr[index] = charginganimation;
+        this.chargingarr.push({animation: charginganimation, id : tower.id});
         // this.towerobjarr[index].charginganimation = charginganimation;
       }
 
@@ -1319,8 +1343,16 @@ class mapBuilder{
       if (tower.chargingindicator == 0){
         console.log('removing charging animation')
         // this.towerobjarr[index].charginganimation.remove();
-        this.chargingarr[index].remove();
-        this.chargingarr[index] = null;
+        let animindex = this.chargingarr.findIndex(animation => animation.id == tower.id);
+        if (animindex < 0){
+          return;
+        }
+        this.chargingarr[animindex].animation.remove();
+        this.chargingarr.splice(animindex, 1);
+        // this.chargingarr[animindex] = null;
+        // if (this.chargingarr[index] != null){
+          
+        // }
       }
       // towersprite.draw = () => {
       //   image(tower.img, 0, 0, this.TILE_WIDTH, this.TILE_HEIGHT * 3);
@@ -1334,9 +1366,9 @@ class mapBuilder{
     function map(value, start1, stop1, start2, stop2) {
       return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
     }
-    let currentHeight = map(diff, 0, 100, 0, maxHeight);
-    let intensity = map(diff, 0, 100, 0, 255);
-    console.log(currentHeight, intensity, 'current height and intensity', diff, 'diff')
+    let currentHeight = map(diff, 0, 80, 0, maxHeight);
+    let intensity = map(diff, 0, 80, 0, 210);
+    // console.log(currentHeight, intensity, 'current height and intensity', diff, 'diff')
     
     if (currentHeight > maxHeight) {
       currentHeight = maxHeight;
@@ -1345,12 +1377,10 @@ class mapBuilder{
       intensity = 255;
     }
     strokeWeight(0);
-    for (let i = currentHeight; i >0 ; i -=2) {
-      console.log('drawing', i)
-      
+    for (let i = currentHeight; i >0 ; i -=2) {      
       let alpha = map(i, 0, currentHeight, intensity, 0);
       fill(255, 255, 0, alpha); // Light yellow color
-      rect(x, -i + y, width, 3);
+      rect(x, -i + y, width, 2);
     }
   }
   updateHealth(health){

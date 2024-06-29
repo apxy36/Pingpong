@@ -65,7 +65,7 @@ socket.on("buildMap", (mapManager) => {
     mechplayer = createPlayerSprite(localIGN) // creates mechanics for player
     map.buildBaseMap(mapManager);
     map.buildVisualMap();
-    map.updateTowers(mapManager);
+    map.updateTowers(mapManager.towers);
     console.log(mapManager.towers, map.towerarr)
     displayPlayer = createVisiblePlayerSprite(localIGN, playerZ);
     playerZ = map.setPlayerPosition(1, mechplayer);//map.getTile(round(map.)).z;
@@ -113,6 +113,7 @@ socket.on("removeTower", (index) => {
 
 socket.on("updateTower", (id, tower, team) => {
     map.updateTower(id, tower, team);
+    // map.updateTowers()
     console.log(id, 'updated')
 }
 );
@@ -227,14 +228,15 @@ function draw() {
         // checkIfPlayerIsNearTower(player);
         if (map.checkIfPlayerIsNearTower(mechplayer) != false && interactionBtn == undefined && startGame == true) {
             console.log(map.checkIfPlayerIsNearTower(displayPlayer))
-            interactionBtn = createButton('Examine');
-            interactionBtn.addClass('flex m-0 my-2 p-4 scale-90 btn btn-primary hover:scale-100 text-center justify-self-center hover:border-2 hover:border-secondary hover:border-offset-2 overflow-visible w-32');
-            interactionBtn.position(width / 2 - 64, height - 100);
-            interactionBtn.mouseClicked(towerToggled);
+            // interactionBtn = createButton('Examine');
+            // interactionBtn.addClass('flex m-0 my-2 p-4 scale-90 btn btn-primary hover:scale-100 text-center justify-self-center hover:border-2 hover:border-secondary hover:border-offset-2 overflow-visible w-32');
+            // interactionBtn.position(width / 2 - 64, height - 100);
+            // interactionBtn.mouseClicked(towerToggled);
+            checkKeyPressed();
         }
         else if (map.checkIfPlayerIsNearTower(mechplayer) == false && interactionBtn != undefined && startGame == true) {
-            interactionBtn.remove();
-            interactionBtn = undefined;
+            // interactionBtn.remove();
+            // interactionBtn = undefined;
         }
         // console.log(map.towerarr)
 
@@ -253,6 +255,16 @@ function draw() {
     
 }
 
+function checkKeyPressed() {
+    if (keyIsPressed && keyCode == 32) {
+        console.log('shift')
+        towerToggled();
+        
+    }
+    // if (keyIsPressed && keyCode === CONTROL) {
+    //     if (map.towerarr.length > 0){
+}
+
 function towerToggled() {
     let index = map.checkIfPlayerIsNearTower(mechplayer);
     let tower = map.towerobjarr[index];
@@ -263,7 +275,7 @@ function towerToggled() {
         socket.emit("activateTower", id);
 
         console.log("activated")
-    } else if (tower.active && tower.team == team) {
+    } else if (tower.active && tower.team == team && tower.comboavailable) {
         socket.emit("comboTower", id);
     }
     if (map.checkIfPlayerIsNearTower(mechplayer) != false) {
@@ -272,25 +284,25 @@ function towerToggled() {
 }
 
 let SPEED = 5;
-let adjacentSPEED = 2 * 5**0.5;
-let oppSPEED = 5**0.5;
+let adjacentSPEED = 2 * SPEED**0.5;
+let oppSPEED = SPEED**0.5;
 function updateStatusConditions() {
     // console.log(statusconditions);
     // console.log(muted)
     // Update statusconditions (from playerStats.js)
-    SPEED = 5;
-    adjacentSPEED = 2 * 5**0.5;
-    oppSPEED = 5**0.5;
+    SPEED = 6;
+    adjacentSPEED = 2 * SPEED**0.5;
+    oppSPEED = SPEED**0.5;
 
     for (let status of statusconditions) {
         if (status == "speedBoost") {
-            SPEED = 7;
-            adjacentSPEED = 2 * 7**0.5;
-            oppSPEED = 7**0.5;
+            SPEED = 9;
+            adjacentSPEED = 2 * SPEED**0.5;
+            oppSPEED = SPEED**0.5;
         } else if (status == "slow") {
-            SPEED = 3;
-            adjacentSPEED = 2 * 3**0.5;
-            oppSPEED = 3**0.5;
+            SPEED = 4;
+            adjacentSPEED = 2 * SPEED**0.5;
+            oppSPEED = SPEED**0.5;
         }
         else if (status == "mute") {
             if (prevmute == 0) {
