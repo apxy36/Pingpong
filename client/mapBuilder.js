@@ -166,6 +166,7 @@ class mapBuilder{
     this.charginganim.spriteSheet = loadImage('./textures/Towers/charginganim.png');
      this.charginganim.addAnis({
         idle: { row: 0, frames: 20, w: 192, h: 192},
+        inactive: { row: 1, frames: 20, w: 192, h: 192},
     });
     // this.charginganim.anis.offset.x = 16;
     this.charginganim.anis.frameDelay = 2;
@@ -210,6 +211,7 @@ class mapBuilder{
         idle: { row: 0, frames: 8, w: 48, h: 48},
         attack: { row: 2, frames: 6, w: 48, h: 48},
         explode: { row: 4, frames: 9, w: 48, h: 48},
+        jump: { row: 1, frames: 7, w: 48, h: 48},
     });
     this.type0towerfrogs.anis.frameDelay = 2;
     this.type0towerfrogs.anis.scale = 2/3;
@@ -227,6 +229,8 @@ class mapBuilder{
         idle: { row: 0, frames: 8, w: 48, h: 48},
         attack: { row: 2, frames: 6, w: 48, h: 48},
         explode: { row: 4, frames: 9, w: 48, h: 48},
+        jump: { row: 1, frames: 7, w: 48, h: 48},
+
     });
     this.type1towerfrogs.anis.frameDelay = 2;
     this.type1towerfrogs.anis.scale = 2/3;
@@ -243,6 +247,7 @@ class mapBuilder{
         idle: { row: 0, frames: 8, w: 48, h: 48},
         attack: { row: 2, frames: 6, w: 48, h: 48},
         explode: { row: 4, frames: 9, w: 48, h: 48},
+        jump: { row: 1, frames: 7, w: 48, h: 48},
     });
     this.type2towerfrogs.anis.frameDelay = 2;
     this.type2towerfrogs.anis.scale = 2/3;
@@ -259,6 +264,8 @@ class mapBuilder{
         idle: { row: 0, frames: 8, w: 48, h: 48},
         attack: { row: 2, frames: 6, w: 48, h: 48},
         explode: { row: 4, frames: 9, w: 48, h: 48},
+        jump: { row: 1, frames: 7, w: 48, h: 48},
+
     });
     this.type3towerfrogs.anis.frameDelay = 2;
     this.type3towerfrogs.anis.scale = 2/3;
@@ -275,6 +282,7 @@ class mapBuilder{
         idle: { row: 0, frames: 8, w: 48, h: 48},
         attack: { row: 2, frames: 6, w: 48, h: 48},
         explode: { row: 4, frames: 9, w: 48, h: 48},
+        jump: { row: 1, frames: 7, w: 48, h: 48},
     });
     this.type4towerfrogs.anis.frameDelay = 2;
     this.type4towerfrogs.anis.scale = 2/3;
@@ -291,6 +299,7 @@ class mapBuilder{
         idle: { row: 0, frames: 8, w: 48, h: 48},
         attack: { row: 2, frames: 6, w: 48, h: 48},
         explode: { row: 4, frames: 9, w: 48, h: 48},
+        jump: { row: 1, frames: 7, w: 48, h: 48},
     });
     this.type5towerfrogs.anis.frameDelay = 2;
     this.type5towerfrogs.anis.scale = 2/3;
@@ -1268,6 +1277,35 @@ class mapBuilder{
     towerfrog.changeAni('idle');  
     this.towerfrogarr.push({frog: towerfrog, id: tower.id});
 
+    let charginganimation = new this.charginganim.Sprite();
+    charginganimation.pos = createVector(towersprite.pos.x, towersprite.pos.y);
+    charginganimation.width = this.TILE_WIDTH;
+    charginganimation.height = this.TILE_HEIGHT * 2;
+    charginganimation.scale = {x: 1/2.5, y: 1/2.5};
+    charginganimation.changeAni('inactive');
+    const initialframe = frameCount;
+    charginganimation.draw = () => {
+
+
+      if (tower.active == true){
+      // add an oscillating base to the tower based on framecount and sine
+        let freq = 4;
+        let angularfreq = 2 * PI * freq;
+        let amplitude = 10;
+        let oscillation = amplitude * sin(angularfreq * frameCount * 1.2) + 50;
+        fill(0, 0, 255, 150);
+        ellipse(0, 30, oscillation, oscillation / 2);
+        //mimic a beam of light that grows brighter
+        let diff = frameCount - initialframe;
+        
+
+        this.drawLightColumn(0, 33, 20, 250, diff)
+      }
+
+      charginganimation.ani.draw(0,0,0, charginganimation.scale.x, charginganimation.scale.y);
+    }
+    this.chargingarr.push({animation: charginganimation, id : tower.id});
+
     // towersprite.width = this.TILE_WIDTH;
     // towersprite.height = this.TILE_HEIGHT * 3;
 
@@ -1443,6 +1481,34 @@ class mapBuilder{
     }
   }
 
+  toggleFrogFacing(playerSprite){
+    for (let i = 0; i < this.towerfrogarr.length; i++){
+      let towerfrog = this.towerfrogarr[i].frog;
+      let tower = this.towerobjarr[i];
+      let playerx = playerSprite.pos.x;
+      let playery = playerSprite.pos.y;
+      let towerx = towerfrog.pos.x;
+      let towery = towerfrog.pos.y;
+      let distance = dist(playerx, playery, towerx, towery);
+      // console.log(distance, 'distance')
+      if (distance < 200){
+        if (towerfrog.ani.name == 'idle'){
+          console.log('changing to jump')
+          towerfrog.changeAni('jump');
+        } 
+      } else if (towerfrog.ani.name == 'jump'){
+        towerfrog.changeAni('idle');
+      }
+      //check if player is to left or right of frog
+      if (playerx < towerx){
+        towerfrog.scale.x = -1;
+        // console.log('left', towerfrog.ani)
+      } else {
+        towerfrog.scale.x = 1;
+      }
+    }
+  }
+
   updateTower(id, tower){
     // let tower = tower;
     let index = this.towerobjarr.findIndex(tower => tower.id == id);
@@ -1470,32 +1536,33 @@ class mapBuilder{
           this.towerfrogarr[frogindex].frog.changeAni('attack');
         }
         // generates charging tower sprite
-        let charginganimation = new this.charginganim.Sprite();
-        charginganimation.pos = createVector(towersprite.pos.x, towersprite.pos.y);
-        charginganimation.width = this.TILE_WIDTH;
-        charginganimation.height = this.TILE_HEIGHT * 2;
-        charginganimation.scale = {x: 1/2.5, y: 1/2.5};
-        const initialframe = frameCount;
-        charginganimation.draw = () => {
+        // let charginganimation = new this.charginganim.Sprite();
+        // charginganimation.pos = createVector(towersprite.pos.x, towersprite.pos.y);
+        // charginganimation.width = this.TILE_WIDTH;
+        // charginganimation.height = this.TILE_HEIGHT * 2;
+        // charginganimation.scale = {x: 1/2.5, y: 1/2.5};
+        let charginganimation = this.chargingarr.find(animation => animation.id == tower.id).animation;
+        if (charginganimation != null){
+          charginganimation.changeAni('idle');
+          const initialframe = frameCount;
+          charginganimation.draw = () => {
+            // add an oscillating base to the tower based on framecount and sine
+            let freq = 4;
+            let angularfreq = 2 * PI * freq;
+            let amplitude = 10;
+            let oscillation = amplitude * sin(angularfreq * frameCount * 1.2) + 50;
+            fill(0, 0, 255, 150);
+            ellipse(0, 30, oscillation, oscillation / 2);
+            //mimic a beam of light that grows brighter
+            let diff = frameCount - initialframe;
 
+            this.drawLightColumn(0, 33, 20, 250, diff)
 
-          
-          // add an oscillating base to the tower based on framecount and sine
-          let freq = 4;
-          let angularfreq = 2 * PI * freq;
-          let amplitude = 10;
-          let oscillation = amplitude * sin(angularfreq * frameCount * 1.2) + 50;
-          fill(0, 0, 255, 150);
-          ellipse(0, 30, oscillation, oscillation / 2);
-          //mimic a beam of light that grows brighter
-          let diff = frameCount - initialframe;
-
-          this.drawLightColumn(0, 33, 20, 250, diff)
-
-          charginganimation.ani.draw(0,0,0, charginganimation.scale.x, charginganimation.scale.y);
+            charginganimation.ani.draw(0,0,0, charginganimation.scale.x, charginganimation.scale.y);
+          }
+          this.chargingarr.push({animation: charginganimation, id : tower.id});
+          // this.towerobjarr[index].charginganimation = charginganimation;
         }
-        this.chargingarr.push({animation: charginganimation, id : tower.id});
-        // this.towerobjarr[index].charginganimation = charginganimation;
       }
 
       // towersprite.draw = () => {
@@ -1507,11 +1574,19 @@ class mapBuilder{
         console.log('removing charging animation')
         // this.towerobjarr[index].charginganimation.remove();
         let animindex = this.chargingarr.findIndex(animation => animation.id == tower.id);
-        if (animindex < 0){
-          return;
+        if (this.chargingarr[animindex] != null && animindex >= 0  && this.chargingarr[animindex].animation != null){
+          let anim = this.chargingarr[animindex].animation;
+          anim.changeAni('inactive');
+          anim.draw = () => {
+            anim.ani.draw(0,0,0, anim.scale.x, anim.scale.y);
+          }
+          // this.chargingarr[animindex].animation.changeAni('inactive');
+          //  this.chargingarr[animindex].animation.draw = () => {
+          //   this.chargingarr[animindex].animation.ani.draw(0,0,0, this.chargingarr[animindex].animation.scale.x, this.chargingarr[animindex].animation.scale.y);
+          // }
         }
-        this.chargingarr[animindex].animation.remove();
-        this.chargingarr.splice(animindex, 1);
+        // this.chargingarr[animindex].animation.remove();
+        // this.chargingarr.splice(animindex, 1);
 
         let frogindex = this.towerfrogarr.findIndex(frog => frog.id == tower.id);
         if (this.towerfrogarr[frogindex] != null && frogindex >= 0){

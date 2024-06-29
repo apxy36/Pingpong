@@ -238,6 +238,7 @@ function draw() {
             // interactionBtn.remove();
             // interactionBtn = undefined;
         }
+        map.toggleFrogFacing(displayPlayer);
         // console.log(map.towerarr)
 
         socket.emit("position", mechplayer.pos.x, mechplayer.pos.y, playerZ);
