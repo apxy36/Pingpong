@@ -297,10 +297,12 @@ function updateStatusConditions() {
 
     for (let status of statusconditions) {
         if (status == "speedBoost") {
+            console.log("speedboost")
             SPEED = 9;
             adjacentSPEED = 2 * SPEED**0.5;
             oppSPEED = SPEED**0.5;
         } else if (status == "slow") {
+            console.log("slow") 
             SPEED = 4;
             adjacentSPEED = 2 * SPEED**0.5;
             oppSPEED = SPEED**0.5;

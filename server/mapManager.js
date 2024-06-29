@@ -241,7 +241,7 @@ export default class MapManager{
   checkIfTowersWithinProximityofotherTowers(x, y){
     for (let i = 0; i < this.towers.length; i++){
       let dist = Math.sqrt((this.towers[i].x - x)**2 + (this.towers[i].y - y)**2);
-      if (dist < 8){
+      if (dist < 10){
         return true;
       }
     }
