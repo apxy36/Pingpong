@@ -454,7 +454,7 @@ function move() {
     // Play running animation when moving
     // Invert animation where necessary
     if (kb.pressing("w")) {
-        // playerSprite.changeAni('run');
+        displayPlayer.changeAni('run');
         displayPlayer.scale.x = 1;
         // move in a diagonal direction based on isometric x and y
         mechplayer.pos.y -= SPEED * oppSPEED / SPEED; 
@@ -464,21 +464,21 @@ function move() {
         // breakDir = 0;
     }
     if (kb.pressing("a")) {
-        // playerSprite.changeAni('run');
+        displayPlayer.changeAni('run');
         displayPlayer.scale.x =  - abs(displayPlayer.scale.x);
         mechplayer.pos.x -= SPEED * adjacentSPEED / SPEED;
         mechplayer.pos.y -= SPEED * oppSPEED / SPEED;
         // breakDir = 1;
     }
     if (kb.pressing("s")) {
-        // playerSprite.changeAni('run');
-        displayPlayer.scale.x = 1;
+        displayPlayer.changeAni('run');
+        displayPlayer.scale.x = -abs(displayPlayer.scale.x);
         mechplayer.pos.y += SPEED * oppSPEED / SPEED;
         mechplayer.pos.x -= SPEED * adjacentSPEED / SPEED;
         // breakDir = 2;
     }
     if (kb.pressing("d")) {
-        // playerSprite.changeAni('run');
+        displayPlayer.changeAni('run');
         displayPlayer.scale.x = 1;
         mechplayer.pos.x += SPEED * adjacentSPEED / SPEED;
         mechplayer.pos.y += SPEED * oppSPEED / SPEED;
@@ -486,13 +486,13 @@ function move() {
     }
 
     // Reset animation after player stops moving
-    if (kb.released("w") || kb.released("s") || kb.released("d")) {
+    if (kb.released("w")  || kb.released("d")) {
         displayPlayer.scale.x = 1;
-        // playerSprite.changeAni('idle');
+        displayPlayer.changeAni('idle');
     }
-    else if (kb.released("a")) {
+    else if (kb.released("a") || kb.released("s")) {
         displayPlayer.scale.x = -abs(displayPlayer.scale.x);
-        // playerSprite.changeAni('idle');
+        displayPlayer.changeAni('idle');
     }
 
     // To allow the players to change the block added

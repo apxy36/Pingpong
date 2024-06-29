@@ -1949,13 +1949,16 @@ function createVisiblePlayerSprite(name, playerZ) { //scaling added after animat
     playerSprite.visible = true;
     playerSprite.collider = 'none';
     // playerSprite.img = "./new_tileset/tile_001.png";
-    playerSprite.spriteSheet = './textures/charani.png';
+    playerSprite.spriteSheet = './textures/charanimap.png';
     playerSprite.anis.offset.y = -4
     playerSprite.anis.frameDelay = 2
     playerSprite.addAnis({
-      idle: {row:0, frames: 8, w:70, h:70}, 
+      idle: {row:0, frames: 6, w:128, h:128}, 
+      run: {row:7, frames: 6, w:128, h:128},
 
     });
+    playerSprite.anis.scale = 0.5;
+    playerSprite.changeAni('idle');
     
 
     // Load sprite sheet
@@ -1978,15 +1981,15 @@ function createVisiblePlayerSprite(name, playerZ) { //scaling added after animat
         text(name, 0, -35);
         // console.log(name)
 
-        circle(0, 0, 32);
-        rect(10, 0, 32, 50);
+        // circle(0, 0, 32);
+        // rect(10, 0, 32, 50);
         // scaling = 1 + playerZ * 0.1;
         // console.log(playerZ, scaling)
         // image(playerSprite.img, 0, 0, 32, 16);
         // img = loadImage('./new_tileset/tile_001.png');
         // image(img, 0, 0, 32, 16);
 
-        // playerSprite.ani.draw(playerSprite.offset.x, playerSprite.offset.y, 0, playerSprite.scale.x, playerSprite.scale.y);
+        playerSprite.ani.draw(playerSprite.offset.x, playerSprite.offset.y, 0, playerSprite.scale.x, playerSprite.scale.y);
     }
     return playerSprite;
 
