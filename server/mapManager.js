@@ -33,7 +33,8 @@ export default class MapManager{
         this.maxtowerid = 0;
 
         this.teamhealth = [100, 100];
-        this.teamdamage = [15, 15]
+        this.teamdamage = [15, 15];
+        this.prevtime = 0;
         // console.log(this.gridarr)
     }
 
@@ -278,69 +279,71 @@ export default class MapManager{
     if (this.towers.length >= 2){
       let tower = this.towers.find(tower => tower.id == id);
       let index = this.towers.findIndex(towers => towers.id == id);
-      tower.active = true;
-      tower.team = team;
-      tower.activecountdown = 10;
-      tower.chargingindicator = 1;
-      while (tower.linkedtowerid == null){
-        let randindex = Math.round(this.random(0, this.towers.length - 1));
-        if (this.towers[randindex].linkedtowerid == null && randindex != index){
-          tower.linkedtowerid = this.towers[randindex].id // this.towers[randindex];
-        }
-        
-      }
-      let linkedtower = this.towers.find(towers => towers.id == tower.linkedtowerid);
-      linkedtower.active = true;
-      linkedtower.comboavailable = true;
-      linkedtower.team = team;
-      linkedtower.activecountdown = 10;
-      linkedtower.linkedtowerid = id;
-      linkedtower.chargingindicator = 1;
-      // tower.linkedtower.active = true;
-
-      // this.towers[tower.linkedtowerindex].active = true;
-      // this.towers[tower.linkedtowerindex].team = team;
-      // this.towers[tower.linkedtowerindex].activecountdown = 10;
-      // this.towers[tower.linkedtowerindex].linkedtowerindex = index;
-      // tower.linkedtower.active = true;
-      // tower.linkedtower.activecountdown = 15;
-      // tower.linkedtower.team = team;
-      // tower.linkedtower.linkedtowerindex = tower;
-
-      let counter = setInterval(() => {
-        if (tower.activecountdown <= 0 && tower.active){
-          // console.log(tower, index, 'deactivated')
-          
-          this.deactivateTower(tower.linkedtowerid, team, clients);
-          this.deactivateTower(id, team, clients);
-          clearInterval(counter);
-          // clearTimeout(countdown);
-          // tower.active = false;
-          // this.towers[tower.linkedtowerindex].active = false;
-          // // tower.linkedtower.active = false;
-          // tower.team = null;
-          // this.towers[tower.linkedtowerindex].team = null;
-          // // tower.linkedtower.team = null;
-
-          // tower.activecountdown = -1;
-          // this.towers[tower.linkedtowerindex].activecountdown = -1;
-          // // tower.linkedtower.activecountdown = -1;
-          // this.towers[tower.linkedtowerindex].linkedtowerindex = null;
-          // // tower.linkedtower.linkedtowerindex = null;
-          
-          // tower.linkedtowerindex = null;
-        } else {
-          console.log(tower.activecountdown, id)
-          if (tower.active == false){
-            tower.activecountdown -= 1;
-            linkedtower.activecountdown -= 1;
+      if (tower.active == false && tower.linkedtowerid == null){
+        tower.active = true;
+        tower.team = team;
+        tower.activecountdown = 10;
+        tower.chargingindicator = 1;
+        while (tower.linkedtowerid == null){
+          let randindex = Math.round(this.random(0, this.towers.length - 1));
+          if (this.towers[randindex].linkedtowerid == null && randindex != index){
+            tower.linkedtowerid = this.towers[randindex].id // this.towers[randindex];
           }
+          
+        }
+        let linkedtower = this.towers.find(towers => towers.id == tower.linkedtowerid);
+        linkedtower.active = true;
+        linkedtower.comboavailable = true;
+        linkedtower.team = team;
+        linkedtower.activecountdown = 10;
+        linkedtower.linkedtowerid = id;
+        linkedtower.chargingindicator = 1;
+        // tower.linkedtower.active = true;
+
+        // this.towers[tower.linkedtowerindex].active = true;
+        // this.towers[tower.linkedtowerindex].team = team;
+        // this.towers[tower.linkedtowerindex].activecountdown = 10;
+        // this.towers[tower.linkedtowerindex].linkedtowerindex = index;
+        // tower.linkedtower.active = true;
+        // tower.linkedtower.activecountdown = 15;
+        // tower.linkedtower.team = team;
+        // tower.linkedtower.linkedtowerindex = tower;
+        
+        let counter = setInterval(() => {
+          if (tower.activecountdown <= 0){
+            // console.log(tower, index, 'deactivated')
+            clearInterval(counter);
+            this.deactivateTower(tower.linkedtowerid, team, clients);
+            this.deactivateTower(id, team, clients);
+            
+            // clearTimeout(countdown);
+            // tower.active = false;
+            // this.towers[tower.linkedtowerindex].active = false;
+            // // tower.linkedtower.active = false;
+            // tower.team = null;
+            // this.towers[tower.linkedtowerindex].team = null;
+            // // tower.linkedtower.team = null;
+
+            // tower.activecountdown = -1;
+            // this.towers[tower.linkedtowerindex].activecountdown = -1;
+            // // tower.linkedtower.activecountdown = -1;
+            // this.towers[tower.linkedtowerindex].linkedtowerindex = null;
+            // // tower.linkedtower.linkedtowerindex = null;
+            
+            // tower.linkedtowerindex = null;
+          } else {
+            console.log(tower.activecountdown, id, tower, 'tower')
+            if (tower.active){
+              tower.activecountdown -= 1;
+              linkedtower.activecountdown -= 1;
+            }
+            // tower.linkedtower.activecountdown -= 1;
+          }
+          // tower.activecountdown -= 1;
           // tower.linkedtower.activecountdown -= 1;
         }
-        // tower.activecountdown -= 1;
-        // tower.linkedtower.activecountdown -= 1;
+        , 1000);
       }
-      , 1000);
     }
     // countdown = setTimeout(() => {
     //   tower.active = false;
@@ -417,8 +420,13 @@ export default class MapManager{
   }
 
   updateTowers(clients){ // handling tower duration and spawning of new towers
+
     for (let i = 0; i < this.towers.length; i++){
-       this.towers[i].duration += 1;
+        if (this.towers[i].activecountdown < 0){
+          this.towers[i].duration += 1;
+        } else if (this.towers[i].duration > 18){
+          this.towers[i].duration = 10;
+        }
       //  console.log(this.towers[i].duration)
         if (this.towers[i].duration > 20 && this.towers[i].active == false && this.towers[i].linkedtowerid == null && !this.checkIfAnyTowerIsActivated()){ 
           let towerid = this.towers[i].id;
@@ -434,7 +442,7 @@ export default class MapManager{
     //random chance of spawning a new tower
     let rand = Math.random();
     if (rand < 0.2){
-      if (this.towers.length < 5){
+      if (this.towers.length < 8){
         let randx = Math.floor(Math.random() * this.GRID_SIZE);
         let randy = Math.floor(Math.random() * this.GRID_SIZE);
         let randtype = Math.round(Math.random() * 3);

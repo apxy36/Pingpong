@@ -182,6 +182,120 @@ class mapBuilder{
     this.exchangebullets.layer = 99999;
     this.exchangebullets.w = this.TILE_SIDE_LENGTH;
     this.exchangebullets.h = this.TILE_HEIGHT;
+
+    this.explosions = new Group();
+    this.explosions.overlaps(allSprites);
+    this.explosions.collider = 'static';
+    this.explosions.layer = 99999;
+    this.explosions.w = this.TILE_SIDE_LENGTH;
+    this.explosions.h = this.TILE_HEIGHT;
+    this.explosions.spriteSheet = loadImage('./textures/Towers/explosion.png');
+    this.explosions.addAnis({
+        idle: { row: 0, frames: 9, w: 32, h: 32},
+    });
+    this.explosions.anis.frameDelay = 2;
+    this.explosions.anis.scale = 1;
+    this.explosions.anis.rotation = 0;
+
+
+    this.towerfrogarr = [];
+    this.type0towerfrogs = new Group();
+    this.type0towerfrogs.overlaps(allSprites);
+    this.type0towerfrogs.collider = 'static';
+    this.type0towerfrogs.layer = 99999;
+    this.type0towerfrogs.w = this.TILE_SIDE_LENGTH;
+    this.type0towerfrogs.h = this.TILE_HEIGHT;
+    this.type0towerfrogs.spriteSheet = loadImage('./textures/Towers/ToxicFrog/0/ToxicFrogBlueBlue_Sheet.png');
+    this.type0towerfrogs.addAnis({
+        idle: { row: 0, frames: 8, w: 48, h: 48},
+        attack: { row: 2, frames: 6, w: 48, h: 48},
+        explode: { row: 4, frames: 9, w: 48, h: 48},
+    });
+    this.type0towerfrogs.anis.frameDelay = 2;
+    this.type0towerfrogs.anis.scale = 2/3;
+    this.type0towerfrogs.anis.rotation = 0;
+
+
+    this.type1towerfrogs = new Group();
+    this.type1towerfrogs.overlaps(allSprites);
+    this.type1towerfrogs.collider = 'static';
+    this.type1towerfrogs.layer = 99999;
+    this.type1towerfrogs.w = this.TILE_SIDE_LENGTH;
+    this.type1towerfrogs.h = this.TILE_HEIGHT;
+    this.type1towerfrogs.spriteSheet = loadImage('./textures/Towers/ToxicFrog/1/ToxicFrogGreenBlue_Sheet.png');
+    this.type1towerfrogs.addAnis({
+        idle: { row: 0, frames: 8, w: 48, h: 48},
+        attack: { row: 2, frames: 6, w: 48, h: 48},
+        explode: { row: 4, frames: 9, w: 48, h: 48},
+    });
+    this.type1towerfrogs.anis.frameDelay = 2;
+    this.type1towerfrogs.anis.scale = 2/3;
+    this.type1towerfrogs.anis.rotation = 0;
+
+    this.type2towerfrogs = new Group();
+    this.type2towerfrogs.overlaps(allSprites);
+    this.type2towerfrogs.collider = 'static';
+    this.type2towerfrogs.layer = 99999;
+    this.type2towerfrogs.w = this.TILE_SIDE_LENGTH;
+    this.type2towerfrogs.h = this.TILE_HEIGHT;
+    this.type2towerfrogs.spriteSheet = loadImage('./textures/Towers/ToxicFrog/2/ToxicFrogBlueBrown_Sheet.png');
+    this.type2towerfrogs.addAnis({
+        idle: { row: 0, frames: 8, w: 48, h: 48},
+        attack: { row: 2, frames: 6, w: 48, h: 48},
+        explode: { row: 4, frames: 9, w: 48, h: 48},
+    });
+    this.type2towerfrogs.anis.frameDelay = 2;
+    this.type2towerfrogs.anis.scale = 2/3;
+    this.type2towerfrogs.anis.rotation = 0;
+
+    this.type3towerfrogs = new Group();
+    this.type3towerfrogs.overlaps(allSprites);
+    this.type3towerfrogs.collider = 'static';
+    this.type3towerfrogs.layer = 99999;
+    this.type3towerfrogs.w = this.TILE_SIDE_LENGTH;
+    this.type3towerfrogs.h = this.TILE_HEIGHT;
+    this.type3towerfrogs.spriteSheet = loadImage('./textures/Towers/ToxicFrog/3/ToxicFrogGreenBrown_Sheet.png');
+    this.type3towerfrogs.addAnis({
+        idle: { row: 0, frames: 8, w: 48, h: 48},
+        attack: { row: 2, frames: 6, w: 48, h: 48},
+        explode: { row: 4, frames: 9, w: 48, h: 48},
+    });
+    this.type3towerfrogs.anis.frameDelay = 2;
+    this.type3towerfrogs.anis.scale = 2/3;
+    this.type3towerfrogs.anis.rotation = 0;
+
+    this.type4towerfrogs = new Group();
+    this.type4towerfrogs.overlaps(allSprites);
+    this.type4towerfrogs.collider = 'static';
+    this.type4towerfrogs.layer = 99999;
+    this.type4towerfrogs.w = this.TILE_SIDE_LENGTH;
+    this.type4towerfrogs.h = this.TILE_HEIGHT;
+    this.type4towerfrogs.spriteSheet = loadImage('./textures/Towers/ToxicFrog/4/ToxicFrogPurpleBlue_Sheet.png');
+    this.type4towerfrogs.addAnis({
+        idle: { row: 0, frames: 8, w: 48, h: 48},
+        attack: { row: 2, frames: 6, w: 48, h: 48},
+        explode: { row: 4, frames: 9, w: 48, h: 48},
+    });
+    this.type4towerfrogs.anis.frameDelay = 2;
+    this.type4towerfrogs.anis.scale = 2/3;
+    this.type4towerfrogs.anis.rotation = 0;
+
+    this.type5towerfrogs = new Group();
+    this.type5towerfrogs.overlaps(allSprites);
+    this.type5towerfrogs.collider = 'static';
+    this.type5towerfrogs.layer = 99999;
+    this.type5towerfrogs.w = this.TILE_SIDE_LENGTH;
+    this.type5towerfrogs.h = this.TILE_HEIGHT;
+    this.type5towerfrogs.spriteSheet = loadImage('./textures/Towers/ToxicFrog/5/ToxicFrogPurpleWhite_Sheet.png');
+    this.type5towerfrogs.addAnis({
+        idle: { row: 0, frames: 8, w: 48, h: 48},
+        attack: { row: 2, frames: 6, w: 48, h: 48},
+        explode: { row: 4, frames: 9, w: 48, h: 48},
+    });
+    this.type5towerfrogs.anis.frameDelay = 2;
+    this.type5towerfrogs.anis.scale = 2/3;
+    this.type5towerfrogs.anis.rotation = 0;
+
     // this.exchangebullets.image = loadImage('./textures/Towers/bullet.png');
     // add boid follow mechanics for bullets
 
@@ -1131,6 +1245,29 @@ class mapBuilder{
     let towery = (tower.x + tower.y) * this.TILE_HEIGHT / 2 - max(0, (tower.z - 2)) * this.TILE_HEIGHT / 2 + this.ystart;
     towersprite.pos = createVector(towerx, towery);
     towersprite.rotation = 0;
+
+    let towerfrog;
+    if (tower.type == 0){
+      towerfrog = new this.type0towerfrogs.Sprite();
+    } else if (tower.type == 1){
+      towerfrog = new this.type1towerfrogs.Sprite();
+    } else if (tower.type == 2){
+      towerfrog = new this.type2towerfrogs.Sprite();
+    } else if (tower.type == 3){
+      towerfrog = new this.type3towerfrogs.Sprite();
+    } else if (tower.type == 4){
+      towerfrog = new this.type4towerfrogs.Sprite();
+    } else if (tower.type == 5){
+      towerfrog = new this.type5towerfrogs.Sprite();
+    } else {
+      towerfrog = new this.type0towerfrogs.Sprite();
+    }
+    towerfrog.pos = createVector(towerx, towery - this.TILE_HEIGHT * 1.5);
+    towerfrog.rotation = 0;
+    towerfrog.scale = 1;
+    towerfrog.changeAni('idle');  
+    this.towerfrogarr.push({frog: towerfrog, id: tower.id});
+
     // towersprite.width = this.TILE_WIDTH;
     // towersprite.height = this.TILE_HEIGHT * 3;
 
@@ -1212,6 +1349,7 @@ class mapBuilder{
     this.towerarr = [];
     this.towerobjarr = [];
     this.towerprevcountdowns = [];
+    this.chargingarr = [];
 
     // Spawn coins on the map
     for (let i = 0; i < towers.length; i++) {
@@ -1233,15 +1371,36 @@ class mapBuilder{
       this.updateTower(this.towerobjarr[index].linkedtowerid, linkedtower);
       linkedtower.linkedtowerid = null;
     }
-    this.towerarr[index].remove();
+    let explosion = new this.explosions.Sprite();
+    explosion.pos = createVector(this.towerarr[index].pos.x, this.towerarr[index].pos.y);
+    explosion.scale = 1;
+    setTimeout(() => {
+      let index = this.towerobjarr.findIndex(tower => tower.id == id);
+      this.towerarr[index].remove();
+      this.towerarr.splice(index, 1);
+      this.towerobjarr.splice(index, 1);
+      this.towerprevcountdowns.splice(index, 1);
+      explosion.remove();
+    }, 1000);
     let chargingindex = this.chargingarr.findIndex(animation => animation.id == id);
     if (this.chargingarr[chargingindex] != null && chargingindex >= 0){
       this.chargingarr[chargingindex].animation.remove();
       this.chargingarr.splice(chargingindex, 1);
     }
-    this.towerarr.splice(index, 1);
-    this.towerobjarr.splice(index, 1);
-    this.towerprevcountdowns.splice(index, 1);
+    let frogindex = this.towerfrogarr.findIndex(frog => frog.id == id);
+    if (this.towerfrogarr[frogindex] != null && frogindex >= 0){
+      this.towerfrogarr[frogindex].frog.changeAni('explode');
+      console.log('frogarr', this.towerfrogarr[frogindex].frog, 'frog')
+      setTimeout(() => {
+        frogindex = this.towerfrogarr.findIndex(frog => frog.id == id);
+        this.towerfrogarr[frogindex].frog.remove();
+        this.towerfrogarr.splice(frogindex, 1);
+
+      }, 1000);
+    }
+    // this.towerarr.splice(index, 1);
+    // this.towerobjarr.splice(index, 1);
+    // this.towerprevcountdowns.splice(index, 1);
     // let animationindex = this.chargingarr.findIndex(animation => animation.id == id);
     
     
@@ -1298,7 +1457,7 @@ class mapBuilder{
     this.scanForUpdatedCountdowns();
     // this.towerprevcountdowns[index] = tower.activecountdown;
     //change draw function and add teams
-    console.log('animationcharge', this.towerobjarr[index].charginganimation, 'charging animation')
+    console.log('animationcharge', this.chargingarr.animation, 'charging animation')
     if (tower.active){
       let linkedtower = this.towerobjarr.find(tower => tower.id == tower.linkedtowerid);
       // shoot bullet sprites at each other
@@ -1306,6 +1465,10 @@ class mapBuilder{
       // console.log('active', this.towerobjarr[index].charginganimation, 'charging animation')
       if (tower.chargingindicator == 1){
         console.log('generating charging animation')
+        let frogindex = this.towerfrogarr.findIndex(frog => frog.id == tower.id);
+        if (this.towerfrogarr[frogindex] != null && frogindex >= 0){
+          this.towerfrogarr[frogindex].frog.changeAni('attack');
+        }
         // generates charging tower sprite
         let charginganimation = new this.charginganim.Sprite();
         charginganimation.pos = createVector(towersprite.pos.x, towersprite.pos.y);
@@ -1339,7 +1502,7 @@ class mapBuilder{
       //   image(tower.img, 0, 0, this.TILE_WIDTH, this.TILE_HEIGHT * 3);
       // }
     } else {
-      console.log('removing charging animation', this.chargingarr[index], 'charging animation')
+      // console.log('removing charging animation', this.chargingarr[index], 'charging animation')
       if (tower.chargingindicator == 0){
         console.log('removing charging animation')
         // this.towerobjarr[index].charginganimation.remove();
@@ -1349,6 +1512,11 @@ class mapBuilder{
         }
         this.chargingarr[animindex].animation.remove();
         this.chargingarr.splice(animindex, 1);
+
+        let frogindex = this.towerfrogarr.findIndex(frog => frog.id == tower.id);
+        if (this.towerfrogarr[frogindex] != null && frogindex >= 0){
+          this.towerfrogarr[frogindex].frog.changeAni('idle');
+        }
         // this.chargingarr[animindex] = null;
         // if (this.chargingarr[index] != null){
           

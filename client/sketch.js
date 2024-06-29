@@ -227,7 +227,7 @@ function draw() {
         // mapBuilder.checkIfPlayerIsNearTower
         // checkIfPlayerIsNearTower(player);
         if (map.checkIfPlayerIsNearTower(mechplayer) != false && interactionBtn == undefined && startGame == true) {
-            console.log(map.checkIfPlayerIsNearTower(displayPlayer))
+            // console.log(map.checkIfPlayerIsNearTower(displayPlayer))
             // interactionBtn = createButton('Examine');
             // interactionBtn.addClass('flex m-0 my-2 p-4 scale-90 btn btn-primary hover:scale-100 text-center justify-self-center hover:border-2 hover:border-secondary hover:border-offset-2 overflow-visible w-32');
             // interactionBtn.position(width / 2 - 64, height - 100);
@@ -268,6 +268,7 @@ function checkKeyPressed() {
 function towerToggled() {
     let index = map.checkIfPlayerIsNearTower(mechplayer);
     let tower = map.towerobjarr[index];
+    console.log(tower)
     let id = tower.id;
     if (tower.active && tower.team != team) {
         socket.emit("deactivateTower", id);
@@ -283,7 +284,7 @@ function towerToggled() {
     }
 }
 
-let SPEED = 5;
+let SPEED = 6;
 let adjacentSPEED = 2 * SPEED**0.5;
 let oppSPEED = SPEED**0.5;
 function updateStatusConditions() {
