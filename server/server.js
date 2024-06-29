@@ -114,6 +114,12 @@ io.on("connection", (socket) => {
         }, 1000);
     });
 
+    socket.on("startingGameSoon", () => {
+        for (let c of client.room.clients) {
+            c.socket.emit("startingGameSoon");
+        }
+    });
+
     socket.on("activateTower", (id) => {
         console.log('activating tower', id, client.team)
         client.room.mapManager.activateTower(id, client.team, client.room.clients);

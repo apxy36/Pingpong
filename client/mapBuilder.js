@@ -313,6 +313,8 @@ class mapBuilder{
     this.healthbars.h = this.TILE_HEIGHT;
     this.basehealthbars = [];
 
+    this.idlefrogs = [];
+
 
     // this.exchangebullets.image = loadImage('./textures/Towers/bullet.png');
     // add boid follow mechanics for bullets
@@ -320,6 +322,50 @@ class mapBuilder{
     // this.basetowers.image = loadImage('./textures/Towers/basetower.png');
 
   }
+
+  displayIdleFrogs(){
+    //adds frogs
+    for (let i = this.idlefrogs.length; i < 10; i++){
+      let idlefrog = new this.type0towerfrogs.Sprite();
+      let isox = random(0, this.width);
+      let isoy = random(0, this.height);
+      idlefrog.position.x = (isox - isoy) * this.TILE_WIDTH / 2;
+      idlefrog.position.y = (isox + isoy) * this.TILE_HEIGHT / 2;
+      this.idlefrogs.push(idlefrog);
+      idlefrog.changeAni('jump');
+    }
+    console.log(this.idlefrogs)
+    // move frogs
+    for (let i = 0; i < this.idlefrogs.length; i++){
+      let idlefrog = this.idlefrogs[i];
+      let isox = idlefrog.position.x / this.TILE_WIDTH + idlefrog.position.y / this.TILE_HEIGHT;
+      let isoy = idlefrog.position.y / this.TILE_HEIGHT - idlefrog.position.x / this.TILE_WIDTH;
+      let newisox = isox + noise(isox * 10000, isoy) * 0.07;
+      let newisoy = isoy + noise(isox * 100, -isoy) * 0.07;
+      let newx = (newisox - newisoy) * this.TILE_WIDTH / 2;
+      let newy = (newisox + newisoy) * this.TILE_HEIGHT / 2;
+      let dx = newx - idlefrog.position.x;
+      let dy = newy - idlefrog.position.y;
+      // change facing of frog 
+      if (dx > 0 || dy < 0){
+        idlefrog.anis.scale = 2/3;
+      } else {
+        idlefrog.anis.scale = -2/3;
+      }
+      idlefrog.position.x = newx;
+      idlefrog.position.y = newy;
+    }
+
+
+  }
+
+  deleteIdleFrogs(){
+    for (let i = 0; i < this.idlefrogs.length; i++){
+      this.idlefrogs[i].remove();
+    }
+    this.idlefrogs = [];
+  }
+
 
   buildBaseMap(mapManager){
     this.grid = this.convertTileArrayToMap(mapManager.gridarr);

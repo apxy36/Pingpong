@@ -132,6 +132,51 @@ socket.on("preGenerateTower", (randx, randy, randtype) => {
 
 socket.on("gameStarted", () => {
     startGame = true;
+    map.deleteIdleFrogs();
+}
+);
+
+socket.on("startingGameSoon", () => {
+    console.log("Game starting soon...");
+    interactionBtn.remove();
+        interactionBtn = undefined;
+        Swal.fire({
+            title: 'Game starting...',
+            html: 'Game will start in 5 seconds.',
+            timer: 5000, // milliseconds - 10 seconds for the example
+            timerProgressBar: true,
+            icon: 'success',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+                const content = Swal.getHtmlContainer();
+                const timerInterval = setInterval(() => {
+                    // Calculate remaining time
+                    const timeLeft = Swal.getTimerLeft();
+                    if (timeLeft !== null) {
+                        content.textContent = `Time remaining: ${Math.ceil(timeLeft / 1000)} seconds`;
+                    } else {
+                        clearInterval(timerInterval);
+                    }
+                }, 100);
+            },
+        });
+});
+
+socket.on("gameEnded", (teamwon) => { //temp function
+    if (teamwon == team) {
+        Swal.fire({
+            title: "Victory!",
+            text: "Your team has won the game!",
+            icon: "success"
+        });
+    } else {
+        Swal.fire({
+            title: "Defeat!",
+            text: "Your team has lost the game.",
+            icon: "error"
+        });
+    }
 }
 );
 
@@ -270,12 +315,16 @@ function draw() {
             prevPlayerZ = playerZ;
         }
 
+        if (startGame == false) {
+            map.displayIdleFrogs();
+        }
+
         if (startGame == false && interactionBtn == undefined) {
             interactionBtn = createButton('Start Game');
-            interactionBtn.addClass('flex m-0 my-2 p-4 scale-90 btn btn-primary hover:scale-100 pulse-border text-center justify-self-center hover:border-2 border-secondary hover:border-offset-4 overflow-visible w-32');
+            interactionBtn.addClass('flex m-0 my-2 p-4 scale-90 btn btn-primary hover:scale-100 border-offset-0 text-center justify-self-center hover:border-2 border-secondary hover:border-offset-4 overflow-visible w-32');
             interactionBtn.position(width / 2 - 64, height - 100);
             interactionBtn.mouseClicked(() => {
-                if (em.entities.size < 2) {
+                if (em.entities.size < 1) {
                     Swal.fire({
                         title: "Not enough players...",
                         text: "Not enough players to start the game. A minimum of 2 players are needed for the game to start. Please wait for more players to join.",
@@ -322,7 +371,7 @@ function draw() {
             // interactionBtn.addClass('flex m-0 my-2 p-4 scale-90 btn btn-primary hover:scale-100 text-center justify-self-center hover:border-2 hover:border-secondary hover:border-offset-2 overflow-visible w-32');
             // interactionBtn.position(width / 2 - 64, height - 100);
             // interactionBtn.mouseClicked(towerToggled);
-            checkKeyPressed();
+            // checkKeyPressed();
             }
             else if (map.checkIfPlayerIsNearTower(mechplayer) == false && interactionBtn != undefined && startGame == true) {
                 // interactionBtn.remove();
@@ -358,22 +407,22 @@ function draw() {
     
 }
 
-function checkKeyPressed() {
-    if (keyIsPressed && keyCode == 32) {
-        console.log('shift')
-        towerToggled();
+// function checkKeyPressed() {
+//     if (keyIsPressed && keyCode == 32) {
+//         console.log('shift')
+//         towerToggled();
         
-    }
-    // if (keyIsPressed && keyCode === CONTROL) {
-    //     if (map.towerarr.length > 0){
-}
+//     }
+//     // if (keyIsPressed && keyCode === CONTROL) {
+//     //     if (map.towerarr.length > 0){
+// }
 
 function keyPressed() {
     if (keyCode === 32) {
         console.log('space')
         healths[0] -= 10;
         healths[1] -= 10;
-        
+        towerToggled();
     } else if (keyCode == 74){
         console.log('j')
         healths[0] += 10;
