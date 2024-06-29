@@ -2,6 +2,7 @@ import { Server } from "socket.io";
 import { readFileSync } from "fs";
 import MapManager from './mapManager.js'
 import { timingSafeEqual } from "crypto";
+import { clear } from "console";
 
 const io = new Server(8001, {
     cors: {
@@ -27,7 +28,8 @@ class Room {
         this.clients = [];
         this.id = id;
         this.mapManager = new MapManager(id);
-        this.gameStarted = true; // set to false ltr
+        this.gameStarted = false; // set to false ltr
+        this.gamecountdown = 60 * 3; // 3 minutes
 
     }
 
@@ -91,6 +93,26 @@ io.on("connection", (socket) => {
         socket.emit("buildMap", client.room.mapManager);
         socket.emit("setRoomCode", roomCode);
     })
+
+    socket.on("startGame", () => {
+        client.room.gameStarted = true;
+        for (let c of client.room.clients) {
+            c.socket.emit("gameStarted");
+        }
+        setInterval(() => {
+            client.room.gamecountdown--;
+            if (client.room.gamecountdown <= 0) {
+                if (client.room.gameStarted) {
+                    let teamwon = client.room.mapManager.checkWinCondition();
+                    for (let c of client.room.clients) {
+                        c.socket.emit("gameEnded", teamwon);
+                    }
+                    clearInterval();
+                }
+            }
+        
+        }, 1000);
+    });
 
     socket.on("activateTower", (id) => {
         console.log('activating tower', id, client.team)

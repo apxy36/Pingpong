@@ -130,6 +130,11 @@ socket.on("preGenerateTower", (randx, randy, randtype) => {
 }
 );
 
+socket.on("gameStarted", () => {
+    startGame = true;
+}
+);
+
 socket.on("updateHealth", (health) => {
     healths = health;
     for (let i = 0; i < health.length; i++) {
@@ -228,7 +233,7 @@ function setup() {
         fill("black");
         text(`Room Code: ${currentRoomCode}`, 0, 50, width, 50);
     };
-    startGame = true;
+    // startGame = true;
     totalhealth = 100;
     
     healthBar0 = createElement('iframe').size(330, 70);
@@ -264,21 +269,70 @@ function draw() {
             map.updateCollisionLayers(playerZ, mechplayer);
             prevPlayerZ = playerZ;
         }
-        // mapBuilder.checkIfPlayerIsNearTower
-        // checkIfPlayerIsNearTower(player);
-        if (map.checkIfPlayerIsNearTower(mechplayer) != false && interactionBtn == undefined && startGame == true) {
+
+        if (startGame == false && interactionBtn == undefined) {
+            interactionBtn = createButton('Start Game');
+            interactionBtn.addClass('flex m-0 my-2 p-4 scale-90 btn btn-primary hover:scale-100 pulse-border text-center justify-self-center hover:border-2 border-secondary hover:border-offset-4 overflow-visible w-32');
+            interactionBtn.position(width / 2 - 64, height - 100);
+            interactionBtn.mouseClicked(() => {
+                if (em.entities.size < 2) {
+                    Swal.fire({
+                        title: "Not enough players...",
+                        text: "Not enough players to start the game. A minimum of 2 players are needed for the game to start. Please wait for more players to join.",
+                        icon: "info"
+                    });
+                } else {
+                    socket.emit("startingGameSoon");
+                    interactionBtn.remove();
+                    interactionBtn = undefined;
+                    Swal.fire({
+                        title: 'Game starting...',
+                        html: 'Game will start in 5 seconds.',
+                        timer: 5000, // milliseconds - 10 seconds for the example
+                        timerProgressBar: true,
+                        icon: 'success',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                            const content = Swal.getHtmlContainer();
+                            const timerInterval = setInterval(() => {
+                                // Calculate remaining time
+                                const timeLeft = Swal.getTimerLeft();
+                                if (timeLeft !== null) {
+                                    content.textContent = `Time remaining: ${Math.ceil(timeLeft / 1000)} seconds`;
+                                } else {
+                                    clearInterval(timerInterval);
+                                }
+                            }, 100);
+                        },
+                    });
+                    setTimeout(() => {
+                        socket.emit("startGame");
+                        
+                    }, 5000);
+            }
+            })
+
+        } 
+        if (startGame) {
+            updateStatusConditions();
+            if (map.checkIfPlayerIsNearTower(mechplayer) != false && interactionBtn == undefined && startGame == true) {
             // console.log(map.checkIfPlayerIsNearTower(displayPlayer))
             // interactionBtn = createButton('Examine');
             // interactionBtn.addClass('flex m-0 my-2 p-4 scale-90 btn btn-primary hover:scale-100 text-center justify-self-center hover:border-2 hover:border-secondary hover:border-offset-2 overflow-visible w-32');
             // interactionBtn.position(width / 2 - 64, height - 100);
             // interactionBtn.mouseClicked(towerToggled);
             checkKeyPressed();
+            }
+            else if (map.checkIfPlayerIsNearTower(mechplayer) == false && interactionBtn != undefined && startGame == true) {
+                // interactionBtn.remove();
+                // interactionBtn = undefined;
+            }
+            map.toggleFrogFacing(displayPlayer);
         }
-        else if (map.checkIfPlayerIsNearTower(mechplayer) == false && interactionBtn != undefined && startGame == true) {
-            // interactionBtn.remove();
-            // interactionBtn = undefined;
-        }
-        map.toggleFrogFacing(displayPlayer);
+        // mapBuilder.checkIfPlayerIsNearTower
+        // checkIfPlayerIsNearTower(player);
+        
         // console.log(map.towerarr)
 
         socket.emit("position", mechplayer.pos.x, mechplayer.pos.y, playerZ);

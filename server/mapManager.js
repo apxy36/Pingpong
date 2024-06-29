@@ -248,6 +248,18 @@ export default class MapManager{
     return false;
   }
 
+  checkWinCondition(){
+    let teamwon = -1;
+    if (this.teamhealth[0] < this.teamhealth[1]){
+      teamwon = 1;
+    } else if (this.teamhealth[1] < this.teamhealth[0]){
+      teamwon = 0;
+    } else {
+      teamwon = -1;
+    }
+    return teamwon;
+  }
+
   updateMap(tileIndex, tileChar) {
     // Find which char in this.mapTiles to update
     // double check this works
