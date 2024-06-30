@@ -449,7 +449,7 @@ export default class MapManager{
             c.socket.emit('removeTower', towerid);
           }
           this.removeTowerByIndex(i, clients);
-          console.log("tower removed", i);
+          // console.log("tower removed", i);
         }
       
     }
@@ -484,7 +484,7 @@ export default class MapManager{
       }
     }
     }
-    console.log(this.towers.length)
+    // console.log(this.towers.length)
     // for (let c of clients){
     //   for (let tower of this.towers){
     //     c.socket.emit('updateTower', tower.id, tower, tower.team);
