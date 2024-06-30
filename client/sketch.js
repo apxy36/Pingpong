@@ -210,6 +210,12 @@ socket.on("slowdown", (team, tower) => {
 }
 );
 
+socket.on("healing", (team, tower) => {
+    console.log('healing')
+    map.healBase(team, tower);
+}
+);
+
 
 function manageVisiblePlayer(mechanicSprite, playerSprite, map){
     // console.log(mechanicSprite.pos.x, mechanicSprite.pos.y, playerSprite.pos.x, playerSprite.pos.y, map)
@@ -480,7 +486,7 @@ function towerToggled() {
     let id = tower.id;
     if (tower.active && tower.team != team) {
         socket.emit("deactivateTower", id);
-    } else if (tower.active == false && map.towerobjarr.length > 0 && map.countNumOfUnactivatedTowers() > 1){
+    } else if (tower.active == false && map.countNumOfUnactivatedTowers() > 1){
         socket.emit("activateTower", id);
 
         console.log("activated")

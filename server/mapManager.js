@@ -461,7 +461,7 @@ export default class MapManager{
         let randx = Math.floor(Math.random() * this.GRID_SIZE);
         let randy = Math.floor(Math.random() * this.GRID_SIZE);
         // let randtype = Math.round(Math.random() * 3);
-        let randtype = 4
+        let randtype = 3;
         let z = this.grid.get(`${randx}_${randy}`).z;
         if (!this.checkIfTowersWithinProximityofotherTowers(randx, randy)){
         for (let c of clients){
@@ -588,6 +588,9 @@ export default class MapManager{
           this.teamhealth[0] += 9;
         } else {
           this.teamhealth[1] += 9;
+        }
+        for (let c of clients){
+          c.socket.emit('healing', team, linkedtower);
         }
       } else if (tower.type == 4){ // slow towers
         for (let c of clients){

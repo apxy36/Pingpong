@@ -218,10 +218,23 @@ class mapBuilder{
     this.icebullets.h = this.TILE_HEIGHT;
     this.icebullets.spriteSheet = loadImage('./textures/Towers/New_All_Fire_Bullet_Pixel_16x16/All_Fire_Bullet_Pixel_16x16_02.png');
     this.icebullets.addAnis({
-        idle: { row: 9, frames: 4, w: 16, h: 16, col: 16},
+        idle: { row: 9, frames: 4, w: 16, h: 16, col: 26},
     });
     this.icebullets.anis.frameDelay = 2;
     this.icebullets.anis.scale = 1;
+
+    this.healingbullets = new Group();
+    this.healingbullets.overlaps(allSprites);
+    this.healingbullets.collider = 'static';
+    this.healingbullets.layer = 99999;
+    this.healingbullets.w = this.TILE_SIDE_LENGTH;
+    this.healingbullets.h = this.TILE_HEIGHT;
+    this.healingbullets.spriteSheet = loadImage('./textures/Towers/New_All_Fire_Bullet_Pixel_16x16/All_Fire_Bullet_Pixel_16x16_03.png');
+    this.healingbullets.addAnis({
+        idle: { row: 11, frames: 4, w: 16, h: 16, col: 21},
+    });
+    this.healingbullets.anis.frameDelay = 2;
+    this.healingbullets.anis.scale = 1;
 
     this.explosions = new Group();
     this.explosions.overlaps(allSprites);
@@ -1838,6 +1851,38 @@ class mapBuilder{
     }
   }
 
+  healBase(team, tower){
+    console.log('healing base')
+    let index = this.towerobjarr.findIndex(tower => tower.id == tower.id);
+    let linkedtower = this.towerobjarr.find(towers => towers.id == tower.linkedtowerid);
+    console.log(linkedtower, 'linked tower', index, 'index', tower, this.towerobjarr, 'towerobjarr')
+    if (linkedtower != null){
+      let frogindex = this.towerfrogarr.findIndex(frog => frog.id == tower.id);
+      let linkedfrogindex = this.towerfrogarr.findIndex(frog => frog.id == tower.linkedtowerid);
+      let frog = this.towerfrogarr[frogindex].frog;
+      let linkedfrog = this.towerfrogarr[linkedfrogindex].frog;
+      let distance = dist(frog.pos.x, frog.pos.y, linkedfrog.pos.x, linkedfrog.pos.y);
+      let speed = 10;
+      let time = distance / speed //time in frames
+      time = time / frameRate(); //time in seconds
+
+      let pos2 = createVector(linkedfrog.pos.x, linkedfrog.pos.y);
+      let pos1 = createVector(frog.pos.x, frog.pos.y);
+      let pos3;
+      if (team == 0){
+        pos3 = createVector(this.basetowerarr[0].pos.x, this.basetowerarr[0].pos.y);
+      } else {
+        pos3 = createVector(this.basetowerarr[1].pos.x, this.basetowerarr[1].pos.y);
+      }
+      console.log(pos3, 'pos3', pos2, 'pos2', pos1, 'pos1')
+      this.shootPingPong(pos1, pos2, 1, 'heal');
+      setTimeout(() => {
+        this.shootPingPong(pos2, pos3, 1.5, 'heal');
+      }, time * 1000);
+
+    }
+  }
+
   slowTeam(team, tower, players, selfplayer, selfteam){
     console.log('slowing team')
     let index = this.towerobjarr.findIndex(towers => towers.id == tower.id);
@@ -1868,9 +1913,9 @@ class mapBuilder{
         }
         if (pos3 != null){
           console.log(pos3, 'pos3')
-          this.shootPingPong(pos1, pos2, 1, 'slow');
+          this.shootPingPong(pos1, pos2, 1.5, 'slow');
           setTimeout(() => {
-            this.shootPingPong(pos2, pos3, 1.5, 'slow');
+            this.shootPingPong(pos2, pos3, 2.5, 'slow');
           }, time * 1000);
         }
         // pos3 = null;
@@ -1909,6 +1954,62 @@ class mapBuilder{
     //   frog.changeAni('slow');
     // }
   }
+  
+  shootBullet(tower, target){
+    // console.log('shooting bullet')
+    let bullet = new this.exchangebullets.Sprite();
+    bullet.collider = 'none';
+    let realx = (tower.x - tower.y) * this.TILE_WIDTH / 2 + this.xstart;
+    let realy = (tower.x + tower.y) * this.TILE_HEIGHT / 2 - tower.z * this.TILE_HEIGHT / 2 + this.ystart;
+    let frogindex = this.towerfrogarr.findIndex(frog => frog.id == tower.id);
+    let frog = this.towerfrogarr[frogindex].frog;
+    // console.log(frog, 'frog')
+    bullet.pos = createVector(frog.pos.x, frog.pos.y);
+    // bullet.target = target;
+    // console.log(tower, target, 'tower and target')
+    let speed = 13;
+    // bullet.damage = 5;
+    // bullet.active = true;
+    bullet.draw = () => {
+        let targetx = (target.x - target.y) * this.TILE_WIDTH / 2 + this.xstart;
+        let targety = (target.x + target.y) * this.TILE_HEIGHT / 2 - target.z * this.TILE_HEIGHT / 2 + this.ystart;
+        let bulletx = bullet.pos.x;
+        let bullety = bullet.pos.y;
+        let distance = dist(targetx, targety, bulletx, bullety);
+        let angle = atan2(targety - bullety, targetx - bulletx);
+        if (angle < 0){
+          angle = 2 * PI + angle;
+        }
+        // bullet.anis.rotation = angle * 180 / PI;
+        // if (targetx - bulletx < 0 && targety - bullety > 0){
+        //   angle = PI - angle;
+        // } else if (targetx - bulletx < 0 && targety - bullety < 0){
+        //   angle = PI + angle;
+        // } else if (targetx - bulletx > 0 && targety - bullety < 0){
+        //   angle = 2 * PI - angle;
+        // }
+        let animationangle = (angle * 180 / PI + 180) * PI / 180;
+        bullet.rotation = animationangle;
+        let x = cos(angle) * speed;
+        let y = sin(angle) * speed;
+        bullet.pos.x += x;
+        bullet.pos.y += y;
+        // console.log(bullet.pos.x, bullet.pos.y, 'bullet pos')
+        // fill(255, 0, 0);
+        // ellipse(0, 0, 10, 10);
+        bullet.ani.draw(0, 0, 0, 1, 1);
+        if (distance < 25){
+          // target.health -= bullet.damage;
+          // bullet.active = false;
+          bullet.remove();
+        }
+        // console.log(bullet.pos.x, bullet.pos.y, 'bullet pos')
+        
+      }
+      
+     
+    // this.bulletsarr.push(bullet);
+  }
 
   shootPingPong(pos1, pos2, scale, type = 'normal'){
     let bullet;
@@ -1916,12 +2017,15 @@ class mapBuilder{
       bullet = new this.bullets.Sprite();
     } else if (type == 'slow'){
       bullet = new this.icebullets.Sprite();
+    } else if (type == 'heal'){
+      bullet = new this.healingbullets.Sprite();
+      // console.log('healing bullet', bullet)
     }
 
     bullet.pos = createVector(pos1.x, pos1.y);
     bullet.scale = 0.5;
     bullet.rotation = 0;
-    bullet.collider = "none"; 
+    // bullet.collider = "none"; 
     bullet.changeAni('idle');
     
     bullet.draw = () => {
@@ -1952,6 +2056,8 @@ class mapBuilder{
         if (type == 'normal'){
           animationangle = (angle * 180 / PI - 90) * PI / 180;
         } else if (type == 'slow'){
+          animationangle = (angle * 180 / PI + 90) * PI / 180;
+        } else if (type == 'heal'){
           animationangle = (angle * 180 / PI + 90) * PI / 180;
         }
 
@@ -2213,61 +2319,7 @@ class mapBuilder{
     }
   }
 
-  shootBullet(tower, target){
-    console.log('shooting bullet')
-    let bullet = new this.exchangebullets.Sprite();
-    bullet.collider = 'none';
-    let realx = (tower.x - tower.y) * this.TILE_WIDTH / 2 + this.xstart;
-    let realy = (tower.x + tower.y) * this.TILE_HEIGHT / 2 - tower.z * this.TILE_HEIGHT / 2 + this.ystart;
-    let frogindex = this.towerfrogarr.findIndex(frog => frog.id == tower.id);
-    let frog = this.towerfrogarr[frogindex].frog;
-    console.log(frog, 'frog')
-    bullet.pos = createVector(frog.pos.x, frog.pos.y);
-    // bullet.target = target;
-    console.log(tower, target, 'tower and target')
-    let speed = 13;
-    // bullet.damage = 5;
-    // bullet.active = true;
-    bullet.draw = () => {
-        let targetx = (target.x - target.y) * this.TILE_WIDTH / 2 + this.xstart;
-        let targety = (target.x + target.y) * this.TILE_HEIGHT / 2 - target.z * this.TILE_HEIGHT / 2 + this.ystart;
-        let bulletx = bullet.pos.x;
-        let bullety = bullet.pos.y;
-        let distance = dist(targetx, targety, bulletx, bullety);
-        let angle = atan2(targety - bullety, targetx - bulletx);
-        if (angle < 0){
-          angle = 2 * PI + angle;
-        }
-        // bullet.anis.rotation = angle * 180 / PI;
-        // if (targetx - bulletx < 0 && targety - bullety > 0){
-        //   angle = PI - angle;
-        // } else if (targetx - bulletx < 0 && targety - bullety < 0){
-        //   angle = PI + angle;
-        // } else if (targetx - bulletx > 0 && targety - bullety < 0){
-        //   angle = 2 * PI - angle;
-        // }
-        let animationangle = (angle * 180 / PI + 180) * PI / 180;
-        bullet.rotation = animationangle;
-        let x = cos(angle) * speed;
-        let y = sin(angle) * speed;
-        bullet.pos.x += x;
-        bullet.pos.y += y;
-        // console.log(bullet.pos.x, bullet.pos.y, 'bullet pos')
-        // fill(255, 0, 0);
-        // ellipse(0, 0, 10, 10);
-        bullet.ani.draw(0, 0, 0, 1, 1);
-        if (distance < 25){
-          // target.health -= bullet.damage;
-          // bullet.active = false;
-          bullet.remove();
-        }
-        // console.log(bullet.pos.x, bullet.pos.y, 'bullet pos')
-        
-      }
-      
-     
-    // this.bulletsarr.push(bullet);
-  }
+  
 
 
 
