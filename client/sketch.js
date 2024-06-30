@@ -447,6 +447,7 @@ function draw() {
         }
         if (startGame) {
             updateStatusConditions();
+            map.checkIfPlayerIsNearTower(mechplayer);
             if (map.checkIfPlayerIsNearTower(mechplayer) != false && interactionBtn == undefined && startGame == true) {
             // console.log(map.checkIfPlayerIsNearTower(displayPlayer))
             // interactionBtn = createButton('Examine');
@@ -517,9 +518,11 @@ function keyPressed() {
 }
 
 function towerToggled() {
-    let index = map.checkIfPlayerIsNearTower(mechplayer);
-    if (index == false) {
-        return;
+    let index = map.checkIfPlayerIsNearTower(displayPlayer);
+    if (index == 0) {
+        console.log(index, 'no tower')
+    } else if (index == false) {
+        return
     }
     let tower = map.towerobjarr[index];
     console.log(tower)

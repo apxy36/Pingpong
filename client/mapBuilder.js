@@ -378,6 +378,16 @@ class mapBuilder{
         idle: { row: 1.6, frames: 4, w: 40, h: 66},
     });
 
+    this.circles = new Group();
+    this.circles.overlaps(allSprites);
+    this.circles.collider = 'static';
+    this.circles.layer = 9999;
+    this.circles.w = this.TILE_SIDE_LENGTH;
+    this.circles.h = this.TILE_HEIGHT;
+
+    this.circlearr = [];
+
+
     
 
 
@@ -1442,13 +1452,17 @@ class mapBuilder{
     if (mapBuilt == true){
       for (let i = 0; i < this.towerobjarr.length; i++){
         let tower = this.towerobjarr[i];
+        let towersprite = this.towerarr[i];
         let playerx = player.pos.x;
         let playery = player.pos.y;
 
-        let padding = 3;
+        let padding = 2;
         // let startx = ();
-        let x = (tower.x - tower.y) * this.TILE_WIDTH / 2 + this.xstart - padding * this.TILE_WIDTH;
-        let y = (tower.x + tower.y) * this.TILE_HEIGHT / 2  + this.ystart - padding * this.TILE_HEIGHT / 2;
+
+        let x = towersprite.pos.x - padding * this.TILE_WIDTH / 2;
+        let y = towersprite.pos.y - padding * this.TILE_HEIGHT / 2;
+        // let x = (tower.x - tower.y) * this.TILE_WIDTH / 2 + this.xstart - padding * this.TILE_WIDTH;
+        // let y = (tower.x + tower.y) * this.TILE_HEIGHT / 2  + this.ystart - padding * this.TILE_HEIGHT / 2;
         let w = this.TILE_WIDTH + padding * this.TILE_WIDTH; //tile width is tower width
         let h = this.TILE_HEIGHT * 2 + padding * this.TILE_HEIGHT; //tile height is tower height
         // let x = (mapOverlayArea.x - areaPadding) * this.mapCellSize + this.mapX;- tower.z * this.TILE_HEIGHT / 2
@@ -1458,11 +1472,35 @@ class mapBuilder{
         // console.log(tower, i)
         if (playerx > x && playerx < x + w && playery > y && playery < y + h) {
           console.log('player near tower', i)
-            return i;
+          // towersprite = this.towerarr[i];
+          // draws a circle around the tower
+          // makes new sprite
+          let circle = new this.circles.Sprite();
+          circle.pos = createVector(towersprite.pos.x, towersprite.pos.y + 40);
+          circle.scale = 1;
+          circle.draw = () => {
+            push();
+            strokeWeight(2);
+            stroke('yellow');
+            fill(0,0,0,0);
+            ellipse(0, 0, 50, 30);
+
+            pop();
+          }
+          this.circlearr.push(circle);
+          return i;
+        } else {
+          
+            // return i;
         }
+        
         
 
       }
+      for (let k = 0; k < this.circlearr.length; k++){
+          this.circlearr[k].remove();
+        }
+        this.circlearr = [];
       return false;
 
 
