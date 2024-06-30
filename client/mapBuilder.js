@@ -1476,14 +1476,14 @@ class mapBuilder{
           // draws a circle around the tower
           // makes new sprite
           let circle = new this.circles.Sprite();
-          circle.pos = createVector(towersprite.pos.x, towersprite.pos.y + 40);
+          circle.pos = createVector(towersprite.pos.x, towersprite.pos.y + 25);
           circle.scale = 1;
           circle.draw = () => {
             push();
-            strokeWeight(2);
+            strokeWeight(1);
             stroke('yellow');
             fill(0,0,0,0);
-            ellipse(0, 0, 50, 30);
+            ellipse(0, 0, 50, 10);
 
             pop();
           }

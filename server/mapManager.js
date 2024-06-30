@@ -241,7 +241,7 @@ export default class MapManager{
   checkIfTowersWithinProximityofotherTowers(x, y){
     for (let i = 0; i < this.towers.length; i++){
       let dist = Math.sqrt((this.towers[i].x - x)**2 + (this.towers[i].y - y)**2);
-      if (dist < 10){
+      if (dist < 14){
         return true;
       }
     }
@@ -456,8 +456,8 @@ export default class MapManager{
     //handle spawning of new towers
     //random chance of spawning a new tower
     let rand = Math.random();
-    if (rand < 0.4){
-      if (this.towers.length < 8){
+    if (rand < 0.5){
+      if (this.towers.length < 9){
         let randx = Math.floor(Math.random() * this.GRID_SIZE);
         let randy = Math.floor(Math.random() * this.GRID_SIZE);
         // let randtype = Math.round(Math.random() * 3);
