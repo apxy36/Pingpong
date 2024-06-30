@@ -2538,7 +2538,7 @@ function createPlayerSprite(name) {
     
 }
 
-function createVisiblePlayerSprite(name, playerZ) { //scaling added after animation
+function createVisiblePlayerSprite(name, playerZ, team) { //scaling added after animation
     // let playerSprite = new Sprite(0, 0, 10);
     // // playerSprite.layer = 99999
     // playerSprite.visible = true;
@@ -2559,8 +2559,12 @@ function createVisiblePlayerSprite(name, playerZ) { //scaling added after animat
     // 
     // playerSprite.changeAni('idle');
     // playerSprite.layer = 99999;
-
-    let playerSprite = new playerSpriteGroup.Sprite();
+    let playerSprite;
+    if (team == 0){
+      playerSprite = new playerSpriteGroup1.Sprite();
+    } else if (team == 1){
+      playerSprite = new playerSpriteGroup2.Sprite();
+    }
     playerSprite.width = 10;
     playerSprite.height = 10;
     playerSprite.pos = createVector(0, 0);

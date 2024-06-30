@@ -71,26 +71,43 @@ let chillmusicsfx;
 
 const socket = io.connect("ws://localhost:8001");
 
-let playerSpriteGroup;
+let playerSpriteGroup1;
+let playerSpriteGroup2;
 function preload() {
     map = new mapBuilder(52, 52, 32);
     // preload idle animation
     // loadAnimation("images/spritesheets/characters/hero/idle.png", "idle", 64, 64, 5);
-    playerSpriteGroup = new Group();
-    playerSpriteGroup.visible = true;
-    playerSpriteGroup.collider = 'none';
+    playerSpriteGroup1 = new Group();
+    playerSpriteGroup1.visible = true;
+    playerSpriteGroup1.collider = 'none';
     // playerSprite.img = "./new_tileset/tile_001.png";
-    playerSpriteGroup.spriteSheet = './textures/charanimap.png';
+    playerSpriteGroup1.spriteSheet = './textures/charanimap.png';
     // playerSprite.anis.offset.x = -64;
-    playerSpriteGroup.anis.offset.y = -64
-    playerSpriteGroup.anis.offset.x = 0;
-    playerSpriteGroup.anis.frameDelay = 2
-    playerSpriteGroup.scale.x = 0.5;
-    playerSpriteGroup.scale.y = 0.5;
-    playerSpriteGroup.addAnis({
+    playerSpriteGroup1.anis.offset.y = -64
+    playerSpriteGroup1.anis.offset.x = 0;
+    playerSpriteGroup1.anis.frameDelay = 2
+    playerSpriteGroup1.scale.x = 0.5;
+    playerSpriteGroup1.scale.y = 0.5;
+    playerSpriteGroup1.addAnis({
       idle: {row:0, frames: 6, w:128, h:128}, 
       run: {row:7, frames: 6, w:128, h:128},
 
+    });
+
+    playerSpriteGroup2 = new Group();
+    playerSpriteGroup2.visible = true;
+    playerSpriteGroup2.collider = 'none';
+    // playerSprite.img = "./new_tileset/tile_001.png";
+    playerSpriteGroup2.spriteSheet = './textures/team2.png';
+    // playerSprite.anis.offset.x = -64;
+    playerSpriteGroup2.anis.offset.y = -64
+    playerSpriteGroup2.anis.offset.x = 0;
+    playerSpriteGroup2.anis.frameDelay = 2
+    playerSpriteGroup2.scale.x = 0.5;
+    playerSpriteGroup2.scale.y = 0.5;
+    playerSpriteGroup2.addAnis({
+        idle: {row:2, frames: 5, w:128, h:128},
+        run: {row:4, frames: 8, w:128, h:128},
     });
 
     soundFormats('mp3', 'ogg');
@@ -146,7 +163,7 @@ socket.on("buildMap", (mapManager) => {
     map.buildVisualMap();
     map.updateTowers(mapManager.towers);
     console.log(mapManager.towers, map.towerarr)
-    displayPlayer = createVisiblePlayerSprite(localIGN, playerZ);
+    displayPlayer = createVisiblePlayerSprite(localIGN, playerZ, 0);
     playerZ = map.setPlayerPosition(1, mechplayer);//map.getTile(round(map.)).z;
     cam.setTarget(displayPlayer);
     map.initializeCollisions(playerZ, mechplayer);
@@ -230,6 +247,8 @@ socket.on("preGenerateTower", (randx, randy, randtype) => {
 socket.on("gameStarted", (team) => {
     startGame = true;
     team = team;
+    displayPlayer = createVisiblePlayerSprite(localIGN, playerZ, team);
+    playerZ = map.setPlayerPosition(1, mechplayer);//map.getTile(round(map.)).z;
     chillmusicsfx.stop();
     gamestartsfx.play();
     music.play();
@@ -496,7 +515,7 @@ function draw() {
             interactionBtn.addClass('flex m-0 my-2 p-4 scale-90 btn btn-primary hover:scale-100 border-offset-0 text-center justify-self-center hover:border-2 border-secondary hover:border-offset-4 overflow-visible w-32');
             interactionBtn.position(width / 2 - 64, height - 100);
             interactionBtn.mouseClicked(() => {
-                if (em.entities.size < 0) {
+                if (em.entities.size < 3) {
                     Swal.fire({
                         title: "Not enough players...",
                         text: "Not enough players to start the game. A minimum of 2 players are needed for the game to start. Please wait for more players to join.",

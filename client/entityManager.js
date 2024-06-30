@@ -16,7 +16,7 @@ class EntityManager {
     }
 
     registerNewPlayer(data) {
-        let playerSprite = createVisiblePlayerSprite(data.ign, data.position.z);
+        let playerSprite = createVisiblePlayerSprite(data.ign, data.position.z, data.team, data.statusconditions);
         playerSprite.x = data.position.x;
         playerSprite.y = data.position.y;
         this.entities.set(data.id, {
