@@ -415,8 +415,8 @@ class mapBuilder{
       let idlefrog = this.idlefrogs[i];
       let isox = idlefrog.position.x / this.TILE_WIDTH + idlefrog.position.y / this.TILE_HEIGHT;
       let isoy = idlefrog.position.y / this.TILE_HEIGHT - idlefrog.position.x / this.TILE_WIDTH;
-      let newisox = isox + noise(isox * 1000, isoy, frameCount) * 0.05;
-      let newisoy = isoy + noise(isox * -1000, -isoy, -frameCount) * 0.05;
+      let newisox = isox + (noise(isox * 1000, isoy, frameCount) * 0.25 - 0.125);
+      let newisoy = isoy + (noise(isox * -1000, -isoy, -frameCount) * 0.25 - 0.125);
       let newx = (newisox - newisoy) * this.TILE_WIDTH / 2;
       let newy = (newisox + newisoy) * this.TILE_HEIGHT / 2;
       let dx = newx - idlefrog.position.x;
