@@ -293,6 +293,7 @@ let healthBar0;
 let healthBar1;
 let timerFrame;
 let FPSFrame;
+let roomCodeFrame;
 
 let testspeedBoost;
 
@@ -332,15 +333,15 @@ function setup() {
     // have to jump thru hoops to draw our text
     // over our sprites...... by making a another
     // sprite. wow.
-    let text_layer = new Sprite();
-    text_layer.visible = false;
-    text_layer.collider = "none";
-    text_layer.update = () => {
-        textAlign(CENTER, CENTER);
-        textSize(32);
-        fill("black");
-        text(`Room Code: ${currentRoomCode}`, 0, 50, width, 50);
-    };
+    // let text_layer = new Sprite();
+    // text_layer.visible = false;
+    // text_layer.collider = "none";
+    // text_layer.update = () => {
+    //     textAlign(CENTER, CENTER);
+    //     textSize(32);
+    //     fill("black");
+    //     text(`Room Code: ${currentRoomCode}`, 0, 50, width, 50);
+    // };
     // startGame = true;
     totalhealth = 100;
     
@@ -375,6 +376,10 @@ function setup() {
     FPSFrame.position(width - 140, height -37);
     FPSFrame.attribute('src', './ui/fps.html');
 
+    roomCodeFrame = createElement('iframe').size(200, 50);
+    roomCodeFrame.addClass('opacity-75 hover:opacity-100 rounded-lg border-2 transition ease-in-out border-primary bg-gray-800');
+    roomCodeFrame.position(-10, height - 30);
+    roomCodeFrame.attribute('src', './ui/roomcodeframe.html');
     
 }
 
@@ -472,7 +477,7 @@ function draw() {
         updateTeamHealth((healthBar0.elt.contentDocument || healthBar0.elt.contentWindow.document), map.basehealths[0], 0, healths[0]);
         updateTeamHealth((healthBar1.elt.contentDocument || healthBar1.elt.contentWindow.document), map.basehealths[1], 1, healths[1]);
         updateTimer((timerFrame.elt.contentDocument || timerFrame.elt.contentWindow.document), timeRemaining);
-       
+        updateRoomCode((roomCodeFrame.elt.contentDocument || roomCodeFrame.elt.contentWindow.document), currentRoomCode, startGame);
         // console.log(fps)
         
         map.updateHealth(healths);
@@ -505,14 +510,14 @@ function draw() {
 
 function keyPressed() {
     if (keyCode === 32) {
-        console.log('space')
-        healths[0] -= 10;
-        healths[1] -= 10;
+        // console.log('space')
+        // healths[0] -= 10;
+        // healths[1] -= 10;
         towerToggled();
     } else if (keyCode == 74){
-        console.log('j')
-        healths[0] += 10;
-        healths[1] += 10;
+        // console.log('j')
+        // healths[0] += 10;
+        // healths[1] += 10;
     
     }
 }
@@ -541,26 +546,26 @@ function towerToggled() {
     }
 }
 
-let SPEED = 3.5;
+let SPEED = 2.8;
 let adjacentSPEED = 2 * SPEED**0.5;
 let oppSPEED = SPEED**0.5;
 function updateStatusConditions() {
     // console.log(statusconditions);
     // console.log(muted)
     // Update statusconditions (from playerStats.js)
-    SPEED = 3.5;
+    SPEED = 2.8;
     adjacentSPEED = 2 * SPEED**0.5;
     oppSPEED = SPEED**0.5;
 
     for (let status of statusconditions) {
         if (status == "speedBoost") {
             console.log("speedboost")
-            SPEED = 5.5;
+            SPEED = 4.5;
             adjacentSPEED = 2 * SPEED**0.5;
             oppSPEED = SPEED**0.5;
         } else if (status == "slow") {
             console.log("slow") 
-            SPEED = 2.5;
+            SPEED = 2;
             adjacentSPEED = 2 * SPEED**0.5;
             oppSPEED = SPEED**0.5;
         }

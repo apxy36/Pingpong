@@ -6,6 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Start Page</title>
     <script src="index.js"></script>
+    <style>
+    .hidden {
+      display: none;
+    }
+    .iframe-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .iframe-content {
+      position: relative;
+      width: 80%;
+      height: 80%;
+      background-color: white;
+      border-radius: 0.5rem;
+      overflow: hidden;
+    }
+  </style>
      <!-- SweetAlert (no dark mode) -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
@@ -18,11 +42,20 @@
         <div class="w-1/2 bg-neutral border-primary border-2 p-8 rounded-md shadow-md ease-in-out hover:border-offset-2">
             <!-- flex m-0 my-2 p-4 scale-90 btn btn-primary hover:scale-100 text-center justify-self-center hover:border-2 hover:border-secondary hover:border-offset-2 overflow-visible w-32 -->
             <h1 class="text-2xl font-bold mb-4 text-center">Ping Pong</h1>
-            <form id="joinForm" class="flex flex-col gap-4">
+            <form id="joinForm" class="flex flex-col gap-4 h-full">
                 <input type="text" id="ignInput" class="border border-primary hover:border-secondary scale-90 focus:scale-100 rounded px-4 py-2 mt-2 ease-in-out duration-100" placeholder="Enter your IGN" required>
                 <input type="text" id="roomCodeInput" class="border border-primary focus:border-secondary scale-90 focus:scale-100 rounded px-4 py-2 mt-2 ease-in-out duration-100" placeholder="Enter room code - 5 characters" required>
                 <button type="reset" class="border-0 h-full rounded-md ease-in-out duration-200 scale-90 bg-primary hover:scale-100 text-center font-bold text-2xl text-neutral justify-self-center hover:border-offset-4 hover:border-2 hover:border-secondary overflow-visible" onclick="validateCode()">Join Room</button>
             </form>
+            <div class="container mx-auto text-center py-6">
+                <button id="open-iframe" class="btn border-0 h-full rounded-md ease-in-out duration-200 scale-90 bg-primary hover:scale-100 text-center font-bold text-2xl text-neutral justify-self-center hover:border-offset-4 hover:border-2 hover:border-secondary overflow-visible hover:bg-primary" onclick="openIFrame()">Open How-To Guide</button>
+            </div>
+
+            <div id="iframe-container" class="iframe-container hidden">
+                <div class="iframe-content">
+                <iframe id="guide-iframe" src="guide.html" class="w-full h-full" frameborder="0"></iframe>
+                </div>
+            </div>
         </div>
     </div>
 

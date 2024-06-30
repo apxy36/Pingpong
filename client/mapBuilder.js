@@ -1460,7 +1460,7 @@ class mapBuilder{
         // let startx = ();
 
         let x = towersprite.pos.x - padding * this.TILE_WIDTH / 2;
-        let y = towersprite.pos.y - padding * this.TILE_HEIGHT / 2;
+        let y = towersprite.pos.y //- padding * this.TILE_HEIGHT / 2;
         // let x = (tower.x - tower.y) * this.TILE_WIDTH / 2 + this.xstart - padding * this.TILE_WIDTH;
         // let y = (tower.x + tower.y) * this.TILE_HEIGHT / 2  + this.ystart - padding * this.TILE_HEIGHT / 2;
         let w = this.TILE_WIDTH + padding * this.TILE_WIDTH; //tile width is tower width

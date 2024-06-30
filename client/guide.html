@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="forest">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FPS Game How-To Guide</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@1.14.0/dist/full.css" rel="stylesheet">
+  <style>
+    .close-button {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background-color: #ff0000;
+      color: white;
+      border: none;
+      border-radius: 0.25rem;
+      padding: 0.25rem 0.5rem;
+      cursor: pointer;
+    }
+    .content {
+      background: url('https://www.transparenttextures.com/patterns/asfalt-light.png');
+      padding: 1rem;
+      border-radius: 0.5rem;
+    }
+    .section {
+      margin-bottom: 2rem;
+    }
+    .section h2 {
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+    }
+    .section h2 img {
+      margin-left: 0.5rem;
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+    .section p {
+      margin-top: 1rem;
+    }
+    .tower-section {
+      display: flex;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+    .tower-section img {
+      margin-right: 1rem;
+      width: 80px;
+      height: 80px;
+      border-radius: 0.25rem;
+    }
+  </style>
+</head>
+<body class="bg-forest text-white p-8 relative content">
+  <button class="close-button" onclick="window.parent.postMessage('close-iframe', '*')">X</button>
+  
+  <h1 class="text-3xl font-bold mb-6">Frog Pong: The Game</h1>
+
+  <section class="section text-md">
+    <h2>Overview <img src="https://img.icons8.com/ios-filled/50/000000/rules.png" class="inline-block"></h2>
+    <p class="font-light"> In an alternate universe, the game of ping pong has been (nearly completely) reinvented. </p>
+    <p class="font-light"> The game is now played with frogs and towers, and the objective is for you to toggle them quick enough to whittle down the opponent's base. </p>
+    <p class="font-light"> (Yes, this is quite a revamp) </p>
+
+    <video controls class="mt-4 rounded">
+        <source src="./textures/howto/gameplay.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+        </video>
+  </section>
+  
+  <section class="section text-md">
+    <h2>Rules <img src="https://img.icons8.com/ios-filled/50/000000/rules.png" class="inline-block"></h2>
+    <p class="font-light"> The rules are simple: </p>
+    <ul class="list-disc list-inside">
+        <li> There are two teams in the game, with 2 players each. </li>
+      <li> Each team has a base with 100 health points. </li>
+      <li> The objective is to toggle the frogs and towers to attack the opponent's base. each game lasts 3 minutes. </li>
+      <li> The first player to reduce the opponent's base to 0 health points wins. </li>
+      <li> If no team is able to deplete their opponent's base when the timer ends, the team whose base has the highest HP will win. </li>
+        <li> The game will end in a draw if both bases have the same HP. </li>
+
+    </ul>
+    
+  </section>
+  
+  <section class="section text-md">
+    <h2>Towers <img src="./textures/Towers/Green towers/tower_green(1).png" class="inline-block"></h2>
+    <p class="font-light"> Towers are stationary units that can have a range of effects. </p>
+    <p class="font-light"> There are 5 types of towers, corresponding to the types of frogs on them. </p>
+
+    <div class="tower-section">
+      <img src="./textures/Towers/ToxicFrog/0/ToxicFrogBlueBlue_Attack - Copy.png" alt="Tower 1">
+      <div>
+        <h3 class="text-xl font-semibold">Normal Tower</h3>
+        <p class="text-lg">Deals 15 damage to the opponent's base. </p>
+      </div>
+    </div>
+    <div class="tower-section">
+      <img src="./textures/Towers/ToxicFrog/1/ToxicFrogGreenBlue_Attack - Copy.png" alt="Tower 2">
+      <div>
+        <h3 class="text-xl font-semibold">Speed Tower</h3>
+        <p class="text-lg">Increases the movement speed of your team's players for 20s. </p>
+      </div>
+    </div>
+    <div class="tower-section">
+      <img src="./textures/Towers/ToxicFrog/2/ToxicFrogBlueBrown_Attack - Copy.png" alt="Tower 3">
+      <div>
+        <h3 class="text-xl font-semibold">Ice Tower</h3>
+        <p class="text-lg">Slows the movement speed of opponent players for 20s.</p>
+      </div>
+    </div>
+    <div class="tower-section">
+      <img src="./textures/Towers/ToxicFrog/3/ToxicFrogGreenBrown_Attack - Copy.png" alt="Tower 4">
+      <div>
+        <h3 class="text-xl font-semibold">Buff Tower</h3>
+        <p class="text-lg">Increases the damage dealt by normal towers (by your team) by 5. </p>
+      </div>
+    </div>
+    <div class="tower-section">
+      <img src="./textures/Towers/ToxicFrog/4/ToxicFrogPurpleBlue_Attack - Copy.png" alt="Tower 5">
+      <div>
+        <h3 class="text-xl font-semibold">Healing Tower</h3>
+        <p class="text-lg">Heals your base for 10 HP.</p>
+      </div>
+    </div>
+
+    
+  </section>
+  
+  <section class="section">
+    <h2>How to Play <img src="https://img.icons8.com/ios-filled/50/000000/play.png" class="inline-block"></h2>
+    <p>Use WASD to move around, and the SPACE bar to toggle the towers. </p>
+    <video controls class="mt-4 rounded">
+        <source src="./textures/howto/yellow.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+        </video>
+    <div class="tower-section">
+      
+      
+      <div>
+        <h3 class="text-xl font-semibold"> You can only toggle towers when you are close to them. </h3>
+        <p class="text-lg">Notice the yellow ring. </p>
+      </div>
+    </div>
+    
+  </section>
+</body>
+</html>

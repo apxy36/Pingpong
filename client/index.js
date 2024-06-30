@@ -34,3 +34,20 @@ function validateCode() {
         enterRoom(roomCodeInputBox.value);
     }
 }
+
+
+function openIFrame() {
+  document.getElementById('iframe-container').classList.remove('hidden');
+}
+
+function closeIframe() {
+    document.getElementById('iframe-container').classList.add('hidden');
+    }
+
+window.addEventListener('message', function(event) {
+  if (event.data === 'close-iframe') {
+    console.log('closing iframe ')
+    document.getElementById('iframe-container').classList.add('hidden');
+  }
+  
+});

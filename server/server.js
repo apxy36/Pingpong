@@ -107,6 +107,8 @@ io.on("connection", (socket) => {
                     for (let c of client.room.clients) {
                         c.socket.emit("gameEnded", teamwon);
                     }
+                    client.room.gameStarted = false;
+                    client.room.gamecountdown = 60 * 3;
                     clearInterval();
                 }
             }

@@ -589,9 +589,9 @@ export default class MapManager{
         }
       } else if (tower.type == 3){ // heal towers
         if (team == 0){
-          this.teamhealth[0] += 9;
+          this.teamhealth[0] += 10;
         } else {
-          this.teamhealth[1] += 9;
+          this.teamhealth[1] += 10;
         }
         for (let c of clients){
           c.socket.emit('healing', team, linkedtower);
