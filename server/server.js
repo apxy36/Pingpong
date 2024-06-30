@@ -99,13 +99,24 @@ io.on("connection", (socket) => {
         //determine teams
         let team1count = 0;
         let team2count = 0;
-        while (team1count < 2) {
+        if (client.room.clients.length == 4) {
+            while (team1count < 2) {
             let randomclient = client.room.clients[Math.floor(Math.random() * client.room.clients.length)];
             if (randomclient.team == null) {
                 randomclient.team = 0;
                 team1count++;
             }
         }
+        } else {
+            while (team1count < Math.round(random(1, client.room.clients.length - 1))) {
+                let randomclient = client.room.clients[Math.floor(Math.random() * client.room.clients.length)];
+                if (randomclient.team == null) {
+                    randomclient.team = 0;
+                    team1count++;
+                }
+            }
+        }
+        
         // team2 
         for (let c of client.room.clients) {
             if (c.team == null) {
