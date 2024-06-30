@@ -541,21 +541,21 @@ function towerToggled() {
     }
 }
 
-let SPEED = 4.5;
+let SPEED = 3.5;
 let adjacentSPEED = 2 * SPEED**0.5;
 let oppSPEED = SPEED**0.5;
 function updateStatusConditions() {
     // console.log(statusconditions);
     // console.log(muted)
     // Update statusconditions (from playerStats.js)
-    SPEED = 4.5;
+    SPEED = 3.5;
     adjacentSPEED = 2 * SPEED**0.5;
     oppSPEED = SPEED**0.5;
 
     for (let status of statusconditions) {
         if (status == "speedBoost") {
             console.log("speedboost")
-            SPEED = 7;
+            SPEED = 5.5;
             adjacentSPEED = 2 * SPEED**0.5;
             oppSPEED = SPEED**0.5;
         } else if (status == "slow") {
