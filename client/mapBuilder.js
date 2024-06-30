@@ -205,7 +205,7 @@ class mapBuilder{
     this.bullets.h = this.TILE_HEIGHT;
     this.bullets.spriteSheet = loadImage('./textures/Towers/fireballSpritesheet.png');
     this.bullets.addAnis({
-        idle: { row: 0, frames: 6, w: 20, h: 32},
+        idle: { row: 0, frames: 6, w: 23, h: 32},
     });
     this.bullets.anis.frameDelay = 2;
     this.bullets.anis.scale = 1;
@@ -1817,15 +1817,15 @@ class mapBuilder{
       } else {
         pos3 = createVector(this.basetowerarr[0].pos.x, this.basetowerarr[0].pos.y);
       }
-      this.shootPingPong(pos1, pos2);
+      this.shootPingPong(pos1, pos2, 1);
       setTimeout(() => {
-        this.shootPingPong(pos2, pos3);
+        this.shootPingPong(pos2, pos3, 1.5);
       }, time * 1000);
 
     }
   }
 
-  shootPingPong(pos1, pos2){
+  shootPingPong(pos1, pos2, scale){
     let bullet = new this.bullets.Sprite();
     bullet.pos = createVector(pos1.x, pos1.y);
     bullet.scale = 0.5;
@@ -1857,9 +1857,9 @@ class mapBuilder{
         // } else if (targetx - bulletx > 0 && targety - bullety < 0){
         //   angle = 2 * PI - angle;
         // }
-        let animationangle = (angle * 180 / PI + 90) * PI / 180;
+        let animationangle = (angle * 180 / PI - 90) * PI / 180;
         bullet.rotation = animationangle;
-        bullet.scale = 2;
+        bullet.scale = scale;
         let x = cos(angle) * speed;
         let y = sin(angle) * speed;
         bullet.pos.x += x;
@@ -2141,7 +2141,7 @@ class mapBuilder{
         // } else if (targetx - bulletx > 0 && targety - bullety < 0){
         //   angle = 2 * PI - angle;
         // }
-        let animationangle = (angle * 180 / PI + 90) * PI / 180;
+        let animationangle = (angle * 180 / PI + 180) * PI / 180;
         bullet.rotation = animationangle;
         let x = cos(angle) * speed;
         let y = sin(angle) * speed;
