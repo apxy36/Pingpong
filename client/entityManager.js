@@ -24,6 +24,8 @@ class EntityManager {
             sprite: playerSprite,
             positionBuffer: [],
             z: data.position.z,
+            team: data.team,
+            statusconditions: data.statusconditions,
         });
     }
 
@@ -35,6 +37,7 @@ class EntityManager {
         // currData.sprite.scale.y = 1 + 0.05 * newData.position.z;
         // currData.coins = newData.coins;
         if (!currData) return;
+        currData.team = newData.team;
         currData.positionBuffer.push({
             timestamp: +new Date(),
             x: newData.position.x,

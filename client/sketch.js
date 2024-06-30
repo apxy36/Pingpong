@@ -90,6 +90,7 @@ socket.on("playerDataUpdate", (id, playerData) => {
             // coins = data.coins;
             statusconditions = data.statusconditions;
             timeRemaining = data.timer;
+            team = data.team;
             // timeRemaining = data.timer;
             continue;
         };
@@ -200,6 +201,12 @@ socket.on("updateHealth", (health) => {
 socket.on("baseAttacking", (team, tower) => {
     console.log('base attacking')
     map.attackBase(team, tower);
+}
+);
+
+socket.on("slowdown", (team, tower) => {
+    console.log(em)
+    map.slowTeam(team, tower, em.entities, displayPlayer, team);
 }
 );
 

@@ -210,6 +210,19 @@ class mapBuilder{
     this.bullets.anis.frameDelay = 2;
     this.bullets.anis.scale = 1;
 
+    this.icebullets = new Group();
+    this.icebullets.overlaps(allSprites);
+    this.icebullets.collider = 'static';
+    this.icebullets.layer = 99999;
+    this.icebullets.w = this.TILE_SIDE_LENGTH;
+    this.icebullets.h = this.TILE_HEIGHT;
+    this.icebullets.spriteSheet = loadImage('./textures/Towers/New_All_Fire_Bullet_Pixel_16x16/All_Fire_Bullet_Pixel_16x16_02.png');
+    this.icebullets.addAnis({
+        idle: { row: 9, frames: 4, w: 16, h: 16, col: 16},
+    });
+    this.icebullets.anis.frameDelay = 2;
+    this.icebullets.anis.scale = 1;
+
     this.explosions = new Group();
     this.explosions.overlaps(allSprites);
     this.explosions.collider = 'static';
@@ -239,7 +252,7 @@ class mapBuilder{
         explode: { row: 4, frames: 9, w: 48, h: 48},
         jump: { row: 1, frames: 7, w: 48, h: 48},
     });
-    this.type0towerfrogs.anis.frameDelay = 2;
+    this.type0towerfrogs.anis.frameDelay = Math.round(this.random(0, 4));
     this.type0towerfrogs.anis.scale = 2/3;
     this.type0towerfrogs.anis.rotation = 0;
 
@@ -1825,8 +1838,86 @@ class mapBuilder{
     }
   }
 
-  shootPingPong(pos1, pos2, scale){
-    let bullet = new this.bullets.Sprite();
+  slowTeam(team, tower, players, selfplayer, selfteam){
+    console.log('slowing team')
+    let index = this.towerobjarr.findIndex(towers => towers.id == tower.id);
+    let linkedtower = this.towerobjarr.find(towers => towers.id == tower.linkedtowerid);
+    // console.log(linkedtower, 'linked tower', index, 'index', tower, this.towerobjarr, 'towerobjarr')
+    if (linkedtower != null){
+      let frogindex = this.towerfrogarr.findIndex(frog => frog.id == tower.id);
+      let linkedfrogindex = this.towerfrogarr.findIndex(frog => frog.id == tower.linkedtowerid);
+      let frog = this.towerfrogarr[frogindex].frog;
+      let linkedfrog = this.towerfrogarr[linkedfrogindex].frog;
+      let distance = dist(frog.pos.x, frog.pos.y, linkedfrog.pos.x, linkedfrog.pos.y);
+      let speed = 10;
+      let time = distance / speed //time in frames
+      time = time / frameRate(); //time in seconds
+
+      let pos2 = createVector(linkedfrog.pos.x, linkedfrog.pos.y);
+      let pos1 = createVector(frog.pos.x, frog.pos.y);
+      let pos3;
+      
+        // iterate thru a map object
+        console.log(selfplayer, 'selfplayer', selfteam)
+        if (selfteam == 0 && team == 1){ // opposing team
+          pos3 = selfplayer.pos;
+          // break;
+        } else if (selfteam == 1 && team == 0){
+          pos3 = selfplayer.pos;
+          // break
+        }
+        if (pos3 != null){
+          console.log(pos3, 'pos3')
+          this.shootPingPong(pos1, pos2, 1, 'slow');
+          setTimeout(() => {
+            this.shootPingPong(pos2, pos3, 1.5, 'slow');
+          }, time * 1000);
+        }
+        // pos3 = null;
+        for (let [key, player] of players){
+          console.log(player, 'player')
+          if (player.team == 0 && team == 1){ // opposing team
+            pos3 = player.sprite.position;
+            // break;
+          } else if (player.team == 1 && team == 0){
+            pos3 = player.sprite.position;
+            // break
+          } else{
+            pos3 = null;
+          }
+          if (pos3 != null){
+            console.log(pos3, 'pos3')
+            this.shootPingPong(pos1, pos2, 1, 'slow');
+            setTimeout(() => {
+              this.shootPingPong(pos2, pos3, 1.5, 'slow');
+            }, time * 1000);
+          }
+        }
+
+
+        // for (let i = 0; i < players.length; i++){
+        //   let player = players[i];
+          
+        // }
+
+      
+    }
+    // for (let i = 0; i < towers.length; i++){
+    //   let tower = towers[i];
+    //   let frogindex = this.towerfrogarr.findIndex(frog => frog.id == tower.id);
+    //   let frog = this.towerfrogarr[frogindex].frog;
+    //   frog.changeAni('slow');
+    // }
+  }
+
+  shootPingPong(pos1, pos2, scale, type = 'normal'){
+    let bullet;
+    if (type == 'normal'){
+      bullet = new this.bullets.Sprite();
+    } else if (type == 'slow'){
+      bullet = new this.icebullets.Sprite();
+    }
+
     bullet.pos = createVector(pos1.x, pos1.y);
     bullet.scale = 0.5;
     bullet.rotation = 0;
@@ -1857,7 +1948,13 @@ class mapBuilder{
         // } else if (targetx - bulletx > 0 && targety - bullety < 0){
         //   angle = 2 * PI - angle;
         // }
-        let animationangle = (angle * 180 / PI - 90) * PI / 180;
+        let animationangle;
+        if (type == 'normal'){
+          animationangle = (angle * 180 / PI - 90) * PI / 180;
+        } else if (type == 'slow'){
+          animationangle = (angle * 180 / PI + 90) * PI / 180;
+        }
+
         bullet.rotation = animationangle;
         bullet.scale = scale;
         let x = cos(angle) * speed;
@@ -1869,10 +1966,18 @@ class mapBuilder{
         // ellipse(0, 0, 10, 10);
         // bullet.ani.draw(0, 0, 0, 1, 1);
         bullet.ani.draw(0, 0, 0, bullet.scale, bullet.scale);
-        if (distance < 25){
+        if (distance < 20){
           // target.health -= bullet.damage;
           // bullet.active = false;
+          let explosion = new this.explosions.Sprite();
+          explosion.pos = createVector(bullet.pos.x, bullet.pos.y);
+          explosion.anis.scale = 1.5;
+          explosion.scale = {x: 1.5, y: 1.5};
+          setTimeout(() => {
+            explosion.remove();
+          }, 1000);
           bullet.remove();
+
         }
 
 

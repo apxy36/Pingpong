@@ -461,7 +461,7 @@ export default class MapManager{
         let randx = Math.floor(Math.random() * this.GRID_SIZE);
         let randy = Math.floor(Math.random() * this.GRID_SIZE);
         // let randtype = Math.round(Math.random() * 3);
-        let randtype = 0
+        let randtype = 4
         let z = this.grid.get(`${randx}_${randy}`).z;
         if (!this.checkIfTowersWithinProximityofotherTowers(randx, randy)){
         for (let c of clients){
@@ -533,12 +533,18 @@ export default class MapManager{
     let linkedtower = this.towers.find(towers => towers.id == tower.linkedtowerid);
     console.log(tower, linkedtower);
     if (tower.active && linkedtower.active){
+      
+      if (this.teamhealth[0] <= 0 || this.teamhealth[1] <= 0){
+        for (let c of clients){
+          c.socket.emit('gameOver', team);
+        }
+      }
+      if (tower.type == 0){
       for (let c of clients){
         console.log('baseAttacking', team, linkedtower);
         c.socket.emit('baseAttacking', team, linkedtower);
       }
-      this.deactivateTower(id, team, clients);
-      this.deactivateTower(tower.linkedtowerid, team, clients);
+      
       if (team == 0){
         this.teamhealth[1] -= this.teamdamage[0];
       } else {
@@ -546,12 +552,8 @@ export default class MapManager{
       }
       
 
-      if (this.teamhealth[0] <= 0 || this.teamhealth[1] <= 0){
-        for (let c of clients){
-          c.socket.emit('gameOver', team);
-        }
-      }
-      if (tower.type == 1){
+      
+    } else if (tower.type == 1){
         for (let c of clients){
           if (team == 0){
             if (c.team == 0){
@@ -589,8 +591,12 @@ export default class MapManager{
         }
       } else if (tower.type == 4){ // slow towers
         for (let c of clients){
+          for (let c of clients){
+            c.socket.emit('slowdown', team, linkedtower);
+          }
           if (team == 0){
             if (c.team == 1){
+              // c.socket.emit('slowdown', team, linkedtower);
               c.statusconditions.push('slow');
               setTimeout(() => {
                 c.statusconditions.splice(c.statusconditions.indexOf('slow'), 1);
@@ -621,6 +627,8 @@ export default class MapManager{
 
       
     }
+    this.deactivateTower(id, team, clients);
+    this.deactivateTower(tower.linkedtowerid, team, clients);
     for (let c of clients){
       c.socket.emit('updateHealth', this.teamhealth);
     }
