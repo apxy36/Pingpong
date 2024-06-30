@@ -398,7 +398,7 @@ class mapBuilder{
 
   }
 
-  displayIdleFrogs(){
+  displayIdleFrogs(){ //change into async?
     //adds frogs
     for (let i = this.idlefrogs.length; i < 10; i++){
       let idlefrog = new this.type0towerfrogs.Sprite();
@@ -406,8 +406,16 @@ class mapBuilder{
       let isoy = random(0, this.height);
       idlefrog.position.x = (isox - isoy) * this.TILE_WIDTH / 2 + this.xstart;
       idlefrog.position.y = (isox + isoy) * this.TILE_HEIGHT / 2 + this.ystart;
+      idlefrog.anis.
       this.idlefrogs.push(idlefrog);
-      idlefrog.changeAni('jump');
+      if (random(0, 1) < 0.1){
+        idlefrog.changeAni('jump');
+        // idlefrog.anis.frameDelay = Math.round(random(0, 4));
+      } else {
+        idlefrog.changeAni('idle');
+        // idlefrog.anis.frameDelay = Math.round(random(0, 4));
+      }
+      // idlefrog.changeAni('jump');
       idlefrog.anis.frameDelay = Math.round(random(0, 4));
     }
     // console.log(this.idlefrogs)
@@ -416,8 +424,8 @@ class mapBuilder{
       let idlefrog = this.idlefrogs[i];
       let isox = idlefrog.position.x / this.TILE_WIDTH + idlefrog.position.y / this.TILE_HEIGHT;
       let isoy = idlefrog.position.y / this.TILE_HEIGHT - idlefrog.position.x / this.TILE_WIDTH;
-      let newisox = isox + (noise(isox * 1000, isoy, frameCount) * 0.25 - 0.125);
-      let newisoy = isoy + (noise(isox * -1000, -isoy, -frameCount) * 0.25 - 0.125);
+      let newisox = isox + (noise(isox * 1000, isoy, frameCount) * 0.5 - 0.25);
+      let newisoy = isoy + (noise(isox * -1000, -isoy, -frameCount) * 0.5 - 0.25);
       let newx = (newisox - newisoy) * this.TILE_WIDTH / 2;
       let newy = (newisox + newisoy) * this.TILE_HEIGHT / 2;
       let dx = newx - idlefrog.position.x;
