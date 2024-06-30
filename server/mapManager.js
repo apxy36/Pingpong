@@ -461,7 +461,7 @@ export default class MapManager{
         let randx = Math.floor(Math.random() * this.GRID_SIZE);
         let randy = Math.floor(Math.random() * this.GRID_SIZE);
         // let randtype = Math.round(Math.random() * 3);
-        let randtype = 3;
+        let randtype = 1;
         let z = this.grid.get(`${randx}_${randy}`).z;
         if (!this.checkIfTowersWithinProximityofotherTowers(randx, randy)){
         for (let c of clients){
@@ -556,15 +556,19 @@ export default class MapManager{
     } else if (tower.type == 1){
         for (let c of clients){
           if (team == 0){
+            c.socket.emit('speedBoost', team, linkedtower);
             if (c.team == 0){
               c.statusconditions.push('speedBoost');
+              // c.socket.emit('speedBoost', team, linkedtower);
               setTimeout(() => {
                 c.statusconditions.splice(c.statusconditions.indexOf('speedBoost'), 1);
               }, 20000); // 20 seconds
             }
           } else {
+            c.socket.emit('speedBoost', team, linkedtower);
             if (c.team == 1){
               c.statusconditions.push('speedBoost');
+              // c.socket.emit('speedBoost', team, linkedtower);
               setTimeout(() => {
                 c.statusconditions.splice(c.statusconditions.indexOf('speedBoost'), 1);
               }, 20000); // 20 seconds

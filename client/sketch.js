@@ -29,6 +29,8 @@ let team0healthdisplay;
 let team1healthdisplay;
 let timeRemaining = 180;
 let fps;
+let speedBoost = false;
+let speedSlow = false;
 
 let healths = [100, 100];
 
@@ -201,12 +203,25 @@ socket.on("updateHealth", (health) => {
 socket.on("baseAttacking", (team, tower) => {
     console.log('base attacking')
     map.attackBase(team, tower);
+    // speedBoost = true;
+    // speedSlow = false;
+    
+}
+);
+
+socket.on("speedBoost", (team, tower) => {
+    console.log('speedboost')
+    map.boostTeam(team, tower, em.entities, displayPlayer, team);
+    speedBoost = true;
+    speedSlow = false;
 }
 );
 
 socket.on("slowdown", (team, tower) => {
     console.log(em)
     map.slowTeam(team, tower, em.entities, displayPlayer, team);
+    speedSlow = true;
+    speedBoost = false;
 }
 );
 
@@ -248,15 +263,38 @@ function manageVisiblePlayer(mechanicSprite, playerSprite, map){
     // playerSprite.pos.y = mechanicSprite.pos.y - playerZ * map.TILE_HEIGHT/2;
   
   }
-
+let playerSpriteGroup;
 function preload() {
     map = new mapBuilder(52, 52, 32);
+    // preload idle animation
+    // loadAnimation("images/spritesheets/characters/hero/idle.png", "idle", 64, 64, 5);
+    playerSpriteGroup = new Group();
+    playerSpriteGroup.visible = true;
+    playerSpriteGroup.collider = 'none';
+    // playerSprite.img = "./new_tileset/tile_001.png";
+    playerSpriteGroup.spriteSheet = './textures/charanimap.png';
+    // playerSprite.anis.offset.x = -64;
+    playerSpriteGroup.anis.offset.y = -64
+    playerSpriteGroup.anis.offset.x = 0;
+    playerSpriteGroup.anis.frameDelay = 2
+    playerSpriteGroup.scale.x = 0.5;
+    playerSpriteGroup.scale.y = 0.5;
+    playerSpriteGroup.addAnis({
+      idle: {row:0, frames: 6, w:128, h:128}, 
+      run: {row:7, frames: 6, w:128, h:128},
+
+    });
+    // playerSpriteGroup.anis.scale = 0.5;
+    // playerSprite.changeAni('idle');
+    // playerSprite.layer = 99999;
 }
 
 let healthBar0;
 let healthBar1;
 let timerFrame;
 let FPSFrame;
+
+let testspeedBoost;
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
@@ -318,7 +356,7 @@ function setup() {
 
 
     // healthBar0.attribute('src', './ui/healthbar.html');
-    console.log(healthBar0)
+    // console.log(healthBar0)
     map.basehealths[0] -= 10;
     map.basehealths[1] -= 10;
     setTimeout(() => {
@@ -334,8 +372,10 @@ function setup() {
 
     FPSFrame = createElement('iframe').size(150, 60);
     FPSFrame.addClass('opacity-80 hover:opacity-100 rounded-lg border-2 transition ease-in-out border-primary bg-gray-800');
-    FPSFrame.position(width - 140, height -47);
+    FPSFrame.position(width - 140, height -37);
     FPSFrame.attribute('src', './ui/fps.html');
+
+    
 }
 
 function draw() {
@@ -521,22 +561,7 @@ function updateStatusConditions() {
             adjacentSPEED = 2 * SPEED**0.5;
             oppSPEED = SPEED**0.5;
         }
-        else if (status == "mute") {
-            if (prevmute == 0) {
-                setInterval(function () {
-                    if (muted > 0) {
-                        muted -= 1;
-                    }
-                    else {
-                        muted = 0;
-                    }
-                }, 1000);
-                //prevmute = 1;
-            }
-            prevmute = muted;
-            allowMapModification = false;
-
-        }
+        
     }
 }
 
@@ -606,7 +631,7 @@ function move() {
     // Invert animation where necessary
     if (kb.pressing("w")) {
         displayPlayer.changeAni('run');
-        displayPlayer.scale.x = 1;
+        displayPlayer.scale.x = 0.5;
         // move in a diagonal direction based on isometric x and y
         mechplayer.pos.y -= SPEED * oppSPEED / SPEED; 
         mechplayer.pos.x += SPEED * adjacentSPEED / SPEED;
@@ -630,7 +655,7 @@ function move() {
     }
     if (kb.pressing("d")) {
         displayPlayer.changeAni('run');
-        displayPlayer.scale.x = 1;
+        displayPlayer.scale.x = 0.5;
         mechplayer.pos.x += SPEED * adjacentSPEED / SPEED;
         mechplayer.pos.y += SPEED * oppSPEED / SPEED;
         // breakDir = 3;
@@ -638,7 +663,7 @@ function move() {
 
     // Reset animation after player stops moving
     if (kb.released("w")  || kb.released("d")) {
-        displayPlayer.scale.x = 1;
+        displayPlayer.scale.x = 0.5;
         displayPlayer.changeAni('idle');
     }
     else if (kb.released("a") || kb.released("s")) {

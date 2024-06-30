@@ -137,7 +137,7 @@ class mapBuilder{
     this.pretowers = new Group();
     this.pretowers.overlaps(allSprites);
     this.pretowers.collider = 'static';
-    this.pretowers.layer = 99999;
+    this.pretowers.layer = 9999;
     this.pretowers.w = this.TILE_SIDE_LENGTH;
     this.pretowers.h = this.TILE_HEIGHT;
     this.pretowers.spriteSheet = loadImage('./textures/Towers/spawningcircles.png');
@@ -158,7 +158,7 @@ class mapBuilder{
     this.basetowers = new Group();
     this.basetowers.overlaps(allSprites);
     this.basetowers.collider = 'static';
-    this.basetowers.layer = 99999;
+    this.basetowers.layer = 9999;
     this.basetowers.w = this.TILE_SIDE_LENGTH;
     this.basetowers.h = this.TILE_HEIGHT;
     this.basetowerarr = [];
@@ -168,7 +168,7 @@ class mapBuilder{
     this.charginganim = new Group();
     this.charginganim.overlaps(allSprites);
     this.charginganim.collider = 'static';
-    this.charginganim.layer = 99999;
+    this.charginganim.layer = 9999;
     this.charginganim.w = this.TILE_SIDE_LENGTH;  
     this.charginganim.h = this.TILE_HEIGHT;
     this.chargingarr = [];
@@ -189,7 +189,7 @@ class mapBuilder{
     this.exchangebullets = new Group();
     this.exchangebullets.overlaps(allSprites);
     this.exchangebullets.collider = 'static';
-    this.exchangebullets.layer = 99999;
+    this.exchangebullets.layer = 9999;
     this.exchangebullets.w = this.TILE_SIDE_LENGTH;
     this.exchangebullets.h = this.TILE_HEIGHT;
     this.exchangebullets.spriteSheet = loadImage('./textures/Towers/New_All_Fire_Bullet_Pixel_16x16/All_Fire_Bullet_Pixel_16x16_00.png');
@@ -200,7 +200,7 @@ class mapBuilder{
     this.bullets = new Group();
     this.bullets.overlaps(allSprites);
     this.bullets.collider = 'static';
-    this.bullets.layer = 99999;
+    this.bullets.layer = 9999;
     this.bullets.w = this.TILE_SIDE_LENGTH;
     this.bullets.h = this.TILE_HEIGHT;
     this.bullets.spriteSheet = loadImage('./textures/Towers/fireballSpritesheet.png');
@@ -213,7 +213,7 @@ class mapBuilder{
     this.icebullets = new Group();
     this.icebullets.overlaps(allSprites);
     this.icebullets.collider = 'static';
-    this.icebullets.layer = 99999;
+    this.icebullets.layer = 9999;
     this.icebullets.w = this.TILE_SIDE_LENGTH;
     this.icebullets.h = this.TILE_HEIGHT;
     this.icebullets.spriteSheet = loadImage('./textures/Towers/New_All_Fire_Bullet_Pixel_16x16/All_Fire_Bullet_Pixel_16x16_02.png');
@@ -226,7 +226,7 @@ class mapBuilder{
     this.healingbullets = new Group();
     this.healingbullets.overlaps(allSprites);
     this.healingbullets.collider = 'static';
-    this.healingbullets.layer = 99999;
+    this.healingbullets.layer = 9999;
     this.healingbullets.w = this.TILE_SIDE_LENGTH;
     this.healingbullets.h = this.TILE_HEIGHT;
     this.healingbullets.spriteSheet = loadImage('./textures/Towers/New_All_Fire_Bullet_Pixel_16x16/All_Fire_Bullet_Pixel_16x16_03.png');
@@ -239,7 +239,7 @@ class mapBuilder{
     this.explosions = new Group();
     this.explosions.overlaps(allSprites);
     this.explosions.collider = 'static';
-    this.explosions.layer = 99999;
+    this.explosions.layer = 9999;
     this.explosions.w = this.TILE_SIDE_LENGTH;
     this.explosions.h = this.TILE_HEIGHT;
     this.explosions.spriteSheet = loadImage('./textures/Towers/explosion.png');
@@ -255,7 +255,7 @@ class mapBuilder{
     this.type0towerfrogs = new Group();
     this.type0towerfrogs.overlaps(allSprites);
     this.type0towerfrogs.collider = 'static';
-    this.type0towerfrogs.layer = 99999;
+    this.type0towerfrogs.layer = 9999;
     this.type0towerfrogs.w = this.TILE_SIDE_LENGTH;
     this.type0towerfrogs.h = this.TILE_HEIGHT;
     this.type0towerfrogs.spriteSheet = loadImage('./textures/Towers/ToxicFrog/0/ToxicFrogBlueBlue_Sheet.png');
@@ -273,7 +273,7 @@ class mapBuilder{
     this.type1towerfrogs = new Group();
     this.type1towerfrogs.overlaps(allSprites);
     this.type1towerfrogs.collider = 'static';
-    this.type1towerfrogs.layer = 99999;
+    this.type1towerfrogs.layer = 9999;
     this.type1towerfrogs.w = this.TILE_SIDE_LENGTH;
     this.type1towerfrogs.h = this.TILE_HEIGHT;
     this.type1towerfrogs.spriteSheet = loadImage('./textures/Towers/ToxicFrog/1/ToxicFrogGreenBlue_Sheet.png');
@@ -291,7 +291,7 @@ class mapBuilder{
     this.type2towerfrogs = new Group();
     this.type2towerfrogs.overlaps(allSprites);
     this.type2towerfrogs.collider = 'static';
-    this.type2towerfrogs.layer = 99999;
+    this.type2towerfrogs.layer = 9999;
     this.type2towerfrogs.w = this.TILE_SIDE_LENGTH;
     this.type2towerfrogs.h = this.TILE_HEIGHT;
     this.type2towerfrogs.spriteSheet = loadImage('./textures/Towers/ToxicFrog/2/ToxicFrogBlueBrown_Sheet.png');
@@ -308,7 +308,7 @@ class mapBuilder{
     this.type3towerfrogs = new Group();
     this.type3towerfrogs.overlaps(allSprites);
     this.type3towerfrogs.collider = 'static';
-    this.type3towerfrogs.layer = 99999;
+    this.type3towerfrogs.layer = 9999;
     this.type3towerfrogs.w = this.TILE_SIDE_LENGTH;
     this.type3towerfrogs.h = this.TILE_HEIGHT;
     this.type3towerfrogs.spriteSheet = loadImage('./textures/Towers/ToxicFrog/3/ToxicFrogGreenBrown_Sheet.png');
@@ -326,7 +326,7 @@ class mapBuilder{
     this.type4towerfrogs = new Group();
     this.type4towerfrogs.overlaps(allSprites);
     this.type4towerfrogs.collider = 'static';
-    this.type4towerfrogs.layer = 99999;
+    this.type4towerfrogs.layer = 9999;
     this.type4towerfrogs.w = this.TILE_SIDE_LENGTH;
     this.type4towerfrogs.h = this.TILE_HEIGHT;
     this.type4towerfrogs.spriteSheet = loadImage('./textures/Towers/ToxicFrog/4/ToxicFrogPurpleBlue_Sheet.png');
@@ -343,7 +343,7 @@ class mapBuilder{
     this.type5towerfrogs = new Group();
     this.type5towerfrogs.overlaps(allSprites);
     this.type5towerfrogs.collider = 'static';
-    this.type5towerfrogs.layer = 99999;
+    this.type5towerfrogs.layer = 9999;
     this.type5towerfrogs.w = this.TILE_SIDE_LENGTH;
     this.type5towerfrogs.h = this.TILE_HEIGHT;
     this.type5towerfrogs.spriteSheet = loadImage('./textures/Towers/ToxicFrog/5/ToxicFrogPurpleWhite_Sheet.png');
@@ -360,12 +360,25 @@ class mapBuilder{
     this.healthbars = new Group();
     this.healthbars.overlaps(allSprites);
     this.healthbars.collider = 'static';
-    this.healthbars.layer = 99999;
+    this.healthbars.layer = 9999;
     this.healthbars.w = 100;
     this.healthbars.h = this.TILE_HEIGHT;
     this.basehealthbars = [];
 
     this.idlefrogs = [];
+
+    this.speedBoosts = new Group();
+    this.speedBoosts.overlaps(allSprites);
+    this.speedBoosts.collider = 'static';
+    this.speedBoosts.layer = 9999;
+    this.speedBoosts.w = this.TILE_SIDE_LENGTH;
+    this.speedBoosts.h = this.TILE_HEIGHT;
+    this.speedBoosts.spriteSheet = loadImage('./textures/speedboosts.png');
+    this.speedBoosts.addAnis({
+        idle: { row: 1.6, frames: 4, w: 40, h: 66},
+    });
+
+    
 
 
     // this.exchangebullets.image = loadImage('./textures/Towers/bullet.png');
@@ -1135,32 +1148,7 @@ class mapBuilder{
           } else if (type == "forest"){
             tile.img = './new_tileset/tile_036.png';
           }
-        if (z == 0){
-          // displayTile = new this.displayElevatedTileLayer0.Sprite();
-          // tile.draw = () => {
-          //   image(tile.img, tile.pos.x, tile.pos.y);
-          // }
-        } else if (z == 1){
-          // tile.draw = () => {
-          //   image(tile.img, tile.pos.x, tile.pos.y - z * this.TILE_HEIGHT / 2);
-          // }
-          // displayTile = new this.displayElevatedTileLayer1.Sprite();
-        } else if (z == 2){
-          
-          // displayTile = new this.displayElevatedTileLayer2.Sprite();
-        } else if (z == 3){
-          // displayTile = new this.displayElevatedTileLayer3.Sprite();
-        } else if (z == 4){
-          // displayTile = new this.displayElevatedTileLayer4.Sprite();
-        } else if (z == 5){
-          // displayTile = new this.displayElevatedTileLayer5.Sprite();
-        } else if (z == 'B'){
-          continue;
-          // displayTile = new this.displayElevatedBoundaryLayer.Sprite();
-        } else {
-
-          // displayTile = new this.displayElevatedTileLayer1.Sprite();
-        }
+       
         tile.draw = () => {
           image(tile.img, 0, -z * this.TILE_HEIGHT / 2);
         }
@@ -1180,39 +1168,6 @@ class mapBuilder{
 
       }
     }
-
-
-
-    // for (let i = 0; i < this.numCols; i++) { //x 
-    //     for (let j = 0; j < this.numRows; j++) { // y
-    //       let tile = this.getTile(i, j);
-    //       if (tile != null) {
-    //         // console.log(43)
-    //         let displayTile;
-    //         if (tile.type == "0") {
-    //           displayTile = new this.displayLayer0.Sprite();
-    //         } else if (tile.type == "1") {
-    //             displayTile = new this.displayLayer1.Sprite();
-    //         } else if (tile.type == "2") {
-    //             displayTile = new this.displayLayer2.Sprite();
-    //         } else if (tile.type == "2") {
-    //             displayTile = new this.displayLayer3.Sprite();
-    //         } else if (tile.type == "4") {
-    //             displayTile = new this.displayLayer4.Sprite();
-    //         } else {
-    //             displayTile = new this.displayLayer4.Sprite();
-    //         }
-    //         displayTile.pos.x = this.xstart + (i - j) * this.TILE_WIDTH/2;//i * this.cellSize + (j * this.cellSize / 2);
-    //         displayTile.pos.y = this.ystart + (i + j) * this.TILE_HEIGHT/2 - tile.z * this.TILE_HEIGHT/2; 
-    //         // j * this.cellSize / 2 - i * this.cellSize / 2;
-    //         this.displayMapTiles.push(displayTile); 
-    //       }
-    //       // console.log(tile)
-          
-    //   }
-
-    // }
-    // console.log(" displayer",this.displayMapTiles)
     this.basehealthbars = [];
     for (let i = 0; i < 2; i++){
       let base = new this.basetowers.Sprite();
@@ -1248,8 +1203,11 @@ class mapBuilder{
         //first, an outline with rounded edges
         // fill("black");
         stroke("black");
-        fill("white"); //
+        fill(100,100,100,0); //
         strokeWeight(2);
+        
+        rect(20 + 50, 30, 100, 10, 2);
+        
         // rect(0,0, windowWidth / 4, windowHeight / 10, 8);
         //then, the actual health bar through lerpcolor
         let green = color('#03C04A'); //green
@@ -1883,6 +1841,156 @@ class mapBuilder{
     }
   }
 
+  boostTeam(team, tower, players, selfplayer, selfteam){
+    // creates speed boost effect around players
+    console.log('boosting team')
+    //duration is 20 seconds
+    if (team == 0){
+      // handle self player
+      if (selfteam == 0){
+        // animations
+        let speedanimation = new this.speedBoosts.Sprite();
+        speedanimation.pos = selfplayer.pos;
+        speedanimation.scale = 1;
+        speedanimation.changeAni('idle');
+        const initialframe = frameCount;
+        speedanimation.draw = () => {
+          speedanimation.pos = selfplayer.pos;
+          // let diff = frameCount - initialframe;
+          let animstate = selfplayer.ani.name;
+          console.log(animstate, 'animstate')
+          //determine orientation based on scale.x
+          let orientation;
+          if (selfplayer.scale.x > 0){
+            orientation = 1; //right
+          } else {
+            orientation = -1;
+          }
+          if (orientation == 1){
+            speedanimation.pos.x = selfplayer.pos.x + 15;
+            speedanimation.scale.x = -1;
+          } else {
+            speedanimation.pos.x = selfplayer.pos.x - 15;
+            speedanimation.scale.x = 1;
+          }
+          speedanimation.ani.draw(0,-20,0, speedanimation.scale.x, speedanimation.scale.y);
+
+          
+        }
+        setTimeout(() => {
+          speedanimation.remove();
+        }, 20000);
+      }
+
+      // handle other players
+      for (let [key, player] of players){
+        if (player.team == 0){
+          let speedanimation = new this.speedBoosts.Sprite();
+          speedanimation.pos = player.sprite.position;
+          speedanimation.scale = 1;
+          speedanimation.changeAni('idle');
+          const initialframe = frameCount;
+          speedanimation.draw = () => {
+            speedanimation.pos = player.sprite.position;
+            // let diff = frameCount - initialframe;
+            let animstate = player.sprite.animation;
+            console.log(animstate, 'animstate')
+            //determine orientation based on scale.x
+            let orientation;
+            if (player.sprite.scale.x > 0){
+              orientation = 1; //right
+            } else {
+              orientation = -1;
+            }
+            if (orientation == 1){
+              speedanimation.pos.x = player.sprite.position.x + 15;
+              speedanimation.scale.x = -1;
+            } else {
+              speedanimation.pos.x = player.sprite.position.x - 15;
+              speedanimation.scale.x = 1;
+            }
+            speedanimation.ani.draw(0,-20,0, speedanimation.scale.x, speedanimation.scale.y);
+
+            
+          }
+          setTimeout(() => {
+            speedanimation.remove();
+          }, 20000);
+        }
+      }
+    } else if (team == 1){
+      // handle self player
+      if (selfteam == 1){
+        // animations
+        let speedanimation = new this.speedBoosts.Sprite();
+        speedanimation.pos = selfplayer.pos;
+        speedanimation.scale = 1;
+        speedanimation.changeAni('idle');
+        const initialframe = frameCount;
+        speedanimation.draw = () => {
+          speedanimation.pos = selfplayer.pos;
+          // let diff = frameCount - initialframe;
+          let animstate = selfplayer.ani.name;
+          console.log(animstate, 'animstate')
+          //determine orientation based on scale.x
+          let orientation;
+          if (selfplayer.scale.x > 0){
+            orientation = 1; //right
+          } else {
+            orientation = -1;
+          }
+          if (orientation == 1){
+            speedanimation.pos.x = selfplayer.pos.x + 15;
+            speedanimation.scale.x = -1;
+          } else {
+            speedanimation.pos.x = selfplayer.pos.x - 15;
+            speedanimation.scale.x = 1;
+          }
+          speedanimation.ani.draw(0,-20,0, speedanimation.scale.x, speedanimation.scale.y);
+
+          
+        }
+        setTimeout(() => {
+          speedanimation.remove();
+        }, 20000);
+      }
+
+      // handle other players
+      for (let [key, player] of players){
+        if (player.team == 1){
+          let speedanimation = new this.speedBoosts.Sprite();
+          speedanimation.pos = player.sprite.position;
+          speedanimation.scale = 1;
+          speedanimation.changeAni('idle');
+          const initialframe = frameCount;
+          speedanimation.draw = () => {
+            speedanimation.pos = player.sprite.position;
+            // let diff = frameCount - initialframe;
+            let animstate = player.sprite.animation;
+            console.log(animstate, 'animstate')
+            //determine orientation based on scale.x
+            let orientation;
+            if (player.sprite.scale.x > 0){
+              orientation = 1; //right
+            } else {
+              orientation = -1;
+            }
+            if (orientation == 1){
+              speedanimation.pos.x = player.sprite.position.x + 15;
+              speedanimation.scale.x = -1;
+            } else {
+              speedanimation.pos.x = player.sprite.position.x - 15;
+              speedanimation.scale.x = 1;
+            }
+            speedanimation.ani.draw(0,-20,0, speedanimation.scale.x, speedanimation.scale.y);
+          }
+          setTimeout(() => {
+            speedanimation.remove();
+          }, 20000);
+        }
+      }
+    }
+  }
   slowTeam(team, tower, players, selfplayer, selfteam){
     console.log('slowing team')
     let index = this.towerobjarr.findIndex(towers => towers.id == tower.id);
@@ -2373,21 +2481,36 @@ function createPlayerSprite(name) {
 }
 
 function createVisiblePlayerSprite(name, playerZ) { //scaling added after animation
-    let playerSprite = new Sprite(0, 0, 32, 32);
-    playerSprite.visible = true;
-    playerSprite.collider = 'none';
-    // playerSprite.img = "./new_tileset/tile_001.png";
-    playerSprite.spriteSheet = './textures/charanimap.png';
-    // playerSprite.anis.offset.x = -64;
-    playerSprite.anis.offset.y = -64
-    playerSprite.anis.frameDelay = 2
-    playerSprite.addAnis({
-      idle: {row:0, frames: 6, w:128, h:128}, 
-      run: {row:7, frames: 6, w:128, h:128},
+    // let playerSprite = new Sprite(0, 0, 10);
+    // // playerSprite.layer = 99999
+    // playerSprite.visible = true;
+    // playerSprite.collider = 'none';
+    // // playerSprite.img = "./new_tileset/tile_001.png";
+    // playerSprite.spriteSheet = './textures/charanimap.png';
+    // // playerSprite.anis.offset.x = -64;
+    // playerSprite.anis.offset.y = -64
+    // playerSprite.anis.offset.x = 0;
+    // playerSprite.anis.frameDelay = 2
+    // playerSprite.scale.x = 1;
+    // playerSprite.scale.y = 1;
+    // playerSprite.addAnis({
+    //   idle: {row:0, frames: 6, w:128, h:128}, 
+    //   run: {row:7, frames: 6, w:128, h:128},
 
-    });
-    playerSprite.anis.scale = 0.5;
+    // });
+    // 
+    // playerSprite.changeAni('idle');
+    // playerSprite.layer = 99999;
+
+    let playerSprite = new playerSpriteGroup.Sprite();
+    playerSprite.width = 10;
+    playerSprite.height = 10;
+    playerSprite.pos = createVector(0, 0);
     playerSprite.changeAni('idle');
+    playerSprite.anis.scale = 0.5;
+    playerSprite.collider = 'none';
+    playerSprite.scale = {x: 0.5, y: 0.5};
+
     
 
     // Load sprite sheet
@@ -2407,17 +2530,7 @@ function createVisiblePlayerSprite(name, playerZ) { //scaling added after animat
         fill("white");
         textAlign(CENTER, CENTER);
         textSize(16);
-        text(name, 0, -35);
-        // console.log(name)
-
-        // circle(0, 0, 32);
-        // rect(10, 0, 32, 50);
-        // scaling = 1 + playerZ * 0.1;
-        // console.log(playerZ, scaling)
-        // image(playerSprite.img, 0, 0, 32, 16);
-        // img = loadImage('./new_tileset/tile_001.png');
-        // image(img, 0, 0, 32, 16);
-
+        text(name, 0, -55);
         playerSprite.ani.draw(playerSprite.offset.x, playerSprite.offset.y, 0, playerSprite.scale.x, playerSprite.scale.y);
     }
     return playerSprite;
