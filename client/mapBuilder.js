@@ -1355,6 +1355,10 @@ class mapBuilder{
   
 
   addTower(tower){
+    towerspawnedsfx.play();
+    setTimeout(() => {
+      towerspawnedsfx.stop();
+    }, 1000);
     let towersprite = new this.towers.Sprite();
     // this.towers.push(tower);
     // translate into isometric
@@ -1456,11 +1460,11 @@ class mapBuilder{
         let playerx = player.pos.x;
         let playery = player.pos.y;
 
-        let padding = 2;
+        let padding = 3;
         // let startx = ();
 
         let x = towersprite.pos.x - padding * this.TILE_WIDTH / 2;
-        let y = towersprite.pos.y //- padding * this.TILE_HEIGHT / 2;
+        let y = towersprite.pos.y + this.TILE_HEIGHT / 2;  //- padding * this.TILE_HEIGHT / 2;
         // let x = (tower.x - tower.y) * this.TILE_WIDTH / 2 + this.xstart - padding * this.TILE_WIDTH;
         // let y = (tower.x + tower.y) * this.TILE_HEIGHT / 2  + this.ystart - padding * this.TILE_HEIGHT / 2;
         let w = this.TILE_WIDTH + padding * this.TILE_WIDTH; //tile width is tower width
@@ -1488,6 +1492,13 @@ class mapBuilder{
             pop();
           }
           this.circlearr.push(circle);
+          if (frogsfx.isPlaying() == false){
+            frogsfx.play();
+            setTimeout(() => {
+              frogsfx.stop();
+            }
+            , 1000);
+          }
           return i;
         } else {
           
@@ -1565,6 +1576,8 @@ class mapBuilder{
     explosion.pos = createVector(this.towerarr[index].pos.x, this.towerarr[index].pos.y);
     explosion.anis.scale = 2.5;
     explosion.scale = {x: 2.5, y: 2.5};
+    // explosion sfx
+    explosionsfx.play();
     setTimeout(() => {
       let index = this.towerobjarr.findIndex(tower => tower.id == id);
       this.towerarr[index].remove();
@@ -2219,6 +2232,13 @@ class mapBuilder{
         // bullet.ani.draw(0, 0, 0, 1, 1);
         bullet.ani.draw(0, 0, 0, bullet.scale, bullet.scale);
         if (distance < 20){
+          if (type == 'slow' && scale == 1.5){
+            baseslowsfx.play();
+          } else if (type == 'heal' && scale == 1.5){
+            basehealsfx.play();
+          } else if (type == 'normal' && scale == 1.5){
+            baseattack1sfx.play();
+          }
           // target.health -= bullet.damage;
           // bullet.active = false;
           let explosion = new this.explosions.Sprite();

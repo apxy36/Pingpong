@@ -21,7 +21,7 @@ let cam;
 let displayPlayer;
 let localIGN = '';
 let setupComplete = false;
-let team = 0;
+let team = null;
 let statusconditions = [];
 let interactionBtn;
 let startGame = false;
@@ -34,35 +34,106 @@ let speedSlow = false;
 
 let healths = [100, 100];
 
+// sounds: 1. music 2. explosion for bullets 3. walking 4. alert for 30s left 
+// 5. alert for 10s left 6. alert for 5s left 7. alert for 3s left 
+// 8. alert for 2s left 9. alert for 1s left 10. alert for game start 
+// 11. alert for game end 12. alert for tower activated 13. alert for tower deactivated 
+// 14. alert for tower combo 15. alert for base attacking 16. alert for base healing 
+// 17. alert for speedboost 18. alert for slow 19. alert for tower pre-generated 20. alert for tower removed 
+// 21. alert for tower updated 22. alert for player data update 23. alert for player removed 
+// 24. alert for game starting soon 25. alert for game started 26. alert for game ended 
+// 27. alert for health update 28. alert for tower generated 29. alert for tower pre-generated 
+// 30. alert for tower removed 31. alert for tower updated 32. alert for player data update 
+// 33. alert for player removed 34. alert for game starting soon 35. alert for game started 36. alert for game ended 
+// 37. alert for health update 38. alert for base attacking 39. alert for speedboost 40. alert for slowdown 
+// 41. alert for healing
+
+let music;
+let explosionsfx;
+let walkingsfx;
+let alert30ssfx;
+let frogsfx;
+let gameoversfx;
+let gamestartsfx;
+let toweractivatedsfx;
+let towerdeactivatedsfx;
+let towercombosfx;
+let playerspawnedsfx;
+let towerspawnedsfx;
+let baseattack1sfx;
+let baseslowsfx;
+let basespeedboostsfx;
+let baseheal1sfx;
+let towerbuffsfx;
+let countdownsfx;
+let gamewonsfx;
+let chillmusicsfx;
+
 const socket = io.connect("ws://localhost:8001");
 
-// window.onload = () => { // temporary
-//     const room_code_input = prompt("Enter Room Code", "12345");
-//     // validate room code
-//     if (room_code_input.length !== 5) {
-//         window.onload();
-//     } else {
-//         localIGN = prompt('Enter IGN');
-//         if (localIGN.length === 0) {
-//             window.onload();
-//         }
-//         socket.emit("registerClient", localIGN, team, room_code_input);
-//     }
-//     // const join_option_input = prompt('Select: "CREATE" or "JOIN"', "CREATE");
-//     // if (join_option_input === "CREATE") {
-//     //     // socket.emit("requestCreateRoom");
-//     //     let localIGN = prompt('Enter IGN');
-//     //     let room
-//     //     socket.emit("registerClient", localIGN, team, room_code_input);
-//     // } else if (join_option_input === "JOIN") {
-//     //     const room_code_input = prompt("Enter Room Code");
-//     //     let localIGN = prompt('Enter IGN')
-//     //     socket.emit("registerClient", localIGN, team, room_code_input);
-//     //     // socket.emit("requestJoinRoom", room_code_input);
-//     // } else {
-//     //     window.onload();
-//     // }
-// };
+let playerSpriteGroup;
+function preload() {
+    map = new mapBuilder(52, 52, 32);
+    // preload idle animation
+    // loadAnimation("images/spritesheets/characters/hero/idle.png", "idle", 64, 64, 5);
+    playerSpriteGroup = new Group();
+    playerSpriteGroup.visible = true;
+    playerSpriteGroup.collider = 'none';
+    // playerSprite.img = "./new_tileset/tile_001.png";
+    playerSpriteGroup.spriteSheet = './textures/charanimap.png';
+    // playerSprite.anis.offset.x = -64;
+    playerSpriteGroup.anis.offset.y = -64
+    playerSpriteGroup.anis.offset.x = 0;
+    playerSpriteGroup.anis.frameDelay = 2
+    playerSpriteGroup.scale.x = 0.5;
+    playerSpriteGroup.scale.y = 0.5;
+    playerSpriteGroup.addAnis({
+      idle: {row:0, frames: 6, w:128, h:128}, 
+      run: {row:7, frames: 6, w:128, h:128},
+
+    });
+
+    soundFormats('mp3', 'ogg');
+    music = loadSound('./sfx/battlemusic.mp3');
+    explosionsfx = loadSound('./sfx/bigexplosion.mp3'); //done 
+    walkingsfx = loadSound('./sfx/walking.mp3'); //done
+    
+    alert30ssfx = loadSound('./sfx/30s_alert.mp3'); //done
+    frogsfx = loadSound('./sfx/frog sfx.mp3'); //done
+    
+    gameoversfx = loadSound('./sfx/game_over.mp3'); //done
+    gamestartsfx = loadSound('./sfx/game_start.mp3'); //done
+    toweractivatedsfx = loadSound('./sfx/tower activating 2.mp3'); //done
+    towerdeactivatedsfx = loadSound('./sfx/towerdeactivating.mp3');
+    towercombosfx = loadSound('./sfx/combo.mp3');
+    playerspawnedsfx = loadSound('./sfx/player spawned.mp3'); //done
+    towerspawnedsfx = loadSound('./sfx/tower spawned.mp3'); //done
+    baseattack1sfx = loadSound('./sfx/tower attacks/explosion.mp3'); //done
+    baseslowsfx = loadSound('./sfx/tower attacks/freeze.mp3'); //done
+    basespeedboostsfx = loadSound('./sfx/tower attacks/speed up.mp3'); //done
+    baseheal1sfx = loadSound('./sfx/tower attacks/healing.mp3'); //done
+    towerbuffsfx = loadSound('./sfx/tower attacks/buff strengthen.mp3');
+    countdownsfx = loadSound('./sfx/countdowntimer.mp3');  //done
+    gamewonsfx = loadSound('./sfx/victory.mp3'); //done
+    chillmusicsfx = loadSound('./sfx/chillmusic.mp3'); //done
+
+    chillmusicsfx.loop();
+    // playerSpriteGroup.anis.scale = 0.5;
+    // playerSprite.changeAni('idle');
+    // playerSprite.layer = 99999;
+    walkingsfx.loop();
+    frogsfx.loop();
+}
+
+function checkAllSFXLoaded() {
+    if (explosionsfx.isLoaded() && walkingsfx.isLoaded() && alert30ssfx.isLoaded() && frogsfx.isLoaded() && gameoversfx.isLoaded() && gamestartsfx.isLoaded() && toweractivatedsfx.isLoaded() && towercombosfx.isLoaded() && playerspawnedsfx.isLoaded() && towerspawnedsfx.isLoaded() && baseattack1sfx.isLoaded() && baseslowsfx.isLoaded() && basespeedboostsfx.isLoaded() && baseheal1sfx.isLoaded() && towerbuffsfx.isLoaded() && countdownsfx.isLoaded()) {
+        console.log('all sfx loaded')
+        return true;
+    } else {
+        console.log('not all sfx loaded')
+        return false;
+    }
+}
 
 socket.on("setRoomCode", (code) => {
     currentRoomCode = code;
@@ -81,10 +152,23 @@ socket.on("buildMap", (mapManager) => {
     map.initializeCollisions(playerZ, mechplayer);
     setupComplete = true;
     mapBuilt = true;
+    chillmusicsfx.play();
+    chillmusicsfx.setVolume(volume = 0.6, 2);
     // updateTeamHealth((healthBar0.elt.contentDocument || healthBar0.elt.contentWindow.document), map.basehealths[0], 0, map.towerhealths[0]);
     // updateTeamHealth((healthBar1.elt.contentDocument || healthBar1.elt.contentWindow.document), map.towerhealths[1], 1, map.towerhealths[1]);
     
 });
+
+socket.on("resetGame", (mapManager) => {
+    startGame = false;
+    map.updateTowers(mapManager.towers);
+    chillmusicsfx.play();
+    chillmusicsfx.setVolume(volume = 0.6, 2);
+    if (music.isPlaying()) {
+        music.stop();
+    }
+}
+);
 
 socket.on("playerDataUpdate", (id, playerData) => {
     for (let data of playerData) {
@@ -92,11 +176,18 @@ socket.on("playerDataUpdate", (id, playerData) => {
             // coins = data.coins;
             statusconditions = data.statusconditions;
             timeRemaining = data.timer;
+            if (timeRemaining == 30) {
+                alert30ssfx.play();
+            }
             team = data.team;
             // timeRemaining = data.timer;
             continue;
         };
         if (!em.exists(data.id)) {
+            playerspawnedsfx.play();
+            setTimeout(() => {
+                playerspawnedsfx.stop();
+            }, 2000);
             em.registerNewPlayer(data);
         } else {
             em.updatePlayerData(data);
@@ -136,15 +227,26 @@ socket.on("preGenerateTower", (randx, randy, randtype) => {
 }
 );
 
-socket.on("gameStarted", () => {
+socket.on("gameStarted", (team) => {
     startGame = true;
+    team = team;
+    chillmusicsfx.stop();
+    gamestartsfx.play();
+    music.play();
+    music.setVolume(volume = 0.6, 2);
+    music.loop();
     map.deleteIdleFrogs();
 }
 );
 
 socket.on("startingGameSoon", () => {
     console.log("Game starting soon...");
+    countdownsfx.play();
     interactionBtn.remove();
+    if (chillmusicsfx.isPlaying()) {
+        chillmusicsfx.setVolume(volume = 0.1, 5);
+
+    }
         interactionBtn = undefined;
         Swal.fire({
             title: 'Game starting...',
@@ -170,17 +272,26 @@ socket.on("startingGameSoon", () => {
 });
 
 socket.on("gameEnded", (teamwon) => { //temp function
+    
     if (teamwon == team) {
+        gamewonsfx.play();
         Swal.fire({
             title: "Victory!",
             text: "Your team has won the game!",
             icon: "success"
         });
-    } else {
+    } else if (teamwon == 0 || teamwon == 1) {
+        gameoversfx.play();
         Swal.fire({
             title: "Defeat!",
             text: "Your team has lost the game.",
             icon: "error"
+        });
+    } else {
+        Swal.fire({
+            title: "Draw!",
+            text: "The game has ended in a draw.",
+            icon: "info"
         });
     }
 }
@@ -213,6 +324,7 @@ socket.on("speedBoost", (team, tower) => {
     console.log('speedboost')
     map.boostTeam(team, tower, em.entities, displayPlayer, team);
     speedBoost = true;
+    basespeedboostsfx.play();
     speedSlow = false;
 }
 );
@@ -263,31 +375,7 @@ function manageVisiblePlayer(mechanicSprite, playerSprite, map){
     // playerSprite.pos.y = mechanicSprite.pos.y - playerZ * map.TILE_HEIGHT/2;
   
   }
-let playerSpriteGroup;
-function preload() {
-    map = new mapBuilder(52, 52, 32);
-    // preload idle animation
-    // loadAnimation("images/spritesheets/characters/hero/idle.png", "idle", 64, 64, 5);
-    playerSpriteGroup = new Group();
-    playerSpriteGroup.visible = true;
-    playerSpriteGroup.collider = 'none';
-    // playerSprite.img = "./new_tileset/tile_001.png";
-    playerSpriteGroup.spriteSheet = './textures/charanimap.png';
-    // playerSprite.anis.offset.x = -64;
-    playerSpriteGroup.anis.offset.y = -64
-    playerSpriteGroup.anis.offset.x = 0;
-    playerSpriteGroup.anis.frameDelay = 2
-    playerSpriteGroup.scale.x = 0.5;
-    playerSpriteGroup.scale.y = 0.5;
-    playerSpriteGroup.addAnis({
-      idle: {row:0, frames: 6, w:128, h:128}, 
-      run: {row:7, frames: 6, w:128, h:128},
 
-    });
-    // playerSpriteGroup.anis.scale = 0.5;
-    // playerSprite.changeAni('idle');
-    // playerSprite.layer = 99999;
-}
 
 let healthBar0;
 let healthBar1;
@@ -299,7 +387,7 @@ let testspeedBoost;
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    loadingBall = new LoadingBall();
+    // loadingBall = new LoadingBall();
     // loadingBall.setCollider("circle", 0, 0, 20);
 
     const urlParams = new URLSearchParams(
@@ -385,9 +473,9 @@ function setup() {
 
 function draw() {
     
-    background("grey");
+    background("black");
     fps = frameRate().toFixed(2);
-    if (setupComplete){
+    if (setupComplete && checkAllSFXLoaded()){
         
         
         move();
@@ -498,15 +586,6 @@ function draw() {
     
 }
 
-// function checkKeyPressed() {
-//     if (keyIsPressed && keyCode == 32) {
-//         console.log('shift')
-//         towerToggled();
-        
-//     }
-//     // if (keyIsPressed && keyCode === CONTROL) {
-//     //     if (map.towerarr.length > 0){
-// }
 
 function keyPressed() {
     if (keyCode === 32) {
@@ -533,12 +612,34 @@ function towerToggled() {
     console.log(tower)
     let id = tower.id;
     if (tower.active && tower.team != team) {
+        if (towerdeactivatedsfx.isPlaying()) {
+            towerdeactivatedsfx.stop();
+        }
+        towerdeactivatedsfx.play();
         socket.emit("deactivateTower", id);
     } else if (tower.active == false && map.countNumOfUnactivatedTowers() > 1){
         socket.emit("activateTower", id);
+        if (toweractivatedsfx.isPlaying()) {
+            toweractivatedsfx.stop();
+        }
+        toweractivatedsfx.play();
+        toweractivatedsfx.loop();
+        setTimeout(() => {
+            toweractivatedsfx.stop();
+        }, 10000);
 
         console.log("activated")
     } else if (tower.active && tower.team == team && tower.comboavailable) {
+        if (towercombosfx.isPlaying()) {
+            towercombosfx.stop();
+        }
+        towercombosfx.play();
+        if (toweractivatedsfx.isPlaying()) {
+            toweractivatedsfx.stop();
+        }
+        setTimeout(() => {
+            towercombosfx.stop();
+        }, 2000);
         socket.emit("comboTower", id);
     }
     if (map.checkIfPlayerIsNearTower(mechplayer) != false) {
@@ -643,6 +744,14 @@ function move() {
         // move in a diagonal direction based on isometric x and y
         mechplayer.pos.y -= SPEED * oppSPEED / SPEED; 
         mechplayer.pos.x += SPEED * adjacentSPEED / SPEED;
+        if (!walkingsfx.isPlaying()){
+            walkingsfx.play();
+            setTimeout(() => {
+                walkingsfx.stop();
+            }
+            , 200);
+        }
+        
 
         // mechplayer.pos.y -= SPEED;
         // breakDir = 0;
@@ -652,7 +761,16 @@ function move() {
         displayPlayer.scale.x =  - abs(displayPlayer.scale.x);
         mechplayer.pos.x -= SPEED * adjacentSPEED / SPEED;
         mechplayer.pos.y -= SPEED * oppSPEED / SPEED;
+
         // breakDir = 1;
+        if (!walkingsfx.isPlaying()){
+            walkingsfx.play();
+            setTimeout(() => {
+                walkingsfx.stop();
+            }
+            , 200);
+        }
+        
     }
     if (kb.pressing("s")) {
         displayPlayer.changeAni('run');
@@ -660,6 +778,13 @@ function move() {
         mechplayer.pos.y += SPEED * oppSPEED / SPEED;
         mechplayer.pos.x -= SPEED * adjacentSPEED / SPEED;
         // breakDir = 2;
+        if (!walkingsfx.isPlaying()){
+            walkingsfx.play();
+            setTimeout(() => {
+                walkingsfx.stop();
+            }
+            , 200);
+        }
     }
     if (kb.pressing("d")) {
         displayPlayer.changeAni('run');
@@ -667,6 +792,13 @@ function move() {
         mechplayer.pos.x += SPEED * adjacentSPEED / SPEED;
         mechplayer.pos.y += SPEED * oppSPEED / SPEED;
         // breakDir = 3;
+        if (!walkingsfx.isPlaying()){
+            walkingsfx.play();
+            setTimeout(() => {
+                walkingsfx.stop();
+            }
+            , 200);
+        }
     }
 
     // Reset animation after player stops moving

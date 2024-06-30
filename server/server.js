@@ -96,8 +96,24 @@ io.on("connection", (socket) => {
 
     socket.on("startGame", () => {
         client.room.gameStarted = true;
+        //determine teams
+        let team1count = 0;
+        let team2count = 0;
+        while (team1count < 2) {
+            let randomclient = client.room.clients[Math.floor(Math.random() * client.room.clients.length)];
+            if (randomclient.team == null) {
+                randomclient.team = 0;
+                team1count++;
+            }
+        }
+        // team2 
         for (let c of client.room.clients) {
-            c.socket.emit("gameStarted");
+            if (c.team == null) {
+                c.team = 1;
+            }
+        }
+        for (let c of client.room.clients) {
+            c.socket.emit("gameStarted", c.team);
         }
         setInterval(() => {
             client.room.gamecountdown--;
@@ -109,6 +125,18 @@ io.on("connection", (socket) => {
                     }
                     client.room.gameStarted = false;
                     client.room.gamecountdown = 60 * 3;
+                    //deactivate all towers
+                    for (let tower of client.room.mapManager.towers) {
+                        client.room.mapManager.deactivateTower(tower.id, client.team, client.room.clients);
+                        if (tower.linkedtowerid != null) {
+                            client.room.mapManager.deactivateTower(tower.linkedtowerid, client.team, client.room.clients); 
+                        }
+                    }
+                    client.room.mapManager.teamhealth = [100, 100];
+                    client.room.mapManager.teamdamage = [15, 15];
+                    for (let c of client.room.clients) {
+                        c.socket.emit("resetGame", client.room.mapManager)
+                    }
                     clearInterval();
                 }
             }

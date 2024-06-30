@@ -461,7 +461,7 @@ export default class MapManager{
         let randx = Math.floor(Math.random() * this.GRID_SIZE);
         let randy = Math.floor(Math.random() * this.GRID_SIZE);
         // let randtype = Math.round(Math.random() * 3);
-        let randtype = 1;
+        let randtype = min(Math.floor(Math.random() * 5), 4);
         let z = this.grid.get(`${randx}_${randy}`).z;
         if (!this.checkIfTowersWithinProximityofotherTowers(randx, randy)){
         for (let c of clients){
