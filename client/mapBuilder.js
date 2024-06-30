@@ -408,6 +408,7 @@ class mapBuilder{
       idlefrog.position.y = (isox + isoy) * this.TILE_HEIGHT / 2 + this.ystart;
       this.idlefrogs.push(idlefrog);
       idlefrog.changeAni('jump');
+      idlefrog.anis.frameDelay = Math.round(random(0, 4));
     }
     // console.log(this.idlefrogs)
     // move frogs
