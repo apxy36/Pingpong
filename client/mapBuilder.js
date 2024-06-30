@@ -926,43 +926,46 @@ class mapBuilder{
     this.displayLayer0.h = this.TILE_HEIGHT; // Height of each brick
     this.displayLayer0.tile = "0";
     this.displayLayer0.collider = 'static';
-    // this.displayLayer0.overlaps(allSprites);
+    this.displayLayer0.overlaps(allSprites);
     this.displayLayer0.layer = -990;
-    this.displayLayer0.visible = false;
+    // this.displayLayer0.visible = false;
     // this.displayLayer0.img = './new_tileset/tile_066.png';
 
     this.displayLayer1.w = this.TILE_WIDTH;
     this.displayLayer1.h = this.TILE_HEIGHT
     this.displayLayer1.tile = "1";
     this.displayLayer1.collider = 'static';
-    // this.displayLayer1.overlaps(allSprites);
+    this.displayLayer1.overlaps(allSprites);
     this.displayLayer1.layer = 0;
     // this.displayLayer1.img = './new_tileset/tile_067.png';
-    this.displayLayer1.visible = false;
+    // this.displayLayer1.visible = false;
 
     this.displayLayer2.w = this.TILE_WIDTH;
     this.displayLayer2.h = this.TILE_HEIGHT;
     this.displayLayer2.tile = "2";
     this.displayLayer2.collider = 'static';;
     this.displayLayer2.layer = 0//990;
+    this.displayLayer2.overlaps(allSprites);
     // this.displayLayer2.img = './new_tileset/tile_028.png';
-    this.displayLayer2.visible = false;
+    // this.displayLayer2.visible = false;
 
     this.displayLayer3.w = this.TILE_WIDTH;
     this.displayLayer3.h = this.TILE_HEIGHT;
     this.displayLayer3.tile = "3";
     this.displayLayer3.collider = 'static';
     this.displayLayer3.layer = 0; //2*999;
+    this.displayLayer3.overlaps(allSprites);
     // this.displayLayer3.img = './new_tileset/tile_068.png';
-    this.displayLayer3.visible = false;
+    // this.displayLayer3.visible = false;
 
     this.displayLayer4.w = this.TILE_WIDTH;
     this.displayLayer4.h = this.TILE_HEIGHT;
     this.displayLayer4.tile = "4";
     this.displayLayer4.collider = 'static';
     this.displayLayer4.layer = 0; //3*999;
+    this.displayLayer4.overlaps(allSprites);
     // this.displayLayer4.img = './new_tileset/tile_069.png';
-    this.displayLayer4.visible = false;
+    // this.displayLayer4.visible = false;
 
     this.displayLayer5.w = this.TILE_WIDTH;
     this.displayLayer5.h = this.TILE_HEIGHT;
@@ -972,8 +975,9 @@ class mapBuilder{
     // this.displayLayer5.stroke = "#484848";
     // this.displayLayer5.overlaps(allSprites);
     this.displayLayer5.layer = 0; //4*999;
+    this.displayLayer5.overlaps(allSprites);
     // this.displayLayer5.img = './new_tileset/tile_070.png';
-    this.displayLayer5.visible = false;
+    // this.displayLayer5.visible = false;
 
     
 
@@ -1076,59 +1080,63 @@ class mapBuilder{
         // + z * this.TILE_HEIGHT / 2; //make an entirely new tile that displays another image but has no collision, at the elevated pos. the original tile is at the original pos
         let type = this.getTile(vect.x, vect.y).type;
         let displayTile;
-        // if (z != 'B'){
-        //   displayTile = new this.displayElevatedTileLayers[z - 1].Sprite();
-        // } else {
-        //   displayTile = new this.displayElevatedBoundaryLayer.Sprite();
-        // } else {
-        //   displayTile = new this.displayElevatedTileLayer1.Sprite();
-        // }
-        if (z == 0){
-          displayTile = new this.displayElevatedTileLayer0.Sprite();
-        } else if (z == 1){
-          displayTile = new this.displayElevatedTileLayer1.Sprite();
-        } else if (z == 2){
-          displayTile = new this.displayElevatedTileLayer2.Sprite();
-        } else if (z == 3){
-          displayTile = new this.displayElevatedTileLayer3.Sprite();
-        } else if (z == 4){
-          displayTile = new this.displayElevatedTileLayer4.Sprite();
-        } else if (z == 5){
-          displayTile = new this.displayElevatedTileLayer5.Sprite();
-        } else if (z == 'B'){
-          continue;
-          displayTile = new this.displayElevatedBoundaryLayer.Sprite();
-        } else {
-          displayTile = new this.displayElevatedTileLayer1.Sprite();
-        }
         if (z != 'B'){
           if (type == "grass"){
-            displayTile.img = './new_tileset/tile_027.png';
+            tile.img = './new_tileset/tile_027.png';
           } else if (type == "stone"){
-            displayTile.img = './new_tileset/tile_063.png';
+            tile.img = './new_tileset/tile_063.png';
           } else if (type == "wood"){
-            displayTile.img = './new_tileset/tile_014.png';
+            tile.img = './new_tileset/tile_014.png';
           } else if (type == "brick"){
-            displayTile.img = './new_tileset/tile_066.png';
+            tile.img = './new_tileset/tile_066.png';
           } else if (type == "wall"){
-            displayTile.img = './new_tileset/tile_031.png';
+            tile.img = './new_tileset/tile_031.png';
           } else if (type == "water"){
-            displayTile.img = './new_tileset/tile_104.png';
+            tile.img = './new_tileset/tile_104.png';
           } else if (type == "forest"){
-            displayTile.img = './new_tileset/tile_036.png';
+            tile.img = './new_tileset/tile_036.png';
           }
+        if (z == 0){
+          // displayTile = new this.displayElevatedTileLayer0.Sprite();
+          // tile.draw = () => {
+          //   image(tile.img, tile.pos.x, tile.pos.y);
+          // }
+        } else if (z == 1){
+          // tile.draw = () => {
+          //   image(tile.img, tile.pos.x, tile.pos.y - z * this.TILE_HEIGHT / 2);
+          // }
+          // displayTile = new this.displayElevatedTileLayer1.Sprite();
+        } else if (z == 2){
+          
+          // displayTile = new this.displayElevatedTileLayer2.Sprite();
+        } else if (z == 3){
+          // displayTile = new this.displayElevatedTileLayer3.Sprite();
+        } else if (z == 4){
+          // displayTile = new this.displayElevatedTileLayer4.Sprite();
+        } else if (z == 5){
+          // displayTile = new this.displayElevatedTileLayer5.Sprite();
+        } else if (z == 'B'){
+          continue;
+          // displayTile = new this.displayElevatedBoundaryLayer.Sprite();
+        } else {
+
+          // displayTile = new this.displayElevatedTileLayer1.Sprite();
+        }
+        tile.draw = () => {
+          image(tile.img, 0, -z * this.TILE_HEIGHT / 2);
+        }
 
 
           // let newtile = new this.displayElevatedTileLayer0.Sprite();
           // newtile.pos = createVector(tile.pos.x, tile.pos.y);
           // newtile.img = displayTile.img;
 
-          displayTile.pos.x = tile.pos.x;
-          if (z != 'B'){
-          displayTile.pos.y = tile.pos.y - z * this.TILE_HEIGHT / 2;
-          } else {
-            displayTile.pos.y = tile.pos.y - 10 * this.TILE_HEIGHT / 2;
-          }
+          // displayTile.pos.x = tile.pos.x;
+          // if (z != 'B'){
+          // displayTile.pos.y = tile.pos.y - z * this.TILE_HEIGHT / 2;
+          // } else {
+          //   displayTile.pos.y = tile.pos.y - 10 * this.TILE_HEIGHT / 2;
+          // }
         }
 
       }

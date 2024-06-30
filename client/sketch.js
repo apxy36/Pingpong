@@ -239,7 +239,7 @@ let timerFrame;
 let FPSFrame;
 
 function setup() {
-    createCanvas(windowWidth, windowHeight, WEBGL);
+    createCanvas(windowWidth, windowHeight);
     loadingBall = new LoadingBall();
     // loadingBall.setCollider("circle", 0, 0, 20);
 
@@ -412,7 +412,7 @@ function draw() {
         updateTeamHealth((healthBar1.elt.contentDocument || healthBar1.elt.contentWindow.document), map.basehealths[1], 1, healths[1]);
         updateTimer((timerFrame.elt.contentDocument || timerFrame.elt.contentWindow.document), timeRemaining);
        
-        console.log(fps)
+        // console.log(fps)
         
         map.updateHealth(healths);
     }
