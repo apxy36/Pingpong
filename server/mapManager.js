@@ -280,6 +280,9 @@ export default class MapManager{
 }
   generateTower(x, y, type){
     let z = this.grid.get(`${x}_${y}`).z;
+    if (z == "B"){
+      z = 2;
+    }
     let id = this.maxtowerid;
     let tower = new Tower(x, y, z, type, id);
     this.towers.push(tower);
@@ -434,7 +437,7 @@ export default class MapManager{
   updateTowers(clients){ // handling tower duration and spawning of new towers
 
     for (let i = 0; i < this.towers.length; i++){
-        if (this.towers[i].activecountdown < 0){
+        if (!this.towers[i].activecountdown > 0 && this.towers[i].active == false){
           this.towers[i].duration += 1;
         } else if (this.towers[i].duration > 18){
           this.towers[i].duration = 10;
@@ -453,11 +456,12 @@ export default class MapManager{
     //handle spawning of new towers
     //random chance of spawning a new tower
     let rand = Math.random();
-    if (rand < 0.2){
+    if (rand < 0.4){
       if (this.towers.length < 8){
         let randx = Math.floor(Math.random() * this.GRID_SIZE);
         let randy = Math.floor(Math.random() * this.GRID_SIZE);
-        let randtype = Math.round(Math.random() * 3);
+        // let randtype = Math.round(Math.random() * 3);
+        let randtype = 0
         let z = this.grid.get(`${randx}_${randy}`).z;
         if (!this.checkIfTowersWithinProximityofotherTowers(randx, randy)){
         for (let c of clients){
@@ -529,6 +533,10 @@ export default class MapManager{
     let linkedtower = this.towers.find(towers => towers.id == tower.linkedtowerid);
     console.log(tower, linkedtower);
     if (tower.active && linkedtower.active){
+      for (let c of clients){
+        console.log('baseAttacking', team, linkedtower);
+        c.socket.emit('baseAttacking', team, linkedtower);
+      }
       this.deactivateTower(id, team, clients);
       this.deactivateTower(tower.linkedtowerid, team, clients);
       if (team == 0){
@@ -536,6 +544,8 @@ export default class MapManager{
       } else {
         this.teamhealth[0] -= this.teamdamage[1];
       }
+      
+
       if (this.teamhealth[0] <= 0 || this.teamhealth[1] <= 0){
         for (let c of clients){
           c.socket.emit('gameOver', team);

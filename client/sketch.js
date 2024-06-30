@@ -197,6 +197,13 @@ socket.on("updateHealth", (health) => {
 }
 );
 
+socket.on("baseAttacking", (team, tower) => {
+    console.log('base attacking')
+    map.attackBase(team, tower);
+}
+);
+
+
 function manageVisiblePlayer(mechanicSprite, playerSprite, map){
     // console.log(mechanicSprite.pos.x, mechanicSprite.pos.y, playerSprite.pos.x, playerSprite.pos.y, map)
     // project the sprite onto isometric grid from x and y
@@ -458,12 +465,15 @@ function keyPressed() {
 
 function towerToggled() {
     let index = map.checkIfPlayerIsNearTower(mechplayer);
+    if (index == false) {
+        return;
+    }
     let tower = map.towerobjarr[index];
     console.log(tower)
     let id = tower.id;
     if (tower.active && tower.team != team) {
         socket.emit("deactivateTower", id);
-    } else if (tower.active == false && map.towerobjarr.length > 1){
+    } else if (tower.active == false && map.towerobjarr.length > 0 && map.countNumOfUnactivatedTowers() > 1){
         socket.emit("activateTower", id);
 
         console.log("activated")
@@ -475,26 +485,26 @@ function towerToggled() {
     }
 }
 
-let SPEED = 6;
+let SPEED = 4.5;
 let adjacentSPEED = 2 * SPEED**0.5;
 let oppSPEED = SPEED**0.5;
 function updateStatusConditions() {
     // console.log(statusconditions);
     // console.log(muted)
     // Update statusconditions (from playerStats.js)
-    SPEED = 6;
+    SPEED = 4.5;
     adjacentSPEED = 2 * SPEED**0.5;
     oppSPEED = SPEED**0.5;
 
     for (let status of statusconditions) {
         if (status == "speedBoost") {
             console.log("speedboost")
-            SPEED = 9;
+            SPEED = 7;
             adjacentSPEED = 2 * SPEED**0.5;
             oppSPEED = SPEED**0.5;
         } else if (status == "slow") {
             console.log("slow") 
-            SPEED = 4;
+            SPEED = 2.5;
             adjacentSPEED = 2 * SPEED**0.5;
             oppSPEED = SPEED**0.5;
         }

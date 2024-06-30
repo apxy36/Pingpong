@@ -197,6 +197,19 @@ class mapBuilder{
         idle: { row: 16, frames: 5, w: 16, h: 16},
     });
 
+    this.bullets = new Group();
+    this.bullets.overlaps(allSprites);
+    this.bullets.collider = 'static';
+    this.bullets.layer = 99999;
+    this.bullets.w = this.TILE_SIDE_LENGTH;
+    this.bullets.h = this.TILE_HEIGHT;
+    this.bullets.spriteSheet = loadImage('./textures/Towers/fireballSpritesheet.png');
+    this.bullets.addAnis({
+        idle: { row: 0, frames: 6, w: 20, h: 32},
+    });
+    this.bullets.anis.frameDelay = 2;
+    this.bullets.anis.scale = 1;
+
     this.explosions = new Group();
     this.explosions.overlaps(allSprites);
     this.explosions.collider = 'static';
@@ -347,14 +360,14 @@ class mapBuilder{
       this.idlefrogs.push(idlefrog);
       idlefrog.changeAni('jump');
     }
-    console.log(this.idlefrogs)
+    // console.log(this.idlefrogs)
     // move frogs
     for (let i = 0; i < this.idlefrogs.length; i++){
       let idlefrog = this.idlefrogs[i];
       let isox = idlefrog.position.x / this.TILE_WIDTH + idlefrog.position.y / this.TILE_HEIGHT;
       let isoy = idlefrog.position.y / this.TILE_HEIGHT - idlefrog.position.x / this.TILE_WIDTH;
-      let newisox = isox + noise(isox * 10000, isoy) * 0.07;
-      let newisoy = isoy + noise(isox * 100, -isoy) * 0.07;
+      let newisox = isox + noise(isox * 1000, isoy, frameCount) * 0.05;
+      let newisoy = isoy + noise(isox * -1000, -isoy, -frameCount) * 0.05;
       let newx = (newisox - newisoy) * this.TILE_WIDTH / 2;
       let newy = (newisox + newisoy) * this.TILE_HEIGHT / 2;
       let dx = newx - idlefrog.position.x;
@@ -1352,7 +1365,13 @@ class mapBuilder{
     // this.towers.push(tower);
     // translate into isometric
     let towerx = (tower.x - tower.y) * this.TILE_WIDTH / 2 + this.xstart;
-    let towery = (tower.x + tower.y) * this.TILE_HEIGHT / 2 - max(0, (tower.z - 2)) * this.TILE_HEIGHT / 2 + this.ystart;
+    let towery;
+    if (tower.z == "B"){
+      towery = (tower.x + tower.y) * this.TILE_HEIGHT / 2 - max(0, (2 - 2)) * this.TILE_HEIGHT / 2 + this.ystart;
+    } else {
+      towery = (tower.x + tower.y) * this.TILE_HEIGHT / 2 - max(0, (2 - tower.z)) * this.TILE_HEIGHT / 2 + this.ystart;
+    }
+    
     towersprite.pos = createVector(towerx, towery);
     towersprite.rotation = 0;
 
@@ -1477,6 +1496,16 @@ class mapBuilder{
     }
 
     
+  }
+
+  countNumOfUnactivatedTowers(){
+    let count = 0;
+    for (let i = 0; i < this.towerobjarr.length; i++){
+      if (this.towerobjarr[i].active == false){
+        count += 1;
+      }
+    }
+    return count;
   }
 
   updateTowers(towers){ //use?
@@ -1617,6 +1646,10 @@ class mapBuilder{
   updateTower(id, tower){
     // let tower = tower;
     let index = this.towerobjarr.findIndex(tower => tower.id == id);
+    if (index < 0){
+      return;
+    }
+    let initialcharge = this.towerobjarr[index].chargingindicator;
     let towersprite = this.towerarr[index];
     // const chargeanimation = this.towerobjarr[index].charginganimation;
     // console.log(chargeanimation, 'chargeanimation')
@@ -1640,6 +1673,22 @@ class mapBuilder{
         let frogindex = this.towerfrogarr.findIndex(frog => frog.id == tower.id);
         if (this.towerfrogarr[frogindex] != null && frogindex >= 0){
           this.towerfrogarr[frogindex].frog.changeAni('attack');
+          if (initialcharge == 0){
+            setInterval(() => {
+              let tower = this.towerobjarr.find(towers => towers.id == id);
+              linkedtower = this.towerobjarr.find(towers => towers.id == tower.linkedtowerid);
+              if (tower == null || linkedtower == null || tower.active == false || linkedtower.active == false){
+                clearInterval();
+              }
+              if (tower.chargingindicator == 1 && linkedtower.chargingindicator == 1 && tower.active == true){
+                this.shootBullet(tower, linkedtower);
+              } else {
+                // console.log('clearing interval')
+                clearInterval();
+              }
+            }
+            , 100);
+          }
         }
         // generates charging tower sprite
         // let charginganimation = new this.charginganim.Sprite();
@@ -1668,17 +1717,9 @@ class mapBuilder{
           }
           this.chargingarr.push({animation: charginganimation, id : tower.id});
           // this.towerobjarr[index].charginganimation = charginganimation;
+          
         }
-        setInterval(() => {
-          linkedtower = this.towerobjarr.find(towers => towers.id == tower.linkedtowerid);
-          if (tower.chargingindicator == 1 && linkedtower.chargingindicator == 1 && tower.active == true){
-            this.shootBullet(tower, linkedtower);
-          } else {
-            console.log('clearing interval')
-            clearInterval();
-          }
-        }
-        , 100);
+        
       }
 
       // towersprite.draw = () => {
@@ -1750,10 +1791,100 @@ class mapBuilder{
     // add UI for health
   }
 
+  attackBase(team, tower){
+    console.log('attacking base')
+    let index = this.towerobjarr.findIndex(tower => tower.id == tower.id);
+    let linkedtower = this.towerobjarr.find(towers => towers.id == tower.linkedtowerid);
+    console.log(linkedtower, 'linked tower', index, 'index', tower, this.towerobjarr, 'towerobjarr')
+    if (linkedtower != null){
+      // this.shootBullet(tower, linkedtower);
+      //find time to reach linkedtwoer
+      console.log('attacking base')
+      let frogindex = this.towerfrogarr.findIndex(frog => frog.id == tower.id);
+      let linkedfrogindex = this.towerfrogarr.findIndex(frog => frog.id == tower.linkedtowerid);
+      let frog = this.towerfrogarr[frogindex].frog;
+      let linkedfrog = this.towerfrogarr[linkedfrogindex].frog;
+      let distance = dist(frog.pos.x, frog.pos.y, linkedfrog.pos.x, linkedfrog.pos.y);
+      let speed = 10;
+      let time = distance / speed //time in frames
+      time = time / frameRate(); //time in seconds
+
+      let pos2 = createVector(linkedfrog.pos.x, linkedfrog.pos.y);
+      let pos1 = createVector(frog.pos.x, frog.pos.y);
+      let pos3;
+      if (team == 0){
+        pos3 = createVector(this.basetowerarr[1].pos.x, this.basetowerarr[1].pos.y);
+      } else {
+        pos3 = createVector(this.basetowerarr[0].pos.x, this.basetowerarr[0].pos.y);
+      }
+      this.shootPingPong(pos1, pos2);
+      setTimeout(() => {
+        this.shootPingPong(pos2, pos3);
+      }, time * 1000);
+
+    }
+  }
+
+  shootPingPong(pos1, pos2){
+    let bullet = new this.bullets.Sprite();
+    bullet.pos = createVector(pos1.x, pos1.y);
+    bullet.scale = 0.5;
+    bullet.rotation = 0;
+    bullet.collider = "none"; 
+    bullet.changeAni('idle');
+    
+    bullet.draw = () => {
+      let bulletx = bullet.pos.x;
+      let bullety = bullet.pos.y;
+      let targetx = pos2.x;
+      let targety = pos2.y;
+      // let distance = dist(pos2.x, pos2.y, bulletx, bullety);
+      //   let angle = atan2(targety - bullety, targetx - bulletx);
+      //   if (angle < 0){
+      //     angle = 2 * PI + angle;
+      //   }
+      let speed = 10;
+      let distance = dist(targetx, targety, bulletx, bullety);
+        let angle = atan2(targety - bullety, targetx - bulletx);
+        if (angle < 0){
+          angle = 2 * PI + angle;
+        }
+        // bullet.anis.rotation = angle * 180 / PI;
+        // if (targetx - bulletx < 0 && targety - bullety > 0){
+        //   angle = PI - angle;
+        // } else if (targetx - bulletx < 0 && targety - bullety < 0){
+        //   angle = PI + angle;
+        // } else if (targetx - bulletx > 0 && targety - bullety < 0){
+        //   angle = 2 * PI - angle;
+        // }
+        let animationangle = (angle * 180 / PI + 90) * PI / 180;
+        bullet.rotation = animationangle;
+        bullet.scale = 2;
+        let x = cos(angle) * speed;
+        let y = sin(angle) * speed;
+        bullet.pos.x += x;
+        bullet.pos.y += y;
+        // console.log(bullet.pos.x, bullet.pos.y, 'bullet pos')
+        // fill(255, 0, 0);
+        // ellipse(0, 0, 10, 10);
+        // bullet.ani.draw(0, 0, 0, 1, 1);
+        bullet.ani.draw(0, 0, 0, bullet.scale, bullet.scale);
+        if (distance < 25){
+          // target.health -= bullet.damage;
+          // bullet.active = false;
+          bullet.remove();
+        }
+
+
+      
+    }
+    // this.bulletarr.push(bullet);
+  }
+
   preGenerateTower(x, y, z){
     let towersprite = new this.pretowers.Sprite();
     let towerx = (x - y) * this.TILE_WIDTH / 2 + this.xstart;
-    let towery = (x + y) * this.TILE_HEIGHT / 2 - z * this.TILE_HEIGHT / 2 + this.ystart;
+    let towery = (x + y) * this.TILE_HEIGHT / 2 + this.ystart;
     towersprite.pos = createVector(towerx, towery);
     towersprite.rotation = 0;
     towersprite.width = this.TILE_WIDTH;
@@ -1989,7 +2120,7 @@ class mapBuilder{
     bullet.pos = createVector(frog.pos.x, frog.pos.y);
     // bullet.target = target;
     console.log(tower, target, 'tower and target')
-    let speed = 25;
+    let speed = 13;
     // bullet.damage = 5;
     // bullet.active = true;
     bullet.draw = () => {
@@ -2016,7 +2147,7 @@ class mapBuilder{
         let y = sin(angle) * speed;
         bullet.pos.x += x;
         bullet.pos.y += y;
-        console.log(bullet.pos.x, bullet.pos.y, 'bullet pos')
+        // console.log(bullet.pos.x, bullet.pos.y, 'bullet pos')
         // fill(255, 0, 0);
         // ellipse(0, 0, 10, 10);
         bullet.ani.draw(0, 0, 0, 1, 1);
@@ -2052,7 +2183,7 @@ class mapBuilder{
 }
 
 function createPlayerSprite(name) {
-    let mechanicSprite = new Sprite(0, 0, 10);
+    let mechanicSprite = new Sprite(0, 0, 8);
     mechanicSprite.visible = false;
     return mechanicSprite;
     // mechanicSprite.visible = true;
@@ -2090,7 +2221,8 @@ function createVisiblePlayerSprite(name, playerZ) { //scaling added after animat
     playerSprite.collider = 'none';
     // playerSprite.img = "./new_tileset/tile_001.png";
     playerSprite.spriteSheet = './textures/charanimap.png';
-    playerSprite.anis.offset.y = -4
+    // playerSprite.anis.offset.x = -64;
+    playerSprite.anis.offset.y = -64
     playerSprite.anis.frameDelay = 2
     playerSprite.addAnis({
       idle: {row:0, frames: 6, w:128, h:128}, 
