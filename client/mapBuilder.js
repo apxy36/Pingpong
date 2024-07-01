@@ -451,7 +451,9 @@ class mapBuilder{
 
       }, 300);
     }
-    this.idlefrogs = [];
+    setTimeout(() => {
+      this.idlefrogs = [];
+    }, 1000);
   }
 
 
