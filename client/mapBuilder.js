@@ -453,12 +453,13 @@ class mapBuilder{
 
   buildBaseMap(mapManager){
     this.grid = this.convertTileArrayToMap(mapManager.gridarr);
-    console.log(this.grid)
+    // console.log(this.grid)
     this.gridarray = this.convertMapToGridArray(this.grid);
     // this.grid = mapManager.grid;
     // console.log(this.gridarray)
     // this.generateMap();
     this.isoarray = this.generateIsometricTileArray();
+    console.log(this.isoarray)
 
   }
 
