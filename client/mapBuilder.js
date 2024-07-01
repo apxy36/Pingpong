@@ -406,7 +406,7 @@ class mapBuilder{
       let isoy = random(0, this.height);
       idlefrog.position.x = (isox - isoy) * this.TILE_WIDTH / 2 + this.xstart;
       idlefrog.position.y = (isox + isoy) * this.TILE_HEIGHT / 2 + this.ystart;
-      idlefrog.anis.
+      // idlefrog.anis.
       this.idlefrogs.push(idlefrog);
       if (random(0, 1) < 0.1){
         idlefrog.changeAni('jump');
@@ -445,7 +445,11 @@ class mapBuilder{
 
   deleteIdleFrogs(){
     for (let i = 0; i < this.idlefrogs.length; i++){
-      this.idlefrogs[i].remove();
+      this.idlefrogs[i].changeAni('explode');
+      setTimeout(() => {
+        this.idlefrogs[i].remove();
+
+      }, 300);
     }
     this.idlefrogs = [];
   }
