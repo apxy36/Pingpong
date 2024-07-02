@@ -78,6 +78,14 @@ io.on("connection", (socket) => {
                 //     return;
                 // }
                 roomExists = true;
+                if (rooms[i].clients.length >= 4) {
+                    socket.emit("roomFull");
+                    return;
+                }
+                if (rooms[i].gameStarted) {
+                    socket.emit("gameAlreadyStarted");
+                    return;
+                }
                 rooms[i].addClient(client);
             }
         }

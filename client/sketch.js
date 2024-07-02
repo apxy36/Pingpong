@@ -231,6 +231,26 @@ socket.on("removeTower", (index) => {
 }
 );
 
+socket.on("gameAlreadyStarted", () => {
+    Swal.fire({
+        title: "Game already started...",
+        text: "The game has already started. Please wait for the next game to join.",
+        icon: "info"
+    });
+    window.location.href = "index.html";
+}
+);
+
+socket.on("roomFull", () => {
+    Swal.fire({
+        title: "Room full...",
+        text: "The room is full. Please try joining another room.",
+        icon: "info"
+    });
+    window.location.href = "index.html";
+}
+);
+
 socket.on("updateTower", (id, tower, team) => {
     map.updateTower(id, tower, team);
     // map.updateTowers()
