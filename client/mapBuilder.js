@@ -2251,7 +2251,7 @@ class mapBuilder{
           if (type == 'slow' && scale == 1.5){
             baseslowsfx.play();
           } else if (type == 'heal' && scale == 1.5){
-            basehealsfx.play();
+            baseheal1sfx.play();
           } else if (type == 'normal' && scale == 1.5){
             baseattack1sfx.play();
           }
