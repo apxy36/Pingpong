@@ -29,6 +29,19 @@ class EntityManager {
         });
     }
 
+    updatePlayerSprites() {
+        for (let [id, data] of this.entities) {
+            let playerSprite = data.sprite;
+            if (playerSprite){
+                playerSprite.remove();
+            }
+            let team = data.team;
+            playerSprite = createVisiblePlayerSprite(data.ign, data.z, team, data.statusconditions);
+            data.sprite = playerSprite;
+
+        }
+    }
+
     updatePlayerData(newData) {
         let currData = this.entities.get(newData.id);
         currData.sprite.visible = true;

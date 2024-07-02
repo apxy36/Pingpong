@@ -247,7 +247,11 @@ socket.on("preGenerateTower", (randx, randy, randtype) => {
 socket.on("gameStarted", (team) => {
     startGame = true;
     team = team;
+    if (displayPlayer) {
+        displayPlayer.remove();
+    }
     displayPlayer = createVisiblePlayerSprite(localIGN, playerZ, team);
+    em.updatePlayerSprites();
     playerZ = map.setPlayerPosition(1, mechplayer);//map.getTile(round(map.)).z;
     chillmusicsfx.stop();
     gamestartsfx.play();
