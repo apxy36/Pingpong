@@ -69,8 +69,8 @@ let countdownsfx;
 let gamewonsfx;
 let chillmusicsfx;
 
-// const socket = io.connect("https://frog-pong.onrender.com");
-const socket = io.connect("http://localhost:8001");
+const socket = io.connect("https://frog-pong.onrender.com");
+// const socket = io.connect("http://localhost:8001");
 
 let playerSpriteGroup1;
 let playerSpriteGroup2;
