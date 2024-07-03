@@ -21,7 +21,7 @@ let cam;
 let displayPlayer;
 let localIGN = '';
 let setupComplete = false;
-let team = null;
+let team = -1;
 let statusconditions = [];
 let interactionBtn;
 let startGame = false;
@@ -69,10 +69,26 @@ let countdownsfx;
 let gamewonsfx;
 let chillmusicsfx;
 
-const socket = io.connect("https://frog-pong.onrender.com");
+// const socket = io.connect("https://frog-pong.onrender.com");
+const socket = io.connect("http://localhost:8001");
 
 let playerSpriteGroup1;
 let playerSpriteGroup2;
+
+function onSoundLoadSuccess(e){
+   console.log("load sound success",e);
+    // setupComplete = true;
+}
+function onSoundLoadError(e){
+   console.log("load sound error",e);
+   setupComplete = false;
+}
+function onSoundLoadProgress(e){
+   console.log("load sound progress",e);
+//    setupComplete = false;
+}
+
+
 function preload() {
     map = new mapBuilder(52, 52, 32);
     // preload idle animation
@@ -132,7 +148,7 @@ function preload() {
     towerbuffsfx = loadSound('./sfx/tower attacks/buff strengthen.mp3');
     countdownsfx = loadSound('./sfx/countdowntimer.mp3');  //done
     gamewonsfx = loadSound('./sfx/victory.mp3'); //done
-    chillmusicsfx = loadSound('./sfx/chillmusic.mp3'); //done
+    chillmusicsfx = loadSound('./sfx/chillmusic.mp3',onSoundLoadSuccess,onSoundLoadError,onSoundLoadProgress); //done
 
     chillmusicsfx.loop();
     // playerSpriteGroup.anis.scale = 0.5;
@@ -144,7 +160,7 @@ function preload() {
 
 function checkAllSFXLoaded() {
     if (explosionsfx.isLoaded() && walkingsfx.isLoaded() && alert30ssfx.isLoaded() && frogsfx.isLoaded() && gameoversfx.isLoaded() && gamestartsfx.isLoaded() && toweractivatedsfx.isLoaded() && towercombosfx.isLoaded() && playerspawnedsfx.isLoaded() && towerspawnedsfx.isLoaded() && baseattack1sfx.isLoaded() && baseslowsfx.isLoaded() && basespeedboostsfx.isLoaded() && baseheal1sfx.isLoaded() && towerbuffsfx.isLoaded() && countdownsfx.isLoaded()) {
-        console.log('all sfx loaded')
+        // console.log('all sfx loaded')
         return true;
     } else {
         console.log('not all sfx loaded')
@@ -158,6 +174,13 @@ socket.on("setRoomCode", (code) => {
 
 socket.on("buildMap", (mapManager) => {
     // console.log(mapManager)
+    if (mechplayer) {
+        mechplayer.remove();
+    }
+    if (displayPlayer) {
+        displayPlayer.remove();
+    }
+    console.log('building map')
     mechplayer = createPlayerSprite(localIGN) // creates mechanics for player
     map.buildBaseMap(mapManager);
     map.buildVisualMap();
@@ -171,6 +194,7 @@ socket.on("buildMap", (mapManager) => {
     mapBuilt = true;
     chillmusicsfx.play();
     chillmusicsfx.setVolume(volume = 0.6, 2);
+    cam.setTarget(displayPlayer); 
     // updateTeamHealth((healthBar0.elt.contentDocument || healthBar0.elt.contentWindow.document), map.basehealths[0], 0, map.towerhealths[0]);
     // updateTeamHealth((healthBar1.elt.contentDocument || healthBar1.elt.contentWindow.document), map.towerhealths[1], 1, map.towerhealths[1]);
     
@@ -178,6 +202,7 @@ socket.on("buildMap", (mapManager) => {
 
 socket.on("resetGame", (mapManager) => {
     startGame = false;
+    healths = [100, 100];
     map.updateTowers(mapManager.towers);
     chillmusicsfx.play();
     chillmusicsfx.setVolume(volume = 0.6, 2);
@@ -193,7 +218,7 @@ socket.on("playerDataUpdate", (id, playerData) => {
             // coins = data.coins;
             statusconditions = data.statusconditions;
             timeRemaining = data.timer;
-            if (timeRemaining == 30) {
+            if (timeRemaining == 30 && !alert30ssfx.isPlaying()) {
                 alert30ssfx.play();
             }
             team = data.team;
@@ -264,14 +289,18 @@ socket.on("preGenerateTower", (randx, randy, randtype) => {
 }
 );
 
-socket.on("gameStarted", (team) => {
+socket.on("gameStarted", (teams, clientteams) => {
     startGame = true;
-    team = team;
+    team = teams;
+    console.log(clientteams)
+    em.updatePlayerSprites(clientteams);
     if (displayPlayer) {
         displayPlayer.remove();
     }
+    
     displayPlayer = createVisiblePlayerSprite(localIGN, playerZ, team);
-    em.updatePlayerSprites();
+    cam.setTarget(displayPlayer);
+    
     playerZ = map.setPlayerPosition(1, mechplayer);//map.getTile(round(map.)).z;
     chillmusicsfx.stop();
     gamestartsfx.play();
@@ -337,6 +366,7 @@ socket.on("gameEnded", (teamwon) => { //temp function
             icon: "info"
         });
     }
+    startGame = false;
 }
 );
 
@@ -572,7 +602,7 @@ function draw() {
                     });
                     setTimeout(() => {
                         socket.emit("startGame");
-                        
+                        console.log('game started')
                     }, 5000);
             }
             })

@@ -378,16 +378,19 @@ export default class MapManager{
       return;
     }
     let tower = this.towers.find(tower => tower.id == id);
+    if (tower == null){
+      return;
+    }
     console.log(tower, id, 'deactivated')
     tower.active = false;
-    tower.team = null;
+    tower.team = -1;
     tower.activecountdown = -1;
     tower.chargingindicator = 0;
     tower.comboavailable = false;
     if (tower.linkedtowerid != null){
       let linkedtower = this.towers.find(towers => towers.id == tower.linkedtowerid);
       linkedtower.active = false;
-      linkedtower.team = null;
+      linkedtower.team = -1;
       linkedtower.activecountdown = -1;
       linkedtower.linkedtowerid = null;
       linkedtower.chargingindicator = 0;
@@ -461,7 +464,7 @@ export default class MapManager{
         let randx = Math.floor(Math.random() * this.GRID_SIZE);
         let randy = Math.floor(Math.random() * this.GRID_SIZE);
         // let randtype = Math.round(Math.random() * 3);
-        let randtype = min(Math.floor(Math.random() * 5), 4);
+        let randtype = Math.min(Math.floor(Math.random() * 5), 4);
         let z = this.grid.get(`${randx}_${randy}`).z;
         if (!this.checkIfTowersWithinProximityofotherTowers(randx, randy)){
         for (let c of clients){
@@ -554,6 +557,18 @@ export default class MapManager{
 
       
     } else if (tower.type == 1){
+
+      for (let c of clients){
+        console.log('baseAttacking', team, linkedtower);
+        c.socket.emit('baseAttacking', team, linkedtower);
+      }
+      
+      if (team == 0){
+        this.teamhealth[1] -= 5;
+      } else {
+        this.teamhealth[0] -= 5;
+      }
+
         for (let c of clients){
           if (team == 0){
             c.socket.emit('speedBoost', team, linkedtower);
@@ -587,6 +602,18 @@ export default class MapManager{
             this.teamdamage[1] -= 5;
           }, 20000); // 20 seconds
         }
+
+        for (let c of clients){
+        console.log('baseAttacking', team, linkedtower);
+        c.socket.emit('baseAttacking', team, linkedtower);
+      }
+      
+      if (team == 0){
+        this.teamhealth[1] -= 5;
+      } else {
+        this.teamhealth[0] -= 5;
+      }
+
       } else if (tower.type == 3){ // heal towers
         if (team == 0){
           this.teamhealth[0] += 10;
@@ -597,6 +624,16 @@ export default class MapManager{
           c.socket.emit('healing', team, linkedtower);
         }
       } else if (tower.type == 4){ // slow towers
+        for (let c of clients){
+          console.log('baseAttacking', team, linkedtower);
+          c.socket.emit('baseAttacking', team, linkedtower);
+        }
+        
+        if (team == 0){
+          this.teamhealth[1] -= 5;
+        } else {
+          this.teamhealth[0] -= 5;
+        }
         for (let c of clients){
           for (let c of clients){
             c.socket.emit('slowdown', team, linkedtower);
@@ -666,7 +703,7 @@ class Tower{
     this.activecountdown = -1;
     this.linkedtowerid = null;
     this.duration = 0;
-    this.team = null;
+    this.team = -1;
 
     this.w = 32
     this.h = 32

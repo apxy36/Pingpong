@@ -1472,7 +1472,7 @@ class mapBuilder{
     if (mapBuilt == true){
       for (let i = 0; i < this.towerobjarr.length; i++){
         let tower = this.towerobjarr[i];
-        let towersprite = this.towerarr[i];
+        let towersprite = this.towerarr.find(tower => tower.pos.x == (this.towerobjarr[i].x - this.towerobjarr[i].y) * this.TILE_WIDTH / 2 + this.xstart && tower.pos.y == (this.towerobjarr[i].x + this.towerobjarr[i].y) * this.TILE_HEIGHT / 2 - max(0, (2 - this.towerobjarr[i].z)) * this.TILE_HEIGHT / 2 + this.ystart);
         let playerx = player.pos.x;
         let playery = player.pos.y;
 
@@ -1491,7 +1491,7 @@ class mapBuilder{
         // let h = (mapOverlayArea.h + areaPadding * 2) * this.mapCellSize;
         // console.log(tower, i)
         if (playerx > x && playerx < x + w && playery > y && playery < y + h) {
-          console.log('player near tower', i)
+          // console.log('player near tower', i)
           // towersprite = this.towerarr[i];
           // draws a circle around the tower
           // makes new sprite
@@ -1566,7 +1566,18 @@ class mapBuilder{
     this.towerarr = [];
     this.towerobjarr = [];
     this.towerprevcountdowns = [];
+    for (let i = 0; i < this.chargingarr.length; i++){
+      if (this.chargingarr[i] != null){
+        this.chargingarr[i].animation.remove();
+      }
+    }
     this.chargingarr = [];
+    for (let i = 0; i < this.towerfrogarr.length; i++){
+      if (this.towerfrogarr[i] != null){
+        this.towerfrogarr[i].frog.remove();
+      }
+    }
+    this.towerfrogarr = [];
 
     // Spawn coins on the map
     for (let i = 0; i < towers.length; i++) {
@@ -1730,6 +1741,7 @@ class mapBuilder{
               linkedtower = this.towerobjarr.find(towers => towers.id == tower.linkedtowerid);
               if (tower == null || linkedtower == null || tower.active == false || linkedtower.active == false){
                 clearInterval();
+                return;
               }
               if (tower.chargingindicator == 1 && linkedtower.chargingindicator == 1 && tower.active == true){
                 this.shootBullet(tower, linkedtower);
@@ -2229,7 +2241,7 @@ class mapBuilder{
         // }
         let animationangle;
         if (type == 'normal'){
-          animationangle = (angle * 180 / PI - 90) * PI / 180;
+          animationangle = (angle * 180 / PI + 90) * PI / 180;
         } else if (type == 'slow'){
           animationangle = (angle * 180 / PI + 90) * PI / 180;
         } else if (type == 'heal'){
@@ -2554,8 +2566,10 @@ function createPlayerSprite(name) {
     
 }
 
-function createVisiblePlayerSprite(name, playerZ, team) { //scaling added after animation
+function createVisiblePlayerSprite(name, playerZ, teams) { //scaling added after animation
     // let playerSprite = new Sprite(0, 0, 10);
+    // let teams = data.team;
+    // console.log(teams, 'teams')
     // // playerSprite.layer = 99999
     // playerSprite.visible = true;
     // playerSprite.collider = 'none';
@@ -2575,11 +2589,15 @@ function createVisiblePlayerSprite(name, playerZ, team) { //scaling added after 
     // 
     // playerSprite.changeAni('idle');
     // playerSprite.layer = 99999;
+    console.log(teams, 'teams')
     let playerSprite;
-    if (team == 0){
+    if (teams == 0){
       playerSprite = new playerSpriteGroup1.Sprite();
-    } else if (team == 1){
+    } else if (teams == 1){
       playerSprite = new playerSpriteGroup2.Sprite();
+      // console.log('team 2')
+    } else {
+      playerSprite = new playerSpriteGroup1.Sprite();
     }
     playerSprite.width = 10;
     playerSprite.height = 10;

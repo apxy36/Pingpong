@@ -18,7 +18,7 @@ let frameCount = 0;
 function Client(socket) {
     this.socket = socket;
     this.position = { x: 0, y: 0 ,z:0};
-    this.team = null;
+    this.team = -1;
     this.action = '';
     this.statusconditions = [];
 }
@@ -84,6 +84,7 @@ io.on("connection", (socket) => {
                 }
                 if (rooms[i].gameStarted) {
                     socket.emit("gameAlreadyStarted");
+                    console.log("game already started");
                     return;
                 }
                 rooms[i].addClient(client);
@@ -107,18 +108,22 @@ io.on("connection", (socket) => {
         //determine teams
         let team1count = 0;
         let team2count = 0;
+        for (let c of client.room.clients) {
+            c.team = -1;
+        }
+
         if (client.room.clients.length == 4) {
             while (team1count < 2) {
-            let randomclient = client.room.clients[Math.floor(Math.random() * client.room.clients.length)];
-            if (randomclient.team == null) {
+            let randomclient = client.room.clients[Math.min(Math.round(Math.random() * client.room.clients.length), client.room.clients.length - 1)];
+            if (randomclient.team == -1) {
                 randomclient.team = 0;
                 team1count++;
             }
         }
         } else {
-            while (team1count < Math.round(random(1, client.room.clients.length - 1))) {
-                let randomclient = client.room.clients[Math.floor(Math.random() * client.room.clients.length)];
-                if (randomclient.team == null) {
+            while (team1count < Math.round(1 + client.room.clients.length - 2)){
+                let randomclient = client.room.clients[Math.min(Math.round(Math.random() * client.room.clients.length), client.room.clients.length - 1)];
+                if (randomclient.team == -1) {
                     randomclient.team = 0;
                     team1count++;
                 }
@@ -127,40 +132,51 @@ io.on("connection", (socket) => {
         
         // team2 
         for (let c of client.room.clients) {
-            if (c.team == null) {
+            if (c.team == -1) {
                 c.team = 1;
             }
         }
+        let clientteams = [];
         for (let c of client.room.clients) {
-            c.socket.emit("gameStarted", c.team);
+            clientteams.push({team :c.team , id : c.socket.id});
         }
-        setInterval(() => {
-            client.room.gamecountdown--;
-            if (client.room.gamecountdown <= 0) {
-                if (client.room.gameStarted) {
-                    let teamwon = client.room.mapManager.checkWinCondition();
-                    for (let c of client.room.clients) {
-                        c.socket.emit("gameEnded", teamwon);
-                    }
-                    client.room.gameStarted = false;
-                    client.room.gamecountdown = 60 * 3;
-                    //deactivate all towers
-                    for (let tower of client.room.mapManager.towers) {
-                        client.room.mapManager.deactivateTower(tower.id, client.team, client.room.clients);
-                        if (tower.linkedtowerid != null) {
-                            client.room.mapManager.deactivateTower(tower.linkedtowerid, client.team, client.room.clients); 
-                        }
-                    }
-                    client.room.mapManager.teamhealth = [100, 100];
-                    client.room.mapManager.teamdamage = [15, 15];
-                    for (let c of client.room.clients) {
-                        c.socket.emit("resetGame", client.room.mapManager)
-                    }
-                    clearInterval();
-                }
-            }
+        console.log(clientteams);
+        for (let c of client.room.clients) {
+            c.socket.emit("gameStarted", c.team, clientteams);
+        }
+        // setInterval(() => {
+            
+        //     if (client.room.gamecountdown <= 0) {
+        //         clearInterval();
+        //         if (client.room.gameStarted) {
+        //             let teamwon = client.room.mapManager.checkWinCondition();
+        //             for (let c of client.room.clients) {
+        //                 c.socket.emit("gameEnded", teamwon);
+        //             }
+        //             client.room.gameStarted = false;
+        //             client.room.gamecountdown = 0.5 * 60;
+        //             //deactivate all towers
+        //             for (let tower of client.room.mapManager.towers) {
+        //                 client.room.mapManager.deactivateTower(tower.id, client.team, client.room.clients);
+        //                 if (tower.linkedtowerid != null) {
+        //                     client.room.mapManager.deactivateTower(tower.linkedtowerid, client.team, client.room.clients); 
+        //                 }
+        //             }
+        //             client.room.mapManager.towers = [];
+        //             client.room.mapManager.maxtowerid = 0;
+        //             client.room.mapManager.teamhealth = [100, 100];
+        //             client.room.mapManager.teamdamage = [15, 15];
+        //             for (let c of client.room.clients) {
+        //                 c.socket.emit("resetGame", client.room.mapManager)
+        //             }
+                    
+        //         }
+                
+        //     } else {
+        //         client.room.gamecountdown--;
+        //     }
         
-        }, 1000);
+        // }, 1000);
     });
 
     socket.on("startingGameSoon", () => {
@@ -267,7 +283,30 @@ function tick() {
             // room.mapManager.generateCoins();
             room.mapManager.updateTowers(room.clients);
             // console.log("generating", frameCount, date.getTime() - lastTime, room.mapManager.coinrate, 60 / room.mapManager.coinrate);
-            
+            room.gamecountdown--;
+            if (room.gamecountdown <= 0) {
+                let teamwon = room.mapManager.checkWinCondition();
+                for (let c of room.clients) {
+                    c.socket.emit("gameEnded", teamwon);
+                }
+                room.gameStarted = false;
+                room.gamecountdown = 3 * 60;
+                //deactivate all towers
+                // for (let tower of room.mapManager.towers) {
+                //     room.mapManager.deactivateTower(tower.id, c.team, room.clients);
+                //     if (tower.linkedtowerid != null) {
+                //         room.mapManager.deactivateTower(tower.linkedtowerid, c.team, room.clients); 
+                //     }
+                // }
+                room.mapManager.towers = [];
+                room.mapManager.maxtowerid = 0;
+                // room.mapManager.updateTowers(room.clients);
+                room.mapManager.teamhealth = [100, 100];
+                room.mapManager.teamdamage = [15, 15];
+                for (let c of room.clients) {
+                    c.socket.emit("resetGame", room.mapManager)
+                }
+            }
         }
     }
 }
