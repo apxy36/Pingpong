@@ -52,10 +52,10 @@ class Room {
     }
 }
 
-console.log("Server running...");
+// console.log("Server running...");
 
 io.on("connection", (socket) => {
-    console.log("New connection!");
+    // console.log("New connection!");
     let client = new Client(socket);
     clients.add(client);
 
@@ -84,7 +84,7 @@ io.on("connection", (socket) => {
                 }
                 if (rooms[i].gameStarted) {
                     socket.emit("gameAlreadyStarted");
-                    console.log("game already started");
+                    // console.log("game already started");
                     return;
                 }
                 rooms[i].addClient(client);
@@ -94,7 +94,7 @@ io.on("connection", (socket) => {
         // Client wants to join a room that does not exist, create a new room
         if (roomExists == false) {
             let room = new Room(roomCode);
-            // console.log(room.mapManager.grid)
+            // // console.log(room.mapManager.grid)
             room.addClient(client)
             rooms.push(room);
         }
@@ -140,7 +140,7 @@ io.on("connection", (socket) => {
         for (let c of client.room.clients) {
             clientteams.push({team :c.team , id : c.socket.id});
         }
-        console.log(clientteams);
+        // console.log(clientteams);
         for (let c of client.room.clients) {
             c.socket.emit("gameStarted", c.team, clientteams);
         }
@@ -186,13 +186,13 @@ io.on("connection", (socket) => {
     });
 
     socket.on("activateTower", (id) => {
-        console.log('activating tower', id, client.team)
+        // console.log('activating tower', id, client.team)
         client.room.mapManager.activateTower(id, client.team, client.room.clients);
-        // console.log('activating tower', index, client.team)
+        // // console.log('activating tower', index, client.team)
         for (let c of client.room.clients) {
             let index = client.room.mapManager.towers.findIndex(tower => tower.id == id);
             let linkedtower = client.room.mapManager.towers.find(tower => tower.id == client.room.mapManager.towers[index].linkedtowerid);
-            console.log('sending update tower', id, client.room.mapManager.towers[index], client.team)
+            // console.log('sending update tower', id, client.room.mapManager.towers[index], client.team)
             c.socket.emit("updateTower", id, client.room.mapManager.towers[index], client.team);
             c.socket.emit("updateTower", client.room.mapManager.towers[index].linkedtowerid, linkedtower, client.team);
         }
@@ -200,13 +200,13 @@ io.on("connection", (socket) => {
     );
 
     socket.on("comboTower", (id) => {
-        console.log('combining tower', id, client.team)
+        // console.log('combining tower', id, client.team)
         client.room.mapManager.comboTower(id, client.team, client.room.clients);
-        // console.log('activating tower', index, client.team)
+        // // console.log('activating tower', index, client.team)
         for (let c of client.room.clients) {
             let index = client.room.mapManager.towers.findIndex(tower => tower.id == id);
             let linkedtower = client.room.mapManager.towers.find(tower => tower.id == client.room.mapManager.towers[index].linkedtowerid);
-            console.log('sending update tower', id, client.room.mapManager.towers[index], client.team)
+            // console.log('sending update tower', id, client.room.mapManager.towers[index], client.team)
             c.socket.emit("updateTower", id, client.room.mapManager.towers[index], client.team);
             c.socket.emit("updateTower", client.room.mapManager.towers[index].linkedtowerid, linkedtower, client.team);
         }
@@ -282,7 +282,7 @@ function tick() {
         if (frameCount % Math.round(60) == 0 && room.gameStarted) {
             // room.mapManager.generateCoins();
             room.mapManager.updateTowers(room.clients);
-            // console.log("generating", frameCount, date.getTime() - lastTime, room.mapManager.coinrate, 60 / room.mapManager.coinrate);
+            // // console.log("generating", frameCount, date.getTime() - lastTime, room.mapManager.coinrate, 60 / room.mapManager.coinrate);
             room.gamecountdown--;
             if (room.gamecountdown <= 0) {
                 let teamwon = room.mapManager.checkWinCondition();

@@ -35,7 +35,7 @@ class mapBuilder{
 
     this.truewidth = this.width * this.TILE_WIDTH;
     this.trueheight = this.height * this.TILE_HEIGHT;
-    // console.log(this.truewidth, this.trueheight)
+    // // console.log(this.truewidth, this.trueheight)
     // this.graphics = this.draw_grid(windowWidth/2, windowHeight/2, this.graphics);
     this.xstart = this.truewidth / 2 - this.TILE_WIDTH / 2;
     this.ystart = this.trueheight / 2 - this.GRID_SIZE * this.TILE_HEIGHT / 2;
@@ -45,17 +45,17 @@ class mapBuilder{
     // // this.tile_images = tile_images;
     // this.gridarray = this.generateMapWithCenterRoom(this.width,this.height,8,10);
     // this.gridarray = this.convertMapToGridArray(this.grid);
-    // console.log(this.gridarray)
+    // // console.log(this.gridarray)
     // // this.generateMap();
     // this.isoarray = this.generateIsometricTileArray();
-    // console.log(this.gridarray)
+    // // console.log(this.gridarray)
     // for (let i = 0; i < this.width; i++) {
     //   for (let j = 0; j < this.height; j++) {
     //     this.grid.set(i + "_" + j, new Tile(i, j, round(random(0,2)), 0));
     //   }
     // }
     
-    // console.log(this.grid, this.width, this.height, this.gridarray)
+    // // console.log(this.grid, this.width, this.height, this.gridarray)
 
     
 
@@ -418,7 +418,7 @@ class mapBuilder{
       // idlefrog.changeAni('jump');
       idlefrog.anis.frameDelay = Math.round(random(0, 4));
     }
-    // console.log(this.idlefrogs)
+    // // console.log(this.idlefrogs)
     // move frogs
     for (let i = 0; i < this.idlefrogs.length; i++){
       let idlefrog = this.idlefrogs[i];
@@ -446,10 +446,19 @@ class mapBuilder{
   deleteIdleFrogs(){
     for (let i = 0; i < this.idlefrogs.length; i++){
       this.idlefrogs[i].changeAni('explode');
-      setTimeout(() => {
+      let promise = new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve();
+        }, 300);
+      });
+      promise.then(() => {
         this.idlefrogs[i].remove();
+      });
 
-      }, 300);
+      // setTimeout(() => {
+      //   this.idlefrogs[i].remove();
+
+      // }, 300);
     }
     setTimeout(() => {
       this.idlefrogs = [];
@@ -459,13 +468,13 @@ class mapBuilder{
 
   buildBaseMap(mapManager){
     this.grid = this.convertTileArrayToMap(mapManager.gridarr);
-    // console.log(this.grid)
+    // // console.log(this.grid)
     this.gridarray = this.convertMapToGridArray(this.grid);
     // this.grid = mapManager.grid;
-    // console.log(this.gridarray)
+    // // console.log(this.gridarray)
     // this.generateMap();
     this.isoarray = this.generateIsometricTileArray();
-    console.log(this.isoarray)
+    // console.log(this.isoarray)
 
   }
 
@@ -502,7 +511,7 @@ class mapBuilder{
         for (let y = 0; y < N; y++) {
           grid.set(`${x}_${y}`, new Tile(x, y, 0, 'empty'));
         }
-        // console.log(grid)
+        // // console.log(grid)
       }
       return grid;
     }
@@ -662,7 +671,7 @@ class mapBuilder{
           let tile = grid.get(`${x}_${y}`);
           row += `${tile.type[0]}(${tile.z}) `;
         }
-        console.log(row);
+        // console.log(row);
       }
     }
 
@@ -704,11 +713,11 @@ class mapBuilder{
         // this.grid.set(i + "_" + j, new Tile(i, j, round(random(0,2)), this.gridarray[j][i]));
       }
     }
-    // console.log(this.grid)
+    // // console.log(this.grid)
   }
 
   convertMapToGridArray(map){
-    // console.log(map.get("0_1"))
+    // // console.log(map.get("0_1"))
     let gridarray = [];
     for (let i = 0; i < this.numCols; i++) {
       // join the array to make it a string
@@ -717,10 +726,10 @@ class mapBuilder{
         row.push(map.get(i + "_" + j).z);
       }
       row = row.join('');
-      // console.log(row)
+      // // console.log(row)
       gridarray.push(row);
     }
-    // console.log(gridarray)
+    // // console.log(gridarray)
     return gridarray;
   }
   // temporary generation function for testing
@@ -829,7 +838,7 @@ class mapBuilder{
       }
     }
     this.isoarray = this.isoarray.map(row => row.join('')); 
-    // console.log(this.isoarray)
+    // // console.log(this.isoarray)
     return this.isoarray;
   }
 
@@ -841,7 +850,7 @@ class mapBuilder{
       this.isoarray[arrayy][arrayx] = type;
     }
     // if (arrayy < 5){
-    //   console.log(arrayx, arrayy, type, this.isoarray[arrayy])
+    //   // console.log(arrayx, arrayy, type, this.isoarray[arrayy])
     // }
     
   }
@@ -859,7 +868,7 @@ class mapBuilder{
     let ystart = 0;
     let coordx = (y / this.TILE_HEIGHT) - (ystart / this.TILE_HEIGHT) + (x / this.TILE_WIDTH) - (xstart / this.TILE_WIDTH);
     let coordy = coordx + (2 * xstart) / this.TILE_WIDTH -  (2 * x) / this.TILE_WIDTH;
-    // console.log(coordx, coordy, x, y, xstart, ystart)
+    // // console.log(coordx, coordy, x, y, xstart, ystart)
     return createVector(round(coordx), round(coordy));
   }
 
@@ -953,7 +962,7 @@ class mapBuilder{
           this.TILE_SIDE_LENGTH);
 
       this.mapTiles.visible = false;
-      // console.log(this.mapTiles)
+      // // console.log(this.mapTiles)
 
       this.mapX = 0;//(width / 2) - (this.numCols / 2) * this.cellSize;
       this.mapY = 0;//height - this.numRows * this.cellSize;
@@ -1133,10 +1142,10 @@ class mapBuilder{
         0, // y to position at top
         this.TILE_WIDTH / 2,
         this.TILE_HEIGHT / 2);
-    // console.log(this.displayMapTiles)
+    // // console.log(this.displayMapTiles)
     // this.mapTiles.collider = 'none';
 
-    // console.log(this.displayMapTiles)
+    // // console.log(this.displayMapTiles)
     // for (let i = 0; i < this.displayMapTiles.length; i++) {
     //   let tile = this.displayMapTiles[i]; //sprite object
     //   let vect = this.findFromCoords(tile.pos.x, tile.pos.y);
@@ -1153,7 +1162,7 @@ class mapBuilder{
       let z = this.getTile(vect.x, vect.y).z;
       if (z != 'B'){
         // tile.pos.y -= z * this.TILE_HEIGHT / 2;
-        // console.log(z, vect.x, vect.y)
+        // // console.log(z, vect.x, vect.y)
         
         // + z * this.TILE_HEIGHT / 2; //make an entirely new tile that displays another image but has no collision, at the elevated pos. the original tile is at the original pos
         let type = this.getTile(vect.x, vect.y).type;
@@ -1305,7 +1314,7 @@ class mapBuilder{
       // this.displayLayer3.overlaps(null)
       // this.displayLayer4.overlaps(null)
       // this.displayLayer5.overlaps(null)
-      // console.log(this.displayLayer2)
+      // // console.log(this.displayLayer2)
       // this.displayLayer3.overlaps(allSprites);
       // this.displayLayer4.overlaps(allSprites);
       // this.displayLayer5.overlaps(allSprites);
@@ -1372,9 +1381,17 @@ class mapBuilder{
 
   addTower(tower){
     towerspawnedsfx.play();
-    setTimeout(() => {
+    let promise = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve();
+      }, 1000);
+    });
+    promise.then(() => {
       towerspawnedsfx.stop();
-    }, 1000);
+    });
+    // setTimeout(() => {
+    //   towerspawnedsfx.stop();
+    // }, 1000);
     let towersprite = new this.towers.Sprite();
     // this.towers.push(tower);
     // translate into isometric
@@ -1449,7 +1466,7 @@ class mapBuilder{
     //   rect(0, 0, this.TILE_WIDTH, this.TILE_HEIGHT * 3);
     //   text(tower.type, 0, 0);
     // }
-    console.log(towersprite.pos.x, towersprite.pos.y)
+    // console.log(towersprite.pos.x, towersprite.pos.y)
     this.towerarr.push(towersprite);
     this.towerobjarr.push(tower);
     this.towerprevcountdowns.push(tower.activecountdown);
@@ -1489,9 +1506,9 @@ class mapBuilder{
         // let y = (mapOverlayArea.y - areaPadding) * this.mapCellSize + this.mapY;
         // let w = (mapOverlayArea.w + areaPadding * 2) * this.mapCellSize;
         // let h = (mapOverlayArea.h + areaPadding * 2) * this.mapCellSize;
-        // console.log(tower, i)
+        // // console.log(tower, i)
         if (playerx > x && playerx < x + w && playery > y && playery < y + h) {
-          // console.log('player near tower', i)
+          // // console.log('player near tower', i)
           // towersprite = this.towerarr[i];
           // draws a circle around the tower
           // makes new sprite
@@ -1593,7 +1610,7 @@ class mapBuilder{
     if (index < 0){
       return;
     }
-    console.log(index, 'removing index', id, 'id')
+    // console.log(index, 'removing index', id, 'id')
     if (this.towerobjarr[index].linkedtowerid != null){
       let linkedtower = this.towerobjarr.find(tower => tower.id == this.towerobjarr[index].linkedtowerid);
       this.updateTower(this.towerobjarr[index].linkedtowerid, linkedtower);
@@ -1624,7 +1641,7 @@ class mapBuilder{
     let frogindex = this.towerfrogarr.findIndex(frog => frog.id == id);
     if (this.towerfrogarr[frogindex] != null && frogindex >= 0){
       this.towerfrogarr[frogindex].frog.changeAni('explode');
-      // console.log('frogarr', this.towerfrogarr[frogindex].frog, 'frog')
+      // // console.log('frogarr', this.towerfrogarr[frogindex].frog, 'frog')
       setTimeout(() => {
         frogindex = this.towerfrogarr.findIndex(frog => frog.id == id);
         this.towerfrogarr[frogindex].frog.remove();
@@ -1638,11 +1655,11 @@ class mapBuilder{
     // let animationindex = this.chargingarr.findIndex(animation => animation.id == id);
     
     
-    console.log('removed tower', index)
+    // console.log('removed tower', index)
   }
   scanForUpdatedCountdowns(){
     for (let i = 0; i < this.towerobjarr.length; i++){
-        console.log(this.towerobjarr[i].activecountdown, this.towerprevcountdowns[i], 'countdowns')
+        // console.log(this.towerobjarr[i].activecountdown, this.towerprevcountdowns[i], 'countdowns')
         //what if the obj is immediately deleted after active is false?
         if (this.towerprevcountdowns[i] == -1){
           if (this.towerobjarr[i].activecountdown > 0){
@@ -1654,7 +1671,7 @@ class mapBuilder{
               } else {
                 if (this.towerobjarr[index].activecountdown > 0){
                   this.towerobjarr[index].activecountdown -= 1;
-                  console.log(this.towerobjarr[index].activecountdown, 'countdown')
+                  // console.log(this.towerobjarr[index].activecountdown, 'countdown')
                 } else {
                   this.towerobjarr[index].activecountdown = -1;
                   if (this.towerobjarr[index].charginganimation != null){
@@ -1686,10 +1703,10 @@ class mapBuilder{
       let towerx = towerfrog.pos.x;
       let towery = towerfrog.pos.y;
       let distance = dist(playerx, playery, towerx, towery);
-      // console.log(distance, 'distance')
+      // // console.log(distance, 'distance')
       if (distance < 200){
         if (towerfrog.ani.name == 'idle'){
-          console.log('changing to jump')
+          // console.log('changing to jump')
           towerfrog.changeAni('jump');
         } 
       } else if (towerfrog.ani.name == 'jump'){
@@ -1698,7 +1715,7 @@ class mapBuilder{
       //check if player is to left or right of frog
       if (playerx < towerx){
         towerfrog.scale.x = -1;
-        // console.log('left', towerfrog.ani)
+        // // console.log('left', towerfrog.ani)
       } else {
         towerfrog.scale.x = 1;
       }
@@ -1714,24 +1731,24 @@ class mapBuilder{
     let initialcharge = this.towerobjarr[index].chargingindicator;
     let towersprite = this.towerarr[index];
     // const chargeanimation = this.towerobjarr[index].charginganimation;
-    // console.log(chargeanimation, 'chargeanimation')
+    // // console.log(chargeanimation, 'chargeanimation')
     this.towerobjarr[index] = tower;
 
     // this.towerobjarr[index].chargeanimation = chargeanimation;
 
-    console.log(tower.activecountdown, 'countdown')
+    // console.log(tower.activecountdown, 'countdown')
     this.scanForUpdatedCountdowns();
     // this.towerprevcountdowns[index] = tower.activecountdown;
     //change draw function and add teams
-    console.log('animationcharge', this.chargingarr.animation, 'charging animation')
+    // console.log('animationcharge', this.chargingarr.animation, 'charging animation')
     if (tower.active){
       let linkedtower = this.towerobjarr.find(tower => tower.id == tower.linkedtowerid);
       // shoot bullet sprites at each other
 
-      // console.log('active', this.towerobjarr[index].charginganimation, 'charging animation')
+      // // console.log('active', this.towerobjarr[index].charginganimation, 'charging animation')
       if (tower.chargingindicator == 1){
         linkedtower = this.towerobjarr.find(tower => tower.id == tower.linkedtowerid);
-        console.log('generating charging animation')
+        // console.log('generating charging animation')
         let frogindex = this.towerfrogarr.findIndex(frog => frog.id == tower.id);
         if (this.towerfrogarr[frogindex] != null && frogindex >= 0){
           this.towerfrogarr[frogindex].frog.changeAni('attack');
@@ -1746,7 +1763,7 @@ class mapBuilder{
               if (tower.chargingindicator == 1 && linkedtower.chargingindicator == 1 && tower.active == true){
                 this.shootBullet(tower, linkedtower);
               } else {
-                // console.log('clearing interval')
+                // // console.log('clearing interval')
                 clearInterval();
               }
             }
@@ -1789,9 +1806,9 @@ class mapBuilder{
       //   image(tower.img, 0, 0, this.TILE_WIDTH, this.TILE_HEIGHT * 3);
       // }
     } else {
-      // console.log('removing charging animation', this.chargingarr[index], 'charging animation')
+      // // console.log('removing charging animation', this.chargingarr[index], 'charging animation')
       if (tower.chargingindicator == 0){
-        console.log('removing charging animation')
+        // console.log('removing charging animation')
         // this.towerobjarr[index].charginganimation.remove();
         let animindex = this.chargingarr.findIndex(animation => animation.id == tower.id);
         if (this.chargingarr[animindex] != null && animindex >= 0  && this.chargingarr[animindex].animation != null){
@@ -1831,7 +1848,7 @@ class mapBuilder{
     }
     let currentHeight = map(diff, 0, 80, 0, maxHeight);
     let intensity = map(diff, 0, 80, 0, 210);
-    // console.log(currentHeight, intensity, 'current height and intensity', diff, 'diff')
+    // // console.log(currentHeight, intensity, 'current height and intensity', diff, 'diff')
     
     if (currentHeight > maxHeight) {
       currentHeight = maxHeight;
@@ -1855,14 +1872,14 @@ class mapBuilder{
   }
 
   attackBase(team, tower){
-    console.log('attacking base')
+    // console.log('attacking base')
     let index = this.towerobjarr.findIndex(tower => tower.id == tower.id);
     let linkedtower = this.towerobjarr.find(towers => towers.id == tower.linkedtowerid);
-    console.log(linkedtower, 'linked tower', index, 'index', tower, this.towerobjarr, 'towerobjarr')
+    // console.log(linkedtower, 'linked tower', index, 'index', tower, this.towerobjarr, 'towerobjarr')
     if (linkedtower != null){
       // this.shootBullet(tower, linkedtower);
       //find time to reach linkedtwoer
-      console.log('attacking base')
+      // console.log('attacking base')
       let frogindex = this.towerfrogarr.findIndex(frog => frog.id == tower.id);
       let linkedfrogindex = this.towerfrogarr.findIndex(frog => frog.id == tower.linkedtowerid);
       let frog = this.towerfrogarr[frogindex].frog;
@@ -1889,10 +1906,10 @@ class mapBuilder{
   }
 
   healBase(team, tower){
-    console.log('healing base')
+    // console.log('healing base')
     let index = this.towerobjarr.findIndex(tower => tower.id == tower.id);
     let linkedtower = this.towerobjarr.find(towers => towers.id == tower.linkedtowerid);
-    console.log(linkedtower, 'linked tower', index, 'index', tower, this.towerobjarr, 'towerobjarr')
+    // console.log(linkedtower, 'linked tower', index, 'index', tower, this.towerobjarr, 'towerobjarr')
     if (linkedtower != null){
       let frogindex = this.towerfrogarr.findIndex(frog => frog.id == tower.id);
       let linkedfrogindex = this.towerfrogarr.findIndex(frog => frog.id == tower.linkedtowerid);
@@ -1911,7 +1928,7 @@ class mapBuilder{
       } else {
         pos3 = createVector(this.basetowerarr[1].pos.x, this.basetowerarr[1].pos.y);
       }
-      console.log(pos3, 'pos3', pos2, 'pos2', pos1, 'pos1')
+      // console.log(pos3, 'pos3', pos2, 'pos2', pos1, 'pos1')
       this.shootPingPong(pos1, pos2, 1, 'heal');
       setTimeout(() => {
         this.shootPingPong(pos2, pos3, 1.5, 'heal');
@@ -1922,7 +1939,7 @@ class mapBuilder{
 
   boostTeam(team, tower, players, selfplayer, selfteam){
     // creates speed boost effect around players
-    console.log('boosting team')
+    // console.log('boosting team')
     //duration is 20 seconds
     if (team == 0){
       // handle self player
@@ -1937,7 +1954,7 @@ class mapBuilder{
           speedanimation.pos = selfplayer.pos;
           // let diff = frameCount - initialframe;
           let animstate = selfplayer.ani.name;
-          console.log(animstate, 'animstate')
+          // console.log(animstate, 'animstate')
           //determine orientation based on scale.x
           let orientation;
           if (selfplayer.scale.x > 0){
@@ -1973,7 +1990,7 @@ class mapBuilder{
             speedanimation.pos = player.sprite.position;
             // let diff = frameCount - initialframe;
             let animstate = player.sprite.animation;
-            console.log(animstate, 'animstate')
+            // console.log(animstate, 'animstate')
             //determine orientation based on scale.x
             let orientation;
             if (player.sprite.scale.x > 0){
@@ -2010,7 +2027,7 @@ class mapBuilder{
           speedanimation.pos = selfplayer.pos;
           // let diff = frameCount - initialframe;
           let animstate = selfplayer.ani.name;
-          console.log(animstate, 'animstate')
+          // console.log(animstate, 'animstate')
           //determine orientation based on scale.x
           let orientation;
           if (selfplayer.scale.x > 0){
@@ -2046,7 +2063,7 @@ class mapBuilder{
             speedanimation.pos = player.sprite.position;
             // let diff = frameCount - initialframe;
             let animstate = player.sprite.animation;
-            console.log(animstate, 'animstate')
+            // console.log(animstate, 'animstate')
             //determine orientation based on scale.x
             let orientation;
             if (player.sprite.scale.x > 0){
@@ -2071,10 +2088,10 @@ class mapBuilder{
     }
   }
   slowTeam(team, tower, players, selfplayer, selfteam){
-    console.log('slowing team')
+    // console.log('slowing team')
     let index = this.towerobjarr.findIndex(towers => towers.id == tower.id);
     let linkedtower = this.towerobjarr.find(towers => towers.id == tower.linkedtowerid);
-    // console.log(linkedtower, 'linked tower', index, 'index', tower, this.towerobjarr, 'towerobjarr')
+    // // console.log(linkedtower, 'linked tower', index, 'index', tower, this.towerobjarr, 'towerobjarr')
     if (linkedtower != null){
       let frogindex = this.towerfrogarr.findIndex(frog => frog.id == tower.id);
       let linkedfrogindex = this.towerfrogarr.findIndex(frog => frog.id == tower.linkedtowerid);
@@ -2090,7 +2107,7 @@ class mapBuilder{
       let pos3;
       
         // iterate thru a map object
-        console.log(selfplayer, 'selfplayer', selfteam)
+        // console.log(selfplayer, 'selfplayer', selfteam)
         if (selfteam == 0 && team == 1){ // opposing team
           pos3 = selfplayer.pos;
           // break;
@@ -2099,7 +2116,7 @@ class mapBuilder{
           // break
         }
         if (pos3 != null){
-          console.log(pos3, 'pos3')
+          // console.log(pos3, 'pos3')
           this.shootPingPong(pos1, pos2, 1.5, 'slow');
           setTimeout(() => {
             this.shootPingPong(pos2, pos3, 2.5, 'slow');
@@ -2107,7 +2124,7 @@ class mapBuilder{
         }
         // pos3 = null;
         for (let [key, player] of players){
-          console.log(player, 'player')
+          // console.log(player, 'player')
           if (player.team == 0 && team == 1){ // opposing team
             pos3 = player.sprite.position;
             // break;
@@ -2118,7 +2135,7 @@ class mapBuilder{
             pos3 = null;
           }
           if (pos3 != null){
-            console.log(pos3, 'pos3')
+            // console.log(pos3, 'pos3')
             this.shootPingPong(pos1, pos2, 1, 'slow');
             setTimeout(() => {
               this.shootPingPong(pos2, pos3, 1.5, 'slow');
@@ -2143,17 +2160,17 @@ class mapBuilder{
   }
   
   shootBullet(tower, target){
-    // console.log('shooting bullet')
+    // // console.log('shooting bullet')
     let bullet = new this.exchangebullets.Sprite();
     bullet.collider = 'none';
     let realx = (tower.x - tower.y) * this.TILE_WIDTH / 2 + this.xstart;
     let realy = (tower.x + tower.y) * this.TILE_HEIGHT / 2 - tower.z * this.TILE_HEIGHT / 2 + this.ystart;
     let frogindex = this.towerfrogarr.findIndex(frog => frog.id == tower.id);
     let frog = this.towerfrogarr[frogindex].frog;
-    // console.log(frog, 'frog')
+    // // console.log(frog, 'frog')
     bullet.pos = createVector(frog.pos.x, frog.pos.y);
     // bullet.target = target;
-    // console.log(tower, target, 'tower and target')
+    // // console.log(tower, target, 'tower and target')
     let speed = 13;
     // bullet.damage = 5;
     // bullet.active = true;
@@ -2181,7 +2198,7 @@ class mapBuilder{
         let y = sin(angle) * speed;
         bullet.pos.x += x;
         bullet.pos.y += y;
-        // console.log(bullet.pos.x, bullet.pos.y, 'bullet pos')
+        // // console.log(bullet.pos.x, bullet.pos.y, 'bullet pos')
         // fill(255, 0, 0);
         // ellipse(0, 0, 10, 10);
         bullet.ani.draw(0, 0, 0, 1, 1);
@@ -2190,7 +2207,7 @@ class mapBuilder{
           // bullet.active = false;
           bullet.remove();
         }
-        // console.log(bullet.pos.x, bullet.pos.y, 'bullet pos')
+        // // console.log(bullet.pos.x, bullet.pos.y, 'bullet pos')
         
       }
       
@@ -2206,7 +2223,7 @@ class mapBuilder{
       bullet = new this.icebullets.Sprite();
     } else if (type == 'heal'){
       bullet = new this.healingbullets.Sprite();
-      // console.log('healing bullet', bullet)
+      // // console.log('healing bullet', bullet)
     }
 
     bullet.pos = createVector(pos1.x, pos1.y);
@@ -2254,7 +2271,7 @@ class mapBuilder{
         let y = sin(angle) * speed;
         bullet.pos.x += x;
         bullet.pos.y += y;
-        // console.log(bullet.pos.x, bullet.pos.y, 'bullet pos')
+        // // console.log(bullet.pos.x, bullet.pos.y, 'bullet pos')
         // fill(255, 0, 0);
         // ellipse(0, 0, 10, 10);
         // bullet.ani.draw(0, 0, 0, 1, 1);
@@ -2368,7 +2385,7 @@ class mapBuilder{
         } else if (this.gridarray[y][i] == "4") {
           image = this.tile_images[69]; 
         }
-        // console.log(this.grid.get(i + "_" + y).z)
+        // // console.log(this.grid.get(i + "_" + y).z)
         this.draw_tile(image, i, y, this.grid.get(i + "_" + y).z, graphics, X_start, Y_start);
         y++;
       }
@@ -2400,10 +2417,10 @@ class mapBuilder{
     // let newgraphics = createGraphics(windowWidth, windowHeight);
     // this.draw_grid(camx, camy, newgraphics);
     // this.graphics = newgraphics;
-    // console.log(this.graphics)
+    // // console.log(this.graphics)
     let offsetx = (camx - windowWidth / 2) * this.gridscale; //scaling needs to be dealt with
     let offsety = (camy - windowHeight / 2) * this.gridscale; //scaling needs to be dealt with
-    // console.log(offsetx, offsety)
+    // // console.log(offsetx, offsety)
     this.graphics = this.draw_grid(camx, camy, this.graphics);
     //how to delete prev image? 
     this.xstart = (this.truewidth / 2 - this.TILE_WIDTH / 2) * this.gridscale + offsetx;
@@ -2415,7 +2432,7 @@ class mapBuilder{
   }
   buildIso(camx, camy){ // out of use
     this.graphics = this.draw_grid(camx, camy);
-    // console.log(this.graphics)
+    // // console.log(this.graphics)
   }
 
   initializeCollisions(playerZ, playerSprite){
@@ -2451,7 +2468,7 @@ class mapBuilder{
       // this.displayLayer3.overlaps(null)
       // this.displayLayer4.overlaps(null)
       // this.displayLayer5.overlaps(null)
-      // console.log(this.displayLayer2)
+      // // console.log(this.displayLayer2)
       // this.displayLayer3.overlaps(allSprites);
       // this.displayLayer4.overlaps(allSprites);
       // this.displayLayer5.overlaps(allSprites);
@@ -2522,7 +2539,7 @@ class mapBuilder{
     this.gridscale = size;
   }
   setPlayerPosition(servermap, player){
-    // console.log(player)
+    // // console.log(player)
     player.pos.x = this.numCols/2 * this.TILE_SIDE_LENGTH;
     player.pos.y = this.numRows/2 * this.TILE_HEIGHT;
     // finds z coordinate of player
@@ -2569,7 +2586,7 @@ function createPlayerSprite(name) {
 function createVisiblePlayerSprite(name, playerZ, teams) { //scaling added after animation
     // let playerSprite = new Sprite(0, 0, 10);
     // let teams = data.team;
-    // console.log(teams, 'teams')
+    // // console.log(teams, 'teams')
     // // playerSprite.layer = 99999
     // playerSprite.visible = true;
     // playerSprite.collider = 'none';
@@ -2589,13 +2606,13 @@ function createVisiblePlayerSprite(name, playerZ, teams) { //scaling added after
     // 
     // playerSprite.changeAni('idle');
     // playerSprite.layer = 99999;
-    console.log(teams, 'teams')
+    // console.log(teams, 'teams')
     let playerSprite;
     if (teams == 0){
       playerSprite = new playerSpriteGroup1.Sprite();
     } else if (teams == 1){
       playerSprite = new playerSpriteGroup2.Sprite();
-      // console.log('team 2')
+      // // console.log('team 2')
     } else {
       playerSprite = new playerSpriteGroup1.Sprite();
     }

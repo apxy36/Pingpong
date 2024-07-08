@@ -12,17 +12,17 @@ function enterRoom(meetingCode) {
           });
     }
     else {
-        console.log("Navigating to sketch.html");
+        // console.log("Navigating to sketch.html");
         window.location.href = "sketch.html?ign=" + usernameInputBox.value + "&roomCode=" + meetingCode;
     }
 }
 
 // Function to ensure the user does not input an invalid meeting room code
 function validateCode() {
-    // console.log("Validating code");
+    // // console.log("Validating code");
     // Check that the input box isnt empty
     let roomCodeInputBox = document.getElementById("roomCodeInput");
-    // console.log(roomCodeInputBox.value)
+    // // console.log(roomCodeInputBox.value)
     if (roomCodeInputBox.value.length != 5) {
         Swal.fire({
             title: "Error entering game!",
@@ -46,7 +46,7 @@ function closeIframe() {
 
 window.addEventListener('message', function(event) {
   if (event.data === 'close-iframe') {
-    console.log('closing iframe ')
+    // console.log('closing iframe ')
     document.getElementById('iframe-container').classList.add('hidden');
   }
   

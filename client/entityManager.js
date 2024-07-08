@@ -32,13 +32,13 @@ class EntityManager {
     updatePlayerSprites(teams) {
         for (let [id, data] of this.entities) {
             // let playerSprite = data.sprite;
-            // console.log(data, teams);
+            // // console.log(data, teams);
             let teamer = teams.find(team => team.id === id);
             if (data.sprite){
                 data.sprite.remove();
             }
             // let team = data.team;
-            // console.log(data, teamer);
+            // // console.log(data, teamer);
             let playerSprite = createVisiblePlayerSprite(data.ign, data.z, teamer.team);
             data.sprite = playerSprite;
 

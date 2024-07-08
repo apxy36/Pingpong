@@ -1,6 +1,6 @@
 function updateFPS(frameDocument, fps) {
     // Try catch because draw() will sometimes call before document has loaded  
-    // console.log("FPS: " + fps);
+    // // console.log("FPS: " + fps);
     try {
         
         let fpsElement = frameDocument.getElementById("fps");
@@ -23,7 +23,7 @@ function updateFPS(frameDocument, fps) {
                 fpsElement.classList.add("text-yellow-600");
             }
         } else {
-            // console.log("FPS: " + fps);
+            // // console.log("FPS: " + fps);
             if (fpsElement.classList.contains("text-red-600")) {
                 fpsElement.classList.remove("text-red-600");
             }

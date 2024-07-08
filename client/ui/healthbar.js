@@ -17,7 +17,7 @@ function updateTeamHealth(frameDocument, currentHealth, team, newHealth) {
   let healthBar = frameDocument.getElementById('healthbar');
   let tempChangeBar = frameDocument.getElementById('temp-change-bar');
   // currentHealth -= 1;
-  // console.log('heathbar', frameDocument)
+  // // console.log('heathbar', frameDocument)
   // Calculate health percentage and corresponding TailwindCSS width class
   const healthPercentage = ((currentHealth - 1) / totalHealth) * 100;
   const widthClassIndex = Math.floor(healthPercentage / (100 / widthClasses.length));
@@ -37,7 +37,7 @@ function updateTeamHealth(frameDocument, currentHealth, team, newHealth) {
 
   // Determine if health increased or decreased
   const healthDiff = newHealth - currentHealth;
-  // console.log('healthDiff', healthDiff)
+  // // console.log('healthDiff', healthDiff)
 
   // Apply temporary change bar
   if (abs(healthDiff) > 0) {
@@ -67,7 +67,7 @@ function updateTeamHealth(frameDocument, currentHealth, team, newHealth) {
     // tempChangeBar.style.background = healthDiff > 0 ? 'limegreen' : 'palegray';
     tempChangeBar.style.right = healthDiff > 0 ? '0' : 'auto';
     tempChangeBar.style.left = healthDiff > 0 ? 'auto' : '0';
-    console.log('tempChangeBar', tempChangeBar.style.width)
+    // console.log('tempChangeBar', tempChangeBar.style.width)
 
 
     setTimeout(() => {
@@ -78,7 +78,7 @@ function updateTeamHealth(frameDocument, currentHealth, team, newHealth) {
   
 
   // Remove existing width classes
-  // console.log(healthBar)
+  // // console.log(healthBar)
   widthClasses.forEach(cls => healthBar.classList.remove(cls));
 
   // Apply new width class and gradient background
@@ -90,7 +90,7 @@ function updateTeamHealth(frameDocument, currentHealth, team, newHealth) {
 
   
   } catch (e) {
-    console.log(e)
+    // console.log(e)
   }
 }
 
