@@ -440,19 +440,20 @@ export default class MapManager{
   updateTowers(clients){ // handling tower duration and spawning of new towers
 
     for (let i = 0; i < this.towers.length; i++){
-        if (!this.towers[i].activecountdown > 0 && this.towers[i].active == false){
+        if (this.towers[i].activecountdown < 0 && this.towers[i].active == false){
           this.towers[i].duration += 1;
+          console.log(this.towers[i].duration, this.towers[i].id, 'tower duration')
         } else if (this.towers[i].duration > 18){
-          this.towers[i].duration = 10;
+          // this.towers[i].duration = 10;
         }
       //  console.log(this.towers[i].duration)
-        if (this.towers[i].duration > 20 && this.towers[i].active == false && this.towers[i].linkedtowerid == null && !this.checkIfAnyTowerIsActivated()){ 
+        if (this.towers[i].duration > 15 && this.towers[i].active == false && this.towers[i].linkedtowerid == null){ 
           let towerid = this.towers[i].id;
           for (let c of clients){
             c.socket.emit('removeTower', towerid);
           }
           this.removeTowerByIndex(i, clients);
-          // console.log("tower removed", i);
+          console.log("tower removed", i);
         }
       
     }

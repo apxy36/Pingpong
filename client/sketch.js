@@ -455,6 +455,7 @@ let healthBar1;
 let timerFrame;
 let FPSFrame;
 let roomCodeFrame;
+let leaveRoomBtn;
 
 let testspeedBoost;
 
@@ -543,6 +544,7 @@ function setup() {
     roomCodeFrame.attribute('src', './ui/roomcodeframe.html');
     
 }
+let roomjoined = false;
 
 function draw() {
     
@@ -562,6 +564,51 @@ function draw() {
 
         if (startGame == false) {
             map.displayIdleFrogs();
+        }
+
+        if (roomjoined == false) {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+                });
+            Toast.fire({
+                icon: "success",
+                title: "Joined room successfully!"
+            });
+            roomjoined = true;
+        }
+
+        if (startGame == false && leaveRoomBtn == undefined){
+            leaveRoomBtn = createButton('Leave Room');
+            leaveRoomBtn.addClass('flex m-0 my-2 p-4 rounded-md scale-90 btn btn-secondary hover:scale-100 border-offset-0 text-center justify-self-center hover:border-2 border-primary hover:border-offset-8 overflow-visible w-32');
+            leaveRoomBtn.position(width - 140, height - 100);
+            leaveRoomBtn.mouseClicked(() => {
+                Swal.fire({
+                    title: "Do you want to leave the room?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes, leave room!",
+                    }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                        title: "Room left!",
+                        text: "You will be redirected to the main page.",
+                        icon: "success"
+                        });
+                        window.location.href = "index.html";
+                    }
+                });
+            });
         }
 
         if (startGame == false && interactionBtn == undefined) {
